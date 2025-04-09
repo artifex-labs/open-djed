@@ -74,6 +74,41 @@ import { Data } from '@liqwid-labs/lucid'
 }
 */
 
-const OrderDatumSchema = Data.Object({})
+const OrderDatumSchema = Data.Object({
+  actionFields: Data.Enum([
+    Data.Object({
+      MintDJED: Data.Object({
+        djedAmount: Data.Integer(),
+        adaAmount: Data.Integer(),
+      }),
+    }),
+    Data.Object({
+      BurnDJED: Data.Object({
+        djedAmount: Data.Integer(),
+      }),
+    }),
+    Data.Object({
+      MintSHEN: Data.Object({
+        shenAmount: Data.Integer(),
+        adaAmount: Data.Integer(),
+      }),
+    }),
+    Data.Object({
+      BurnSHEN: Data.Object({
+        shenAmount: Data.Integer(),
+      }),
+    })
+  ]),
+  address: Data.Object({
+    paymentKeyHash: Data.Tuple([Data.Bytes()], { hasConstr: true }),
+    stakeKeyHash: Data.Tuple([Data.Tuple([Data.Tuple([Data.Bytes()], { hasConstr: true })], { hasConstr: true })], { hasConstr: true }),
+  }),
+  adaUsdExchangeRate: Data.Object({
+    denominator: Data.Integer(),
+    numerator: Data.Integer(),
+  }),
+  creationDate: Data.Integer(),
+  orderStateTokenMintingPolicyId: Data.Bytes(),
+})
 export type OrderDatum = Data.Static<typeof OrderDatumSchema>
 export const OrderDatum = OrderDatumSchema as unknown as OrderDatum
