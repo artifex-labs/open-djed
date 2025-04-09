@@ -103,7 +103,7 @@ const OrderDatumSchema = Data.Object({
     paymentKeyHash: Data.Tuple([Data.Bytes()], { hasConstr: true }),
     stakeKeyHash: Data.Tuple([Data.Tuple([Data.Tuple([Data.Bytes()], { hasConstr: true })], { hasConstr: true })], { hasConstr: true }),
   }),
-  adaUsdExchangeRate: Data.Object({
+  adaExchangeRate: Data.Object({
     denominator: Data.Integer(),
     numerator: Data.Integer(),
   }),

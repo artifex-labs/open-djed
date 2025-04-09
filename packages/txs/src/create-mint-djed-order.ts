@@ -1,0 +1,55 @@
+import { Data, Lucid, fromUnit } from '@liqwid-labs/lucid'
+import { registryByNetwork, type Network } from './registry'
+import { OrderDatum } from 'data'
+import { PoolStakeValidatorRedeemer } from '../../data/src'
+import { lucidUtilsByNetwork } from './utils'
+import { OracleDatum } from '../../data/src/oracle-datum'
+
+export const createMintDjedOrder = async ({ lucid, network, amount, address }: { lucid: Lucid, network: Network, amount: bigint, address: string }) => {
+  const now = Date.now()
+  const { paymentCredential, stakeCredential } = lucidUtilsByNetwork[network].getAddressDetails(address)
+  const paymentKeyHash = paymentCredential?.hash
+  if (!paymentKeyHash) throw new Error('Couldn\'t get payment key hash from address.')
+  const stakeKeyHash = stakeCredential?.hash
+  if (!stakeKeyHash) throw new Error('Couldn\'t get stake key hash from address.')
+  const oracleUtxo = await lucid.utxoByUnit(registryByNetwork[network].adaUsdOracleAssetId)
+  const oracleInlineDatum = oracleUtxo.datum
+  if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
+  const { oracleFields: { adaExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
+  const poolUtxo = await lucid.utxoByUnit(registryByNetwork[network].poolStateTokenAssetId)
+
+  const adaAmountToSend = amount * adaExchangeRate.denominator / adaExchangeRate.numerator
+  return lucid
+    .newTx()
+    .attachMintingPolicy(registryByNetwork[network].orderStateTokenMintingPolicy)
+    .readFrom([oracleUtxo, poolUtxo])
+    .validFrom(now)
+    .validTo(now + 15 * 60 * 1000) // 15 minutes
+    .payToContract(
+      registryByNetwork[network].orderAddress,
+      {
+        inline: Data.to({
+          actionFields: {
+            MintDJED: {
+              djedAmount: amount,
+              adaAmount: adaAmountToSend,
+            }
+          },
+          address: {
+            paymentKeyHash: [paymentKeyHash],
+            stakeKeyHash: [[[stakeKeyHash]]],
+          },
+          adaExchangeRate,
+          creationDate: BigInt(now + 1),
+          orderStateTokenMintingPolicyId: fromUnit(registryByNetwork[network].orderStateTokenAssetId).policyId
+        }, OrderDatum)
+      },
+      {
+        [registryByNetwork[network].orderStateTokenAssetId]: 1n,
+        lovelace: adaAmountToSend + 5_000_000n,
+      }
+    )
+    .mintAssets({
+      [registryByNetwork[network].orderStateTokenAssetId]: 1n,
+    })
+}

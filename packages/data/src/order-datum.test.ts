@@ -18,7 +18,7 @@ test('order datum from', () => {
       ],
       stakeKeyHash: [[['b652ad81db60f5d8605dcec6e73d1ed932009651d9f3e8580ee07d22']]],
     },
-    adaUsdExchangeRate: {
+    adaExchangeRate: {
       denominator: 10000n,
       numerator: 6309n,
     },
@@ -40,7 +40,7 @@ test('order datum to', () => {
       ],
       stakeKeyHash: [[['b652ad81db60f5d8605dcec6e73d1ed932009651d9f3e8580ee07d22']]],
     },
-    adaUsdExchangeRate: {
+    adaExchangeRate: {
       denominator: 10000n,
       numerator: 6309n,
     },
