@@ -4,5 +4,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {
+    "@liqwid-labs/lucid": "^0.12.0"
+  }
 }
