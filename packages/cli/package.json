@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "scripts": {},
   "dependencies": {
+    "@lucid-evolution/lucid": "^0.4.25",
     "commander": "^13.1.0"
   }
 }

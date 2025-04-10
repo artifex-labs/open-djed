@@ -1,12 +1,11 @@
-import { Data, Lucid, fromUnit } from '@liqwid-labs/lucid'
+import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { registryByNetwork, type Network } from './registry'
 import { OrderDatum, OrderStateTokenMintingPolicyMintRedeemer } from 'data'
-import { lucidUtilsByNetwork } from './utils'
 import { OracleDatum } from '../../data/src/oracle-datum'
 
-export const createMintDjedOrder = async ({ lucid, network, amount, address }: { lucid: Lucid, network: Network, amount: bigint, address: string }) => {
+export const createMintDjedOrder = async ({ lucid, network, amount, address }: { lucid: LucidEvolution, network: Network, amount: bigint, address: string }) => {
   const now = Date.now()
-  const { paymentCredential, stakeCredential } = lucidUtilsByNetwork[network].getAddressDetails(address)
+  const { paymentCredential, stakeCredential } = getAddressDetails(address)
   const paymentKeyHash = paymentCredential?.hash
   if (!paymentKeyHash) throw new Error('Couldn\'t get payment key hash from address.')
   const stakeKeyHash = stakeCredential?.hash
@@ -20,14 +19,15 @@ export const createMintDjedOrder = async ({ lucid, network, amount, address }: {
   const adaAmountToSend = amount * adaExchangeRate.denominator / adaExchangeRate.numerator
   return lucid
     .newTx()
-    .attachMintingPolicy(registryByNetwork[network].orderStateTokenMintingPolicy)
+    .attach.MintingPolicy(registryByNetwork[network].orderStateTokenMintingPolicy)
     .readFrom([oracleUtxo, poolUtxo])
     .validFrom(now)
     .validTo(now + 1 * 60 * 1000) // 1 minute
-    .payToContract(
+    .pay.ToContract(
       registryByNetwork[network].orderAddress,
       {
-        inline: Data.to({
+        kind: 'inline',
+        value: Data.to({
           actionFields: {
             MintDJED: {
               djedAmount: amount,

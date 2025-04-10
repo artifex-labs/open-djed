@@ -1,4 +1,4 @@
-import { Data } from '@liqwid-labs/lucid'
+import { Data } from '@lucid-evolution/lucid'
 
 /*
 {

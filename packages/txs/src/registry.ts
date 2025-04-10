@@ -1,6 +1,3 @@
-export const networks = [/* 'Preprod', */'Mainnet'] as const
-export type Network = typeof networks[number]
-
 type Script = { type: 'PlutusV2', script: string }
 
 export type Registry = {
@@ -47,4 +44,6 @@ export const registryByNetwork = {
     },
     adaUsdOracleAssetId: '815aca02042ba9188a2ca4f8ce7b276046e2376b4bce56391342299e446a65644f7261636c654e4654'
   },
-} satisfies Record<Network, Registry>
+} satisfies Record<string, Registry>
+
+export type Network = keyof typeof registryByNetwork
