@@ -1,7 +1,6 @@
 import { Data, Lucid, fromUnit } from '@liqwid-labs/lucid'
 import { registryByNetwork, type Network } from './registry'
 import { OrderDatum } from 'data'
-import { PoolStakeValidatorRedeemer } from '../../data/src'
 import { lucidUtilsByNetwork } from './utils'
 import { OracleDatum } from '../../data/src/oracle-datum'
 
