@@ -23,7 +23,7 @@ export const createMintDjedOrder = async ({ lucid, network, amount, address }: {
     .attachMintingPolicy(registryByNetwork[network].orderStateTokenMintingPolicy)
     .readFrom([oracleUtxo, poolUtxo])
     .validFrom(now)
-    .validTo(now + 15 * 60 * 1000) // 15 minutes
+    .validTo(now + 1 * 60 * 1000) // 1 minute
     .payToContract(
       registryByNetwork[network].orderAddress,
       {
@@ -39,13 +39,13 @@ export const createMintDjedOrder = async ({ lucid, network, amount, address }: {
             stakeKeyHash: [[[stakeKeyHash]]],
           },
           adaExchangeRate,
-          creationDate: BigInt(now + 1),
+          creationDate: BigInt(now + 30_000),
           orderStateTokenMintingPolicyId: fromUnit(registryByNetwork[network].orderStateTokenAssetId).policyId
         }, OrderDatum)
       },
       {
         [registryByNetwork[network].orderStateTokenAssetId]: 1n,
-        lovelace: adaAmountToSend + 5_000_000n,
+        lovelace: adaAmountToSend + 10_000_000n,
       }
     )
     .mintAssets({

@@ -15,7 +15,7 @@ export const cancelOrderByOwner = async ({ lucid, network, orderUtxo }: { lucid:
     .attachMintingPolicy(registryByNetwork[network].orderStateTokenMintingPolicy)
     .attachSpendingValidator(registryByNetwork[network].orderSpendingValidator)
     .validFrom(now)
-    .validTo(now + 15 * 60 * 1000) // 15 minutes
+    .validTo(now + 1 * 60 * 1000) // 1 minute
     .collectFrom([orderUtxo], CancelDJEDMintOrderRedeemer)
     .addSigner(address)
     .mintAssets({
