@@ -1,6 +1,6 @@
 import { Data, Lucid, fromUnit } from '@liqwid-labs/lucid'
 import { registryByNetwork, type Network } from './registry'
-import { OrderDatum } from 'data'
+import { OrderDatum, OrderStateTokenMintingPolicyMintRedeemer } from 'data'
 import { lucidUtilsByNetwork } from './utils'
 import { OracleDatum } from '../../data/src/oracle-datum'
 
@@ -50,5 +50,5 @@ export const createMintDjedOrder = async ({ lucid, network, amount, address }: {
     )
     .mintAssets({
       [registryByNetwork[network].orderStateTokenAssetId]: 1n,
-    })
+    }, OrderStateTokenMintingPolicyMintRedeemer)
 }
