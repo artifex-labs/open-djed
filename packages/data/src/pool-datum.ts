@@ -101,7 +101,7 @@ const PoolDatumSchema = Data.Object({
       order: OutputReferenceSchema,
       time: Data.Integer(),
     })
-  ]),
+  ], { hasConstr: true }),
   _0: Data.Integer(),
   _1: Data.Integer(),
   _2: Data.Nullable(Data.Any()),
