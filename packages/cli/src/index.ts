@@ -1,6 +1,6 @@
-import { Lucid, CML, type UTxO, type Assets, toHex, Blockfrost } from '@lucid-evolution/lucid'
+import { Lucid, CML, type UTxO, type Assets, Blockfrost } from '@lucid-evolution/lucid'
 import { program } from 'commander'
-import { createMintDjedOrder, cancelOrderByOwner } from 'txs'
+import { createMintDjedOrder, createMintShenOrder, cancelOrderByOwner } from 'txs'
 
 const lucid = await Lucid(new Blockfrost('https://cardano-mainnet.blockfrost.io/api/v0', 'mainnet6nn5cOiVycGeknLTOBNbmw1fgTeoQWfo'), 'Mainnet')
 
@@ -11,6 +11,18 @@ program
   .action(async (address, amount) => {
     lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
     const tx = await createMintDjedOrder({ lucid, network: 'Mainnet', amount: BigInt(amount), address })
+    const balancedTx = await tx.complete()
+    const signedTx = await balancedTx.complete()
+    console.log(signedTx.toString())
+  })
+
+program
+  .command('create-mint-shen-order')
+  .argument('<address>', 'Address to mint SHEN to')
+  .argument('<amount>', 'Amount of SHEN to mint')
+  .action(async (address, amount) => {
+    lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
+    const tx = await createMintShenOrder({ lucid, network: 'Mainnet', amount: BigInt(amount), address })
     const balancedTx = await tx.complete()
     const signedTx = await balancedTx.complete()
     console.log(signedTx.toString())

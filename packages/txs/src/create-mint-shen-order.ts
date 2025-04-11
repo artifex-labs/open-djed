@@ -1,8 +1,9 @@
+import { Rational } from './rational'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { registryByNetwork, type Network } from './registry'
-import { OrderDatum, OrderStateTokenMintingPolicyMintRedeemer, OracleDatum, PoolDatum } from 'data'
+import { OrderDatum, OrderStateTokenMintingPolicyMintRedeemer, OracleDatum, PoolDatum, PoolDatumSchema } from 'data'
 
-export const createMintDjedOrder = async ({ lucid, network, amount, address }: { lucid: LucidEvolution, network: Network, amount: bigint, address: string }) => {
+export const createMintShenOrder = async ({ lucid, network, amount, address }: { lucid: LucidEvolution, network: Network, amount: bigint, address: string }) => {
   const now = Date.now()
   const { paymentCredential, stakeCredential } = getAddressDetails(address)
   const paymentKeyHash = paymentCredential?.hash
@@ -14,11 +15,14 @@ export const createMintDjedOrder = async ({ lucid, network, amount, address }: {
   if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
   const { oracleFields: { adaExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registryByNetwork[network].poolStateTokenAssetId)
-  const poolInlineDatum = poolUtxo.datum
-  if (!poolInlineDatum) throw new Error('Couldn\'t get pool inline datum.')
-  const { } = Data.from(poolInlineDatum, PoolDatum)
-
-  const adaAmountToSend = amount * adaExchangeRate.denominator / adaExchangeRate.numerator
+  const { adaInReserve, djedInCirculation, shenInCirculation } = Data.from((poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))), PoolDatum)
+  // https://www.reddit.com/r/cardano/comments/12cc64z/how_is_shen_price_determined/?rdt=64523
+  const adaAmountToSend = new Rational(adaInReserve)
+    .sub(new Rational(adaExchangeRate).invert().mul(djedInCirculation))
+    .div(shenInCirculation)
+    .mul(amount)
+    .toBigInt()
+  console.log(adaAmountToSend)
   return lucid
     .newTx()
     .attach.MintingPolicy(registryByNetwork[network].orderStateTokenMintingPolicy)
