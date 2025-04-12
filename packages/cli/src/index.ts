@@ -23,7 +23,15 @@ program
   .action(async (address, amount) => {
     lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
     const tx = await createMintShenOrder({ lucid, network: 'Mainnet', amount: BigInt(amount), address })
-    const balancedTx = await tx.complete()
+    const balancedTx = await tx.collectFrom(
+      await lucid.utxosByOutRef([
+        { txHash: '1a46f561962379b7f0d8e43b5b68d62bc0beac877c678f7e52213bf84841eba1', outputIndex: 2 },
+        { txHash: '31d85154f4bd005979c64c765b5481df2b2eead1b5811ff1576310d22d58ae75', outputIndex: 3 },
+        { txHash: '37ae64c9380586fd6f29a6d0e11808995b128daf0e59f1f6885e6817e46699b9', outputIndex: 2 },
+      ]
+      )).complete({
+        localUPLCEval: false, coinSelection: false
+      })
     const signedTx = await balancedTx.complete()
     console.log(signedTx.toString())
   })

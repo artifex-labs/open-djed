@@ -37,14 +37,22 @@ export class Rational implements RationalFields {
     this.numerator = r.numerator
     this.denominator = r.denominator
   }
-  mul(b: Rational | bigint): Rational {
+  mul(b: RationalFields | bigint): Rational {
     return new Rational(mul(this, typeof b === 'bigint' ? fromBigInt(b) : b))
   }
-  div(b: Rational | bigint): Rational {
+  div(b: RationalFields | bigint): Rational {
     return new Rational(div(this, typeof b === 'bigint' ? fromBigInt(b) : b))
   }
-  sub(b: Rational | bigint): Rational {
+  sub(b: RationalFields | bigint): Rational {
     return new Rational(sub(this, typeof b === 'bigint' ? fromBigInt(b) : b))
+  }
+  ceil(): Rational {
+    const quotient = this.numerator / this.denominator
+    const remainder = this.numerator % this.denominator
+    return new Rational({
+      numerator: quotient + (remainder > 0n ? 1n : 0n),
+      denominator: 1n,
+    })
   }
   toBigInt(): bigint {
     return toBigInt(this)
