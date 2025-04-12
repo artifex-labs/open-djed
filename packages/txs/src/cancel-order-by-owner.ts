@@ -1,9 +1,8 @@
-import { Data, credentialToAddress, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
-import { registryByNetwork, type Network } from './registry'
-import { OrderDatum, CancelDJEDMintOrderRedeemer, OrderStateTokenMintingPolicyBurnRedeemer } from 'data'
+import { Constr, Data, credentialToAddress, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
+import { type Network, type Registry } from './registry'
+import { OrderDatum, CancelOrderRedeemer, OrderStateTokenMintingPolicyBurnRedeemer } from 'data'
 
-export const cancelOrderByOwner = async ({ lucid, network, orderUtxo }: { lucid: LucidEvolution, network: Network, orderUtxo: UTxO }) => {
-  const now = Date.now() - 20_000
+export const cancelOrderByOwner = async ({ lucid, registry, orderUtxo, network }: { lucid: LucidEvolution, registry: Registry, orderUtxo: UTxO, network: Network }) => {
   const orderInlineDatum = orderUtxo.datum
   if (!orderInlineDatum) throw new Error('Couldn\'t get order inline datum.')
   const { address: { paymentKeyHash: [paymentKeyHash], stakeKeyHash: [[[stakeKeyHash]]] } } = Data.from(orderInlineDatum, OrderDatum)
@@ -12,14 +11,17 @@ export const cancelOrderByOwner = async ({ lucid, network, orderUtxo }: { lucid:
   return lucid
     .newTx()
     .readFrom([
-      registryByNetwork[network].orderStateTokenMintingPolicyReferenceUTxO,
-      registryByNetwork[network].orderSpendingValidatorReferenceUTxO,
+      registry.orderSpendingValidatorReferenceUTxO,
+      registry.orderStateTokenMintingPolicyReferenceUTxO,
     ])
-    .validFrom(now)
-    .validTo(now + 1 * 60 * 1000) // 1 minute
-    .collectFrom([orderUtxo], CancelDJEDMintOrderRedeemer)
     .addSigner(address)
+    .collectFrom([orderUtxo], CancelOrderRedeemer)
+    .pay.ToAddressWithData(address, {
+      kind: 'inline',
+      // NOTE: This is temporary. Need to figure out the actual format of this datum.
+      value: Data.to(new Constr(0, [new Constr(11, []), new Constr(0, [new Constr(0, [orderUtxo.txHash]), BigInt(orderUtxo.outputIndex)])]))
+    }, {})
     .mintAssets({
-      [registryByNetwork[network].orderStateTokenAssetId]: -1n,
+      [registry.orderStateTokenAssetId]: -1n,
     }, OrderStateTokenMintingPolicyBurnRedeemer)
 }

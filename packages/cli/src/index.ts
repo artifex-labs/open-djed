@@ -1,8 +1,9 @@
-import { Lucid, CML, type UTxO, type Assets, Blockfrost } from '@lucid-evolution/lucid'
+import { Lucid } from '@lucid-evolution/lucid'
 import { program } from 'commander'
-import { createMintDjedOrder, createBurnShenOrder, cancelOrderByOwner, createBurnDjedOrder, createMintShenOrder, registryByNetwork } from 'txs'
+import { createMintDjedOrder, createBurnShenOrder, createBurnDjedOrder, createMintShenOrder, registryByNetwork, cancelOrderByOwner } from 'txs'
 import { MyBlockfrost } from './blockfrost'
 import { env } from './env'
+import { parseOutRef } from './utils'
 
 const network = 'Preprod'
 const blockfrostProjectIdByNetwork = {
@@ -81,8 +82,32 @@ program
 program
   .command('create-burn-shen-order')
   .argument('<amount>', 'Amount of DJED to mint')
+  .option('--sign', 'Sign the transaction')
+  .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
     const tx = await createBurnShenOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
+    const balancedTx = await tx.complete({ localUPLCEval: false })
+    const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
+    console.log('Transaction CBOR')
+    console.log(signedTx.toCBOR())
+    console.log('Transaction hash')
+    console.log(signedTx.toHash())
+    if (options.submit) {
+      await signedTx.submit()
+      console.log('Transaction submitted')
+    }
+  })
+
+program
+  .command('cancel-order')
+  .argument('<out-ref>', 'The output reference of the order')
+  .option('--sign', 'Sign the transaction')
+  .option('--submit', 'Submit the transaction')
+  .action(async (outRef, options) => {
+    const orderUtxo = (await lucid.utxosByOutRef([parseOutRef(outRef)]))[0]
+    if (!orderUtxo) throw new Error(`Couldn't find order utxo for outRef: ${outRef}`)
+    if (!Object.keys(orderUtxo.assets).includes(registry.orderStateTokenAssetId)) throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
+    const tx = await cancelOrderByOwner({ network, lucid, registry, orderUtxo })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')
