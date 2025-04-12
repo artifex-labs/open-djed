@@ -2,6 +2,7 @@ import { Lucid, CML, type UTxO, type Assets, Blockfrost } from '@lucid-evolution
 import { program } from 'commander'
 import { createMintDjedOrder, createBurnShenOrder, cancelOrderByOwner, createBurnDjedOrder, createMintShenOrder, registryByNetwork } from 'txs'
 import { MyBlockfrost } from './blockfrost'
+import { env } from './env'
 
 const network = 'Preprod'
 const blockfrostProjectIdByNetwork = {
@@ -14,111 +15,84 @@ const lucid = await Lucid(new MyBlockfrost(`https://cardano-${network.toLocaleLo
 console.log('Finished initializing Lucid.')
 const registry = registryByNetwork[network]
 
+if (env.SEED) {
+  lucid.selectWallet.fromSeed(env.SEED)
+} else if (env.ADDRESS) {
+  lucid.selectWallet.fromAddress(env.ADDRESS, await lucid.utxosAt(env.ADDRESS))
+}
+
 program
   .command('create-mint-djed-order')
-  .argument('<address>', 'Address to mint DJED to')
   .argument('<amount>', 'Amount of DJED to mint')
-  .action(async (address, amount) => {
-    lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
-    const tx = await createMintDjedOrder({ lucid, registry, amount: BigInt(amount), address })
+  .option('--sign', 'Sign the transaction')
+  .option('--submit', 'Submit the transaction')
+  .action(async (amount, options) => {
+    const tx = await createMintDjedOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
     const balancedTx = await tx.complete({ localUPLCEval: false })
-    const signedTx = await balancedTx.complete()
+    const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
+    console.log('Transaction CBOR')
     console.log(signedTx.toCBOR())
+    console.log('Transaction hash')
+    console.log(signedTx.toHash())
+    if (options.submit) {
+      await signedTx.submit()
+      console.log('Transaction submitted')
+    }
   })
 
 program
   .command('create-burn-djed-order')
-  .argument('<address>', 'Address to mint DJED to')
   .argument('<amount>', 'Amount of DJED to mint')
-  .action(async (address, amount) => {
-    lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
-    const tx = await createBurnDjedOrder({ lucid, registry, amount: BigInt(amount), address })
+  .option('--sign', 'Sign the transaction')
+  .option('--submit', 'Submit the transaction')
+  .action(async (amount, options) => {
+    const tx = await createBurnDjedOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
     const balancedTx = await tx.complete({ localUPLCEval: false })
-    const signedTx = await balancedTx.complete()
+    const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
+    console.log('Transaction CBOR')
     console.log(signedTx.toCBOR())
+    console.log('Transaction hash')
+    console.log(signedTx.toHash())
+    if (options.submit) {
+      await signedTx.submit()
+      console.log('Transaction submitted')
+    }
   })
 
 program
   .command('create-mint-shen-order')
-  .argument('<address>', 'Address to mint SHEN to')
   .argument('<amount>', 'Amount of SHEN to mint')
-  .action(async (address, amount) => {
-    lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
-    const tx = await createMintShenOrder({ lucid, registry, amount: BigInt(amount), address })
+  .option('--sign', 'Sign the transaction')
+  .option('--submit', 'Submit the transaction')
+  .action(async (amount, options) => {
+    const tx = await createMintShenOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
     const balancedTx = await tx.complete({ localUPLCEval: false })
-    const signedTx = await balancedTx.complete()
+    const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
+    console.log('Transaction CBOR')
     console.log(signedTx.toCBOR())
+    console.log('Transaction hash')
+    console.log(signedTx.toHash())
+    if (options.submit) {
+      await signedTx.submit()
+      console.log('Transaction submitted')
+    }
   })
 
 program
   .command('create-burn-shen-order')
-  .argument('<address>', 'Address to mint DJED to')
   .argument('<amount>', 'Amount of DJED to mint')
-  .action(async (address, amount) => {
-    lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
-    const tx = await createBurnShenOrder({ lucid, registry, amount: BigInt(amount), address })
+  .action(async (amount, options) => {
+    const tx = await createBurnShenOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
     const balancedTx = await tx.complete({ localUPLCEval: false })
-    const signedTx = await balancedTx.complete()
+    const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
+    console.log('Transaction CBOR')
     console.log(signedTx.toCBOR())
-  })
-
-program
-  .command('create-and-cancel-mint-djed-order')
-  .argument('<address>', 'Address to mint DJED to')
-  .argument('<amount>', 'Amount of DJED to mint')
-  .action(async (address, amount) => {
-    lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
-    const mintDjedOrderTx = await createMintDjedOrder({ lucid, registry, amount: BigInt(amount), address })
-    const balancedMintDjedOrderTx = await mintDjedOrderTx.complete({ localUPLCEval: false })
-    const cmlTransactionOutputToUTxO = (cmlTransactionOutput: CML.TransactionOutput, txHash: string, outputIndex: number): UTxO => {
-      const cmlValueToAssets = (cmlValue: CML.Value): Assets => {
-        const cmlArrayLikeToArray = <T>(cmlArrayLike: { get: (i: number) => T, len(): number }): T[] => {
-          const len = cmlArrayLike.len()
-          const array = []
-          for (let i = 0; i < len; i++) {
-            array.push(cmlArrayLike.get(i))
-          }
-          return array
-        }
-        const assets: Assets = {
-          lovelace: BigInt(cmlValue.coin()),
-        }
-        const multiAsset = cmlValue.multi_asset()
-        if (multiAsset) {
-          for (const policyId of cmlArrayLikeToArray(multiAsset.keys())) {
-            const assetsWithPolicyId = multiAsset.get_assets(policyId)
-            if (assetsWithPolicyId) {
-              for (const assetName of cmlArrayLikeToArray(assetsWithPolicyId.keys())) {
-                const policyIdHex = policyId.to_hex()
-                const assetNameHex = assetName.to_hex()
-                const amount = multiAsset.get(policyId, assetName) ?? 0n
-                if (amount === 0n) {
-                  throw new Error('This should never happen.')
-                }
-                assets[policyIdHex + assetNameHex] = amount
-              }
-            }
-          }
-        }
-        return assets
-      }
-      return {
-        txHash,
-        outputIndex,
-        assets: cmlValueToAssets(cmlTransactionOutput.amount()),
-        address: cmlTransactionOutput.address().to_bech32(),
-        datumHash: cmlTransactionOutput.datum()?.as_hash()?.to_hex(),
-        datum: cmlTransactionOutput.datum()?.as_datum()?.to_cbor_hex(),
-        scriptRef: undefined,
-      }
+    console.log('Transaction hash')
+    console.log(signedTx.toHash())
+    if (options.submit) {
+      await signedTx.submit()
+      console.log('Transaction submitted')
     }
-    const signedMintDjedOrderTx = await balancedMintDjedOrderTx.complete()
-    console.log(signedMintDjedOrderTx.toCBOR())
-    const orderUtxo = cmlTransactionOutputToUTxO(signedMintDjedOrderTx.toTransaction().body().outputs().get(0), signedMintDjedOrderTx.toHash(), 0)
-    const cancelDjedOrderTx = await cancelOrderByOwner({ lucid, network, orderUtxo }).catch(e => { console.error('Couldn\'t cancel order due to error', e); throw e })
-    const balancedCancelDjedOrderTx = await cancelDjedOrderTx.complete({ localUPLCEval: false })
-    const signedCancelDjedOrderTx = await balancedCancelDjedOrderTx.complete()
-    console.log(signedCancelDjedOrderTx.toCBOR())
   })
 
 await program.parseAsync()

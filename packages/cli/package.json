@@ -6,6 +6,8 @@
   "scripts": {},
   "dependencies": {
     "@lucid-evolution/lucid": "^0.4.25",
-    "commander": "^13.1.0"
+    "@t3-oss/env-core": "^0.12.0",
+    "commander": "^13.1.0",
+    "zod": "^3.24.2"
   }
 }

@@ -5,7 +5,7 @@ import { OracleDatum } from '../../data/src/oracle-datum'
 import { Rational } from './rational'
 
 export const createMintDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
-  const now = Math.round(Date.now() / 1000) * 1000
+  const now = Math.round((Date.now() - 20_000) / 1000) * 1000
   const ttl = now + 3 * 60 * 1000 // 3 minutes
   const { paymentCredential, stakeCredential } = getAddressDetails(address)
   const paymentKeyHash = paymentCredential?.hash
