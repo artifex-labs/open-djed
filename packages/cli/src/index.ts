@@ -36,7 +36,7 @@ program
   .action(async (address, amount) => {
     lucid.selectWallet.fromAddress(address, await lucid.utxosAt(address))
     const mintDjedOrderTx = await createMintDjedOrder({ lucid, network: 'Mainnet', amount: BigInt(amount), address })
-    const balancedMintDjedOrderTx = await mintDjedOrderTx.complete()
+    const balancedMintDjedOrderTx = await mintDjedOrderTx.complete({ localUPLCEval: false })
     const cmlTransactionOutputToUTxO = (cmlTransactionOutput: CML.TransactionOutput, txHash: string, outputIndex: number): UTxO => {
       const cmlValueToAssets = (cmlValue: CML.Value): Assets => {
         const cmlArrayLikeToArray = <T>(cmlArrayLike: { get: (i: number) => T, len(): number }): T[] => {
@@ -83,7 +83,7 @@ program
     console.log(signedMintDjedOrderTx.toCBOR())
     const orderUtxo = cmlTransactionOutputToUTxO(signedMintDjedOrderTx.toTransaction().body().outputs().get(0), signedMintDjedOrderTx.toHash(), 0)
     const cancelDjedOrderTx = await cancelOrderByOwner({ lucid, network: 'Mainnet', orderUtxo }).catch(e => { console.error('Couldn\'t cancel order due to error', e); throw e })
-    const balancedCancelDjedOrderTx = await cancelDjedOrderTx.complete()
+    const balancedCancelDjedOrderTx = await cancelDjedOrderTx.complete({ localUPLCEval: false })
     const signedCancelDjedOrderTx = await balancedCancelDjedOrderTx.complete()
     console.log(signedCancelDjedOrderTx.toCBOR())
   })
