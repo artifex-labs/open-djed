@@ -16,8 +16,8 @@ export const createMintShenOrder = async ({ lucid, network, amount, address }: {
   if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
   const { oracleFields: { adaExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registryByNetwork[network].poolStateTokenAssetId)
-  const datumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
-  const { adaInReserve, djedInCirculation, shenInCirculation } = Data.from(datumCbor, PoolDatum)
+  const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
+  const { adaInReserve, djedInCirculation, shenInCirculation } = Data.from(poolDatumCbor, PoolDatum)
   // https://www.reddit.com/r/cardano/comments/12cc64z/how_is_shen_price_determined/?rdt=64523
   const adaAmountToSend = new Rational(adaInReserve)
     .sub(new Rational(adaExchangeRate).invert().mul(djedInCirculation))
@@ -67,5 +67,5 @@ export const createMintShenOrder = async ({ lucid, network, amount, address }: {
     .mintAssets({
       [registryByNetwork[network].orderStateTokenAssetId]: 1n,
     }, OrderStateTokenMintingPolicyMintRedeemer)
-    .pay.ToAddressWithData(address, { kind: 'asHash', value: datumCbor }, {})
+    .pay.ToAddressWithData(address, { kind: 'asHash', value: poolDatumCbor }, {})
 }
