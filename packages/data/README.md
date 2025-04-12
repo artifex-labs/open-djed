@@ -9,3 +9,4 @@ TODO (test before marking as complete):
 - [ ] Order UTxO spend redeemer.
 - [x] `DjedOrderTicket` token mint redeemer.
 - [x] Oracle datum (the datum stored in the UTxO that holds the `DjedOracleNFT` token).
+- [ ] Figure out what unknown fields mean in the various datum.

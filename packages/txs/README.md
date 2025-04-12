@@ -21,3 +21,8 @@ TODO:
   - [x] `burnDJED`
   - [x] `mintSHEN`
   - [x] `burnSHEN`
+- [ ] Use chain time instead of local time (`Date.now()` causes issues when blocks aren't produced for a while).
+- [ ] Stop hard-coding fees (currently just in registry).
+- [ ] Stop hard-coding reference UTxOs (currently just in registry).
+- [ ] Stop hard-coding asset IDs - separate token names from policy IDs.
+- [ ] Stop hard-coding order validator address (use script hash wherever possible).
