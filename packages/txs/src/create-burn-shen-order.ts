@@ -1,10 +1,9 @@
-import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
-import { registryByNetwork, type Network } from './registry'
-import { OrderDatum, OrderStateTokenMintingPolicyMintRedeemer } from 'data'
-import { OracleDatum } from '../../data/src/oracle-datum'
 import { Rational } from './rational'
+import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
+import { registryByNetwork, type Network } from './registry'
+import { OrderDatum, OrderStateTokenMintingPolicyMintRedeemer, OracleDatum, PoolDatum } from 'data'
 
-export const createBurnDjedOrder = async ({ lucid, network, amount, address }: { lucid: LucidEvolution, network: Network, amount: bigint, address: string }) => {
+export const createBurnShenOrder = async ({ lucid, network, amount, address }: { lucid: LucidEvolution, network: Network, amount: bigint, address: string }): Promise<TxBuilder> => {
   const now = Math.round(Date.now() / 1000) * 1000
   const ttl = now + 3 * 60 * 1000 // 3 minutes
   const { paymentCredential, stakeCredential } = getAddressDetails(address)
@@ -18,9 +17,11 @@ export const createBurnDjedOrder = async ({ lucid, network, amount, address }: {
   const { oracleFields: { adaExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registryByNetwork[network].poolStateTokenAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
-
-  const adaAmountToSend = new Rational(adaExchangeRate)
-    .invert()
+  const { adaInReserve, djedInCirculation, shenInCirculation } = Data.from(poolDatumCbor, PoolDatum)
+  // https://www.reddit.com/r/cardano/comments/12cc64z/how_is_shen_price_determined/?rdt=64523
+  const adaAmountToSend = new Rational(adaInReserve)
+    .sub(new Rational(adaExchangeRate).invert().mul(djedInCirculation))
+    .div(shenInCirculation)
     .mul(amount)
     // 1.5% burn fee
     .mul({ numerator: 3n, denominator: 200n })
@@ -43,9 +44,9 @@ export const createBurnDjedOrder = async ({ lucid, network, amount, address }: {
         kind: 'inline',
         value: Data.to({
           actionFields: {
-            BurnDJED: {
-              djedAmount: amount,
-            },
+            BurnSHEN: {
+              shenAmount: amount,
+            }
           },
           address: {
             paymentKeyHash: [paymentKeyHash],
@@ -59,8 +60,8 @@ export const createBurnDjedOrder = async ({ lucid, network, amount, address }: {
       {
         [registryByNetwork[network].orderStateTokenAssetId]: 1n,
         // FIXME: We have a bug in this calculation, hence the +10 ADA. This might be okay though since I'd expect us to get the surplus ADA back during order fulfillment/cancellation.
-        lovelace: adaAmountToSend + 10_000_000n,
-        [registryByNetwork[network].djedAssetId]: amount,
+        lovelace: adaAmountToSend + 10000000n,
+        [registryByNetwork[network].shenAssetId]: amount,
       }
     )
     .mintAssets({
