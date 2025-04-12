@@ -11,8 +11,10 @@ export const cancelOrderByOwner = async ({ lucid, network, orderUtxo }: { lucid:
 
   return lucid
     .newTx()
-    .attach.MintingPolicy(registryByNetwork[network].orderStateTokenMintingPolicy)
-    .attach.SpendingValidator(registryByNetwork[network].orderSpendingValidator)
+    .readFrom([
+      registryByNetwork[network].orderStateTokenMintingPolicyReferenceUTxO,
+      registryByNetwork[network].orderSpendingValidatorReferenceUTxO,
+    ])
     .validFrom(now)
     .validTo(now + 1 * 60 * 1000) // 1 minute
     .collectFrom([orderUtxo], CancelDJEDMintOrderRedeemer)

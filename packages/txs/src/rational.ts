@@ -13,10 +13,12 @@ export const div = (a: RationalFields, b: RationalFields): RationalFields => ({
   denominator: a.denominator * b.numerator,
 })
 
-export const sub = (a: RationalFields, b: RationalFields): RationalFields => ({
-  numerator: a.numerator * b.denominator - b.numerator * a.denominator,
+export const add = (a: RationalFields, b: RationalFields): RationalFields => ({
+  numerator: a.numerator * b.denominator + b.numerator * a.denominator,
   denominator: a.denominator * b.denominator,
 })
+
+export const sub = (a: RationalFields, b: RationalFields): RationalFields => add(a, { numerator: -b.numerator, denominator: b.denominator })
 
 export const fromBigInt = (n: bigint): RationalFields => ({
   numerator: n,
@@ -28,6 +30,10 @@ export const toBigInt = (r: RationalFields): bigint => r.numerator / r.denominat
 export class Rational implements RationalFields {
   readonly numerator: bigint
   readonly denominator: bigint
+
+  static ZERO = new Rational(0n)
+  static ONE = new Rational(1n)
+
   constructor(r: RationalFields | bigint) {
     if (typeof r === 'bigint') {
       this.numerator = r
@@ -42,6 +48,9 @@ export class Rational implements RationalFields {
   }
   div(b: RationalFields | bigint): Rational {
     return new Rational(div(this, typeof b === 'bigint' ? fromBigInt(b) : b))
+  }
+  add(b: RationalFields | bigint): Rational {
+    return new Rational(add(this, typeof b === 'bigint' ? fromBigInt(b) : b))
   }
   sub(b: RationalFields | bigint): Rational {
     return new Rational(sub(this, typeof b === 'bigint' ? fromBigInt(b) : b))
