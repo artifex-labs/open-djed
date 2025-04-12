@@ -1,8 +1,9 @@
 import { Lucid, CML, type UTxO, type Assets, Blockfrost } from '@lucid-evolution/lucid'
 import { program } from 'commander'
 import { createMintDjedOrder, createMintShenOrder, cancelOrderByOwner } from 'txs'
+import { MyBlockfrost } from './blockfrost'
 
-const lucid = await Lucid(new Blockfrost('https://cardano-mainnet.blockfrost.io/api/v0', 'mainnet6nn5cOiVycGeknLTOBNbmw1fgTeoQWfo'), 'Mainnet')
+const lucid = await Lucid(new MyBlockfrost('https://cardano-mainnet.blockfrost.io/api/v0', 'mainnet6nn5cOiVycGeknLTOBNbmw1fgTeoQWfo'), 'Mainnet')
 
 program
   .command('create-mint-djed-order')
@@ -13,7 +14,7 @@ program
     const tx = await createMintDjedOrder({ lucid, network: 'Mainnet', amount: BigInt(amount), address })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await balancedTx.complete()
-    console.log(signedTx.toString())
+    console.log(signedTx.toCBOR())
   })
 
 program
@@ -25,7 +26,7 @@ program
     const tx = await createMintShenOrder({ lucid, network: 'Mainnet', amount: BigInt(amount), address })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await balancedTx.complete()
-    console.log(signedTx.toString())
+    console.log(signedTx.toCBOR())
   })
 
 program
@@ -79,12 +80,12 @@ program
       }
     }
     const signedMintDjedOrderTx = await balancedMintDjedOrderTx.complete()
-    console.log(signedMintDjedOrderTx.toString())
+    console.log(signedMintDjedOrderTx.toCBOR())
     const orderUtxo = cmlTransactionOutputToUTxO(signedMintDjedOrderTx.toTransaction().body().outputs().get(0), signedMintDjedOrderTx.toHash(), 0)
     const cancelDjedOrderTx = await cancelOrderByOwner({ lucid, network: 'Mainnet', orderUtxo }).catch(e => { console.error('Couldn\'t cancel order due to error', e); throw e })
     const balancedCancelDjedOrderTx = await cancelDjedOrderTx.complete()
     const signedCancelDjedOrderTx = await balancedCancelDjedOrderTx.complete()
-    console.log(signedCancelDjedOrderTx.toString())
+    console.log(signedCancelDjedOrderTx.toCBOR())
   })
 
 await program.parseAsync()
