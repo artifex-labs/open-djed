@@ -15,8 +15,6 @@ export class MyBlockfrost extends Blockfrost {
     tx: Transaction,
     additionalUTxOs?: UTxO[], // for tx chaining
   ): Promise<EvalRedeemer[]> {
-    console.log(tx)
-    console.log(additionalUTxOs)
     const payload = {
       cbor: tx,
       additionalUtxoSet: [],
@@ -41,7 +39,7 @@ export class MyBlockfrost extends Blockfrost {
     const blockfrostRedeemer = res as BlockfrostRedeemer
     if (!("EvaluationResult" in blockfrostRedeemer.result)) {
       throw new Error(
-        `EvaluateTransaction fails: ${JSON.stringify(blockfrostRedeemer.result)}`,
+        `EvaluateTransaction fails: ${JSON.stringify(blockfrostRedeemer.result)} for transaction ${tx}`,
       )
     }
     const evalRedeemers: EvalRedeemer[] = []
