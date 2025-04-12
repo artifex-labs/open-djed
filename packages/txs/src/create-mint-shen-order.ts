@@ -1,7 +1,7 @@
 import { Rational } from './rational'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OrderStateTokenMintingPolicyMintRedeemer, OracleDatum, PoolDatum } from 'data'
+import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from 'data'
 
 export const createMintShenOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }): Promise<TxBuilder> => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
@@ -15,7 +15,7 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
   const oracleInlineDatum = oracleUtxo.datum
   if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
   const { oracleFields: { adaExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
-  const poolUtxo = await lucid.utxoByUnit(registry.poolStateTokenAssetId)
+  const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
   const { adaInReserve, djedInCirculation, shenInCirculation } = Data.from(poolDatumCbor, PoolDatum)
   // https://www.reddit.com/r/cardano/comments/12cc64z/how_is_shen_price_determined/?rdt=64523
@@ -31,7 +31,7 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
     .readFrom([
       oracleUtxo,
       poolUtxo,
-      registry.orderStateTokenMintingPolicyReferenceUTxO,
+      registry.orderMintingPolicyReferenceUTxO,
     ])
     .validFrom(now)
     .validTo(ttl)
@@ -53,17 +53,17 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
           },
           adaExchangeRate,
           creationDate: BigInt(ttl),
-          orderStateTokenMintingPolicyId: fromUnit(registry.orderStateTokenAssetId).policyId
+          orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId
         }, OrderDatum)
       },
       {
-        [registry.orderStateTokenAssetId]: 1n,
+        [registry.orderAssetId]: 1n,
         // FIXME: We have a bug in this calculation, hence the +10 ADA. This might be okay though since I'd expect us to get the surplus ADA back during order fulfillment/cancellation.
         lovelace: adaAmountToSend + 10000000n,
       }
     )
     .mintAssets({
-      [registry.orderStateTokenAssetId]: 1n,
-    }, OrderStateTokenMintingPolicyMintRedeemer)
+      [registry.orderAssetId]: 1n,
+    }, OrderMintRedeemer)
     .pay.ToAddressWithData(address, { kind: 'asHash', value: poolDatumCbor }, {})
 }

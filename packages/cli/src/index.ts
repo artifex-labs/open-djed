@@ -106,7 +106,7 @@ program
   .action(async (outRef, options) => {
     const orderUtxo = (await lucid.utxosByOutRef([parseOutRef(outRef)]))[0]
     if (!orderUtxo) throw new Error(`Couldn't find order utxo for outRef: ${outRef}`)
-    if (!Object.keys(orderUtxo.assets).includes(registry.orderStateTokenAssetId)) throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
+    if (!Object.keys(orderUtxo.assets).includes(registry.orderAssetId)) throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
     const tx = await cancelOrderByOwner({ network, lucid, registry, orderUtxo })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
