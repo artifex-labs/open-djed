@@ -102,7 +102,7 @@ const PoolDatumSchema = Data.Object({
       time: Data.Integer(),
     })
   ], { hasConstr: true }),
-  _0: Data.Integer(),
+  minADA: Data.Integer(),
   _1: Data.Integer(),
   _2: Data.Nullable(Data.Any()),
   mintingPolicyId: Data.Bytes(),

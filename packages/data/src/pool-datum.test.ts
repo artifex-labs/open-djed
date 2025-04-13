@@ -16,7 +16,7 @@ const poolDatumRich: PoolDatum = {
     },
     time: 1734350770000n,
   }],
-  _0: 1823130n,
+  minADA: 1823130n,
   _1: 1530050n,
   _2: null,
   mintingPolicyId: '8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61',

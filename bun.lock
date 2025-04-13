@@ -18,6 +18,7 @@
     "packages/app": {
       "name": "@reverse-djed/app",
       "dependencies": {
+        "@lucid-evolution/lucid": "^0.4.26",
         "isbot": "^5.1.17",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
@@ -336,11 +337,11 @@
 
     "@lucid-evolution/crc8": ["@lucid-evolution/crc8@0.1.8", "", {}, "sha512-88+/S6n+sPgxYtG05rvbJDVb8MoFGzckkR3p26uGrzngYzlJGfxBWIzNhVwfI2mgINPo2C5lkZW3GYnfY0MjuA=="],
 
-    "@lucid-evolution/lucid": ["@lucid-evolution/lucid@0.4.25", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/schema": "^0.66.16", "@emurgo/cardano-message-signing-nodejs": "^1.1.0", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/plutus": "0.1.29", "@lucid-evolution/provider": "0.1.88", "@lucid-evolution/sign_data": "0.1.25", "@lucid-evolution/uplc": "0.2.19", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.12.7" } }, "sha512-Kie8bAtdJ4Lz98Vvjfw1WL1ealrtuyGZpB31DYGuaVoYizPCBxM8OA6yH6PglY1g/BbL9lecDRP8LnKE1o+U3w=="],
+    "@lucid-evolution/lucid": ["@lucid-evolution/lucid@0.4.26", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/schema": "^0.66.16", "@emurgo/cardano-message-signing-nodejs": "^1.1.0", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/plutus": "0.1.29", "@lucid-evolution/provider": "0.1.89", "@lucid-evolution/sign_data": "0.1.25", "@lucid-evolution/uplc": "0.2.19", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.12.7" } }, "sha512-5cUIw+QZyHF1FurAlyiAwV06DecCPj+XequodZmS6eeGpw3hwqyR9Zo2fsErZnWqtREYTH4gyYDXXSCusjcVjA=="],
 
     "@lucid-evolution/plutus": ["@lucid-evolution/plutus@0.1.29", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@sinclair/typebox": "^0.32.28" } }, "sha512-GHmq9Pso+xeFszwKAd9jvRFnmnV4fRKdm+OHYLrS58yh3uazKr9VR+amtT9SmKufoLy/gNo5sL7i6gcNSW+yIg=="],
 
-    "@lucid-evolution/provider": ["@lucid-evolution/provider@0.1.88", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/platform": "^0.71.3", "@effect/schema": "^0.68.26", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.11.7" } }, "sha512-jVTneVqeUMsIDB2nr0mKjvQVnEPqw6hv4kfSORQYKfN2pD18idY+aDZVv8bMLr6wsGm8Cw5b0IAkVC8TsN2i8w=="],
+    "@lucid-evolution/provider": ["@lucid-evolution/provider@0.1.89", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/platform": "^0.71.3", "@effect/schema": "^0.68.26", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.11.7" } }, "sha512-i4xdEN6iwlb/0UQw/1eHe+mlFGO38LbLcvQZppMSN70oRLoIkQBoGFk+yHiOnXiIjyO1idkI92Q1CeAKC0WQ8g=="],
 
     "@lucid-evolution/sign_data": ["@lucid-evolution/sign_data@0.1.25", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@emurgo/cardano-message-signing-browser": "^1.0.1", "@emurgo/cardano-message-signing-nodejs": "^1.0.1", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16" } }, "sha512-ZDDl3SyO3Lf+/ji9u0Fg6I9oNs+tW//aHkgz4NlS+9xbx2bT9YU+mV9ZLLjWSZVGTb0TbzT4NGvVqdgRNspdYQ=="],
 
@@ -1090,6 +1091,12 @@
 
     "@react-router/node/undici": ["undici@6.21.2", "", {}, "sha512-uROZWze0R0itiAKVPsYhFov9LxrPMHLMEQFszeI2gCN6bnIIZ8twzBCJcN2LJrBBLfrP0t1FW0g+JmKVl8Vk1g=="],
 
+    "@reverse-djed/cli/@lucid-evolution/lucid": ["@lucid-evolution/lucid@0.4.25", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/schema": "^0.66.16", "@emurgo/cardano-message-signing-nodejs": "^1.1.0", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/plutus": "0.1.29", "@lucid-evolution/provider": "0.1.88", "@lucid-evolution/sign_data": "0.1.25", "@lucid-evolution/uplc": "0.2.19", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.12.7" } }, "sha512-Kie8bAtdJ4Lz98Vvjfw1WL1ealrtuyGZpB31DYGuaVoYizPCBxM8OA6yH6PglY1g/BbL9lecDRP8LnKE1o+U3w=="],
+
+    "@reverse-djed/data/@lucid-evolution/lucid": ["@lucid-evolution/lucid@0.4.25", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/schema": "^0.66.16", "@emurgo/cardano-message-signing-nodejs": "^1.1.0", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/plutus": "0.1.29", "@lucid-evolution/provider": "0.1.88", "@lucid-evolution/sign_data": "0.1.25", "@lucid-evolution/uplc": "0.2.19", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.12.7" } }, "sha512-Kie8bAtdJ4Lz98Vvjfw1WL1ealrtuyGZpB31DYGuaVoYizPCBxM8OA6yH6PglY1g/BbL9lecDRP8LnKE1o+U3w=="],
+
+    "@reverse-djed/txs/@lucid-evolution/lucid": ["@lucid-evolution/lucid@0.4.25", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/schema": "^0.66.16", "@emurgo/cardano-message-signing-nodejs": "^1.1.0", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/plutus": "0.1.29", "@lucid-evolution/provider": "0.1.88", "@lucid-evolution/sign_data": "0.1.25", "@lucid-evolution/uplc": "0.2.19", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.12.7" } }, "sha512-Kie8bAtdJ4Lz98Vvjfw1WL1ealrtuyGZpB31DYGuaVoYizPCBxM8OA6yH6PglY1g/BbL9lecDRP8LnKE1o+U3w=="],
+
     "@rollup/pluginutils/estree-walker": ["estree-walker@2.0.2", "", {}, "sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w=="],
 
     "@types/dns-packet/@types/node": ["@types/node@22.14.0", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA=="],
@@ -1548,6 +1555,12 @@
 
     "youch/cookie": ["cookie@0.7.2", "", {}, "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w=="],
 
+    "@reverse-djed/cli/@lucid-evolution/lucid/@lucid-evolution/provider": ["@lucid-evolution/provider@0.1.88", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/platform": "^0.71.3", "@effect/schema": "^0.68.26", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.11.7" } }, "sha512-jVTneVqeUMsIDB2nr0mKjvQVnEPqw6hv4kfSORQYKfN2pD18idY+aDZVv8bMLr6wsGm8Cw5b0IAkVC8TsN2i8w=="],
+
+    "@reverse-djed/data/@lucid-evolution/lucid/@lucid-evolution/provider": ["@lucid-evolution/provider@0.1.88", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/platform": "^0.71.3", "@effect/schema": "^0.68.26", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.11.7" } }, "sha512-jVTneVqeUMsIDB2nr0mKjvQVnEPqw6hv4kfSORQYKfN2pD18idY+aDZVv8bMLr6wsGm8Cw5b0IAkVC8TsN2i8w=="],
+
+    "@reverse-djed/txs/@lucid-evolution/lucid/@lucid-evolution/provider": ["@lucid-evolution/provider@0.1.88", "", { "dependencies": { "@anastasia-labs/cardano-multiplatform-lib-browser": "6.0.2-3", "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3", "@effect/platform": "^0.71.3", "@effect/schema": "^0.68.26", "@lucid-evolution/core-types": "0.1.22", "@lucid-evolution/core-utils": "0.1.16", "@lucid-evolution/utils": "0.1.65", "@lucid-evolution/wallet": "0.1.71", "effect": "^3.11.7" } }, "sha512-jVTneVqeUMsIDB2nr0mKjvQVnEPqw6hv4kfSORQYKfN2pD18idY+aDZVv8bMLr6wsGm8Cw5b0IAkVC8TsN2i8w=="],
+
     "@types/dns-packet/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "@types/ws/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
@@ -1659,6 +1672,12 @@
     "wrap-ansi-cjs/string-width/emoji-regex": ["emoji-regex@8.0.0", "", {}, "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A=="],
 
     "wrap-ansi-cjs/strip-ansi/ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
+
+    "@reverse-djed/cli/@lucid-evolution/lucid/@lucid-evolution/provider/@effect/schema": ["@effect/schema@0.68.27", "", { "dependencies": { "fast-check": "^3.20.0" }, "peerDependencies": { "effect": "^3.5.7" } }, "sha512-/rmIb+4QaQTecdTfeYSZtNikIV+BeIbYDl/hpgBTaS96en7pKNW5hcygFQhdocjKguIL7Y/be+oUrVafWV60ew=="],
+
+    "@reverse-djed/data/@lucid-evolution/lucid/@lucid-evolution/provider/@effect/schema": ["@effect/schema@0.68.27", "", { "dependencies": { "fast-check": "^3.20.0" }, "peerDependencies": { "effect": "^3.5.7" } }, "sha512-/rmIb+4QaQTecdTfeYSZtNikIV+BeIbYDl/hpgBTaS96en7pKNW5hcygFQhdocjKguIL7Y/be+oUrVafWV60ew=="],
+
+    "@reverse-djed/txs/@lucid-evolution/lucid/@lucid-evolution/provider/@effect/schema": ["@effect/schema@0.68.27", "", { "dependencies": { "fast-check": "^3.20.0" }, "peerDependencies": { "effect": "^3.5.7" } }, "sha512-/rmIb+4QaQTecdTfeYSZtNikIV+BeIbYDl/hpgBTaS96en7pKNW5hcygFQhdocjKguIL7Y/be+oUrVafWV60ew=="],
 
     "npm/@isaacs/cliui/string-width/emoji-regex": ["emoji-regex@9.2.2", "", {}, "sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg=="],
 
