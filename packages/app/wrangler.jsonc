@@ -5,24 +5,18 @@
 {
 	"$schema": "../../node_modules/wrangler/config-schema.json",
 	"name": "reverse-djed",
-	"main": "src/index.ts",
-	"compatibility_date": "2025-04-13",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
-	"assets": {
-		"binding": "ASSETS",
-		"directory": "./public"
-	},
+	"compatibility_date": "2025-04-04",
+	"main": "./workers/app.ts",
+	"vars": {},
 	"observability": {
 		"enabled": true
 	},
 	"routes": [
 		{
 			"pattern": "djed.kylix.dev",
-			"custom_domain": true
-		}
-	]
+			"custom_domain": true,
+		},
+	],
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
