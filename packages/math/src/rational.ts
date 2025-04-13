@@ -25,7 +25,49 @@ export const fromBigInt = (n: bigint): RationalFields => ({
   denominator: 1n,
 })
 
+export const ceil = (r: RationalFields): RationalFields => {
+  const quotient = r.numerator / r.denominator
+  const remainder = r.numerator % r.denominator
+  return new Rational({
+    numerator: quotient + (remainder > 0n ? 1n : 0n),
+    denominator: 1n,
+  })
+}
+
 export const toBigInt = (r: RationalFields): bigint => r.numerator / r.denominator
+
+const absBigInt = (n: bigint): bigint => n < 0n ? -n : n
+
+const gcd = (a: bigint, b: bigint): bigint => {
+  a = absBigInt(a)
+  b = absBigInt(b)
+
+  while (b !== 0n) {
+    const temp = b
+    b = a % b
+    a = temp
+  }
+
+  return a
+}
+
+export const simplify = (r: RationalFields): RationalFields => {
+  const cf = gcd(r.numerator, r.denominator)
+  return {
+    numerator: r.numerator / cf,
+    denominator: r.denominator / cf,
+  }
+}
+
+export const toNumber = (r: RationalFields): number => {
+  const simplifiedR = simplify(r)
+  return Number(simplifiedR.numerator) / Number(simplifiedR.denominator)
+}
+
+export const invert = (r: RationalFields): RationalFields => ({
+  numerator: r.denominator,
+  denominator: r.numerator,
+})
 
 export class Rational implements RationalFields {
   readonly numerator: bigint
@@ -56,17 +98,18 @@ export class Rational implements RationalFields {
     return new Rational(sub(this, typeof b === 'bigint' ? fromBigInt(b) : b))
   }
   ceil(): Rational {
-    const quotient = this.numerator / this.denominator
-    const remainder = this.numerator % this.denominator
-    return new Rational({
-      numerator: quotient + (remainder > 0n ? 1n : 0n),
-      denominator: 1n,
-    })
+    return new Rational(ceil(this))
   }
   toBigInt(): bigint {
     return toBigInt(this)
   }
+  simplify(): Rational {
+    return new Rational(simplify(this))
+  }
+  toNumber(): number {
+    return toNumber(this)
+  }
   invert(): Rational {
-    return new Rational({ numerator: this.denominator, denominator: this.numerator })
+    return new Rational(invert(this))
   }
 }

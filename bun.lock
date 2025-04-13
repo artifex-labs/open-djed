@@ -55,6 +55,10 @@
         "@lucid-evolution/lucid": "^0.4.25",
       },
     },
+    "packages/math": {
+      "name": "@reverse-djed/math",
+      "version": "0.0.1",
+    },
     "packages/txs": {
       "name": "@reverse-djed/txs",
       "version": "0.0.1",
@@ -375,6 +379,8 @@
     "@reverse-djed/cli": ["@reverse-djed/cli@workspace:packages/cli"],
 
     "@reverse-djed/data": ["@reverse-djed/data@workspace:packages/data"],
+
+    "@reverse-djed/math": ["@reverse-djed/math@workspace:packages/math"],
 
     "@reverse-djed/txs": ["@reverse-djed/txs@workspace:packages/txs"],
 

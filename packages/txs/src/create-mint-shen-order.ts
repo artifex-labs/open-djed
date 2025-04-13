@@ -1,4 +1,4 @@
-import { Rational } from './rational'
+import { Rational } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
@@ -14,13 +14,12 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
   const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
   if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
-  const { oracleFields: { adaExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
+  const { oracleFields: { adaUSDExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
   const { adaInReserve, djedInCirculation, shenInCirculation } = Data.from(poolDatumCbor, PoolDatum)
-  // https://www.reddit.com/r/cardano/comments/12cc64z/how_is_shen_price_determined/?rdt=64523
   const adaAmountToSend = new Rational(adaInReserve)
-    .sub(new Rational(adaExchangeRate).invert().mul(djedInCirculation))
+    .sub(new Rational(adaUSDExchangeRate).invert().mul(djedInCirculation))
     .div(shenInCirculation)
     .mul(amount)
     .mul(Rational.ONE.add(registry.mintSHENFee))
@@ -51,7 +50,7 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
             paymentKeyHash: [paymentKeyHash],
             stakeKeyHash: [[[stakeKeyHash]]],
           },
-          adaExchangeRate,
+          adaUSDExchangeRate,
           creationDate: BigInt(ttl),
           orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId
         }, OrderDatum)

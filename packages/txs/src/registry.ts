@@ -1,5 +1,5 @@
 import type { UTxO } from "@lucid-evolution/lucid"
-import type { RationalFields } from "./rational"
+import type { RationalFields } from "@reverse-djed/math"
 
 export type Registry = {
   orderAddress: string

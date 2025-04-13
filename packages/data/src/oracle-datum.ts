@@ -3,7 +3,7 @@ import { Data } from '@lucid-evolution/lucid'
 const OracleDatumSchema = Data.Object({
   _0: Data.Bytes(),
   oracleFields: Data.Object({
-    adaExchangeRate: Data.Object({
+    adaUSDExchangeRate: Data.Object({
       denominator: Data.Integer(),
       numerator: Data.Integer(),
     }),

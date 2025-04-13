@@ -1,0 +1,8 @@
+{
+  "name": "@reverse-djed/math",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "scripts": {},
+  "type": "module",
+  "dependencies": {}
+}

@@ -10,9 +10,9 @@ test('oracle datum from', () => {
     {
       _0: 'baf00a3eaa2919ef46bbdc67cfe6b50819a64781189d95317a8183c34bdce1cb32647a5bbe7950c97ec31c601064fbd255bb69a52d8b7c8b1f706e1aba3deb07',
       oracleFields: {
-        adaExchangeRate: {
-          denominator: 50000n,
+        adaUSDExchangeRate: {
           numerator: 27879n,
+          denominator: 50000n,
         },
         validityRange: {
           lowerBound: [
@@ -42,7 +42,7 @@ test('oracle datum to', () => {
   expect(Data.to({
     _0: 'baf00a3eaa2919ef46bbdc67cfe6b50819a64781189d95317a8183c34bdce1cb32647a5bbe7950c97ec31c601064fbd255bb69a52d8b7c8b1f706e1aba3deb07',
     oracleFields: {
-      adaExchangeRate: {
+      adaUSDExchangeRate: {
         denominator: 50000n,
         numerator: 27879n,
       },
