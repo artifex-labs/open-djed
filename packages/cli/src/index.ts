@@ -1,6 +1,6 @@
 import { Lucid } from '@lucid-evolution/lucid'
 import { program } from 'commander'
-import { createMintDjedOrder, createBurnShenOrder, createBurnDjedOrder, createMintShenOrder, registryByNetwork, cancelOrderByOwner } from 'txs'
+import { createMintDjedOrder, createBurnShenOrder, createBurnDjedOrder, createMintShenOrder, registryByNetwork, cancelOrderByOwner } from '@reverse-djed/txs'
 import { MyBlockfrost } from './blockfrost'
 import { env } from './env'
 import { parseOutRef } from './utils'

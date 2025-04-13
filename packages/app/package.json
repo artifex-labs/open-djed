@@ -1,5 +1,5 @@
 {
-	"name": "app",
+	"name": "@reverse-djed/app",
 	"private": true,
 	"type": "module",
 	"scripts": {

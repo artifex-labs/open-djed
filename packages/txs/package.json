@@ -1,5 +1,5 @@
 {
-  "name": "txs",
+  "name": "@reverse-djed/txs",
   "version": "0.0.1",
   "main": "src/index.ts",
   "scripts": {},

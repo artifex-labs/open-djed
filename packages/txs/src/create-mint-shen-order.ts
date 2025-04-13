@@ -1,7 +1,7 @@
 import { Rational } from './rational'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from 'data'
+import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
 
 export const createMintShenOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }): Promise<TxBuilder> => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000

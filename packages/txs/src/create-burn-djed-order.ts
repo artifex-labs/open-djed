@@ -1,6 +1,6 @@
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OrderMintRedeemer } from 'data'
+import { OrderDatum, OrderMintRedeemer } from '@reverse-djed/data'
 import { OracleDatum } from '../../data/src/oracle-datum'
 import { Rational } from './rational'
 

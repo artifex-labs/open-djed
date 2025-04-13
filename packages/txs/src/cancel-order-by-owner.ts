@@ -1,6 +1,6 @@
 import { Constr, Data, credentialToAddress, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
 import { type Network, type Registry } from './registry'
-import { OrderDatum, CancelOrderSpendRedeemer, OrderBurnRedeemer } from 'data'
+import { OrderDatum, CancelOrderSpendRedeemer, OrderBurnRedeemer } from '@reverse-djed/data'
 
 export const cancelOrderByOwner = async ({ lucid, registry, orderUtxo, network }: { lucid: LucidEvolution, registry: Registry, orderUtxo: UTxO, network: Network }) => {
   const orderInlineDatum = orderUtxo.datum
