@@ -10,7 +10,7 @@ const Action = ({ type, token }: { type: 'Mint' | 'Burn', token: 'DJED' | 'SHEN'
       <div className="flex justify-between"><span>You will pay</span><span>0 ADA</span></div>
       <div className="flex justify-between"><span>Minimum ADA requirement</span><span>0 ADA</span></div>
       <input className="border-1 border-black w-full my-4" type="number" value={amount} onChange={i => setAmount(Number(i.target.value))}></input><br />
-      <button className="border-1 border-black rounded-md p-2 w-full">{`Mint ${amount} ${token}`}</button>
+      <button className="border-1 border-black rounded-md p-2 w-full font-bold">{type}</button>
     </div>
   )
 }
