@@ -7,11 +7,11 @@ export function meta({ }: Route.MetaArgs) {
   ]
 }
 
-export function loader({ context }: Route.LoaderArgs) {
+export function loader() {
   return {}
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
+export default function Home() {
   return (
     <div className="flex justify-center items-center w-full">
       <div className="w-1/2 flex-column border-2 border-black rounded-md p-4 m-4">

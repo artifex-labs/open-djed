@@ -1,5 +1,3 @@
-const SHEN = () => {
-  return <>You're on the SHEN page!</>
-}
+import { Actions } from "../content/actions"
 
-export default SHEN
+export default () => Actions({ token: 'SHEN' })
