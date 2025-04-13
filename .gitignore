@@ -6,3 +6,5 @@ node_modules
 .editorconfig
 .wrangler
 build
+.react-router
+*.tsbuildinfo
