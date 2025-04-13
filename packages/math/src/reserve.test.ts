@@ -1,6 +1,5 @@
 import { expect, test } from "vitest"
 import { adaInReserve, reserveRatio } from "./reserve"
-import { Rational } from "./rational"
 
 test('adaInReserve', () => {
   expect(adaInReserve({

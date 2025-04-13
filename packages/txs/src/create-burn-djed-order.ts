@@ -1,7 +1,7 @@
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OracleDatum, OrderMintRedeemer } from '@reverse-djed/data'
-import { Rational, djedADABurnRate } from '@reverse-djed/math'
+import { djedADABurnRate } from '@reverse-djed/math'
 
 export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000

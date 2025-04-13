@@ -1,6 +1,6 @@
-import type { OracleDatum, PoolDatum } from "@reverse-djed/data";
+import type { PoolDatum } from "@reverse-djed/data";
 import { Rational } from "./rational";
-import { adaDJEDRate, adaSHENRate, djedADARate, type PartialOracleDatum, type PartialPoolDatum } from "./rate";
+import { djedADARate, type PartialOracleDatum, type PartialPoolDatum } from "./rate";
 
 export const adaInReserve = ({ adaInReserve }: Pick<PoolDatum, 'adaInReserve'>): bigint =>
   adaInReserve

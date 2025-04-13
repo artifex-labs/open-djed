@@ -1,4 +1,4 @@
-import { Rational, shenADABurnRate } from '@reverse-djed/math'
+import { shenADABurnRate } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
