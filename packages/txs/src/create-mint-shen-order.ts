@@ -1,4 +1,4 @@
-import { Rational } from '@reverse-djed/math'
+import { Rational, shenADAMintRate } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
@@ -14,15 +14,12 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
   const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
   if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
-  const { oracleFields: { adaUSDExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
+  const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
-  const { adaInReserve, djedInCirculation, shenInCirculation } = Data.from(poolDatumCbor, PoolDatum)
-  const adaAmountToSend = new Rational(adaInReserve)
-    .sub(new Rational(adaUSDExchangeRate).invert().mul(djedInCirculation))
-    .div(shenInCirculation)
+  const poolDatum = Data.from(poolDatumCbor, PoolDatum)
+  const adaAmountToSend = shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFee)
     .mul(amount)
-    .mul(Rational.ONE.add(registry.mintSHENFee))
     .ceil()
     .toBigInt()
   return lucid
@@ -50,7 +47,7 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
             paymentKeyHash: [paymentKeyHash],
             stakeKeyHash: [[[stakeKeyHash]]],
           },
-          adaUSDExchangeRate,
+          adaUSDExchangeRate: oracleDatum.oracleFields.adaUSDExchangeRate,
           creationDate: BigInt(ttl),
           orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId
         }, OrderDatum)

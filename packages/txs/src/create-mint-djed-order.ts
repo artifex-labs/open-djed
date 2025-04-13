@@ -1,7 +1,7 @@
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OracleDatum, OrderMintRedeemer } from '@reverse-djed/data'
-import { Rational } from '@reverse-djed/math'
+import { Rational, djedADAMintRate } from '@reverse-djed/math'
 
 export const createMintDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
@@ -14,14 +14,12 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
   const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
   if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
-  const { oracleFields: { adaUSDExchangeRate } } = Data.from(oracleInlineDatum, OracleDatum)
+  const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
 
-  const adaAmountToSend = new Rational(adaUSDExchangeRate)
-    .invert()
+  const adaAmountToSend = djedADAMintRate(oracleDatum, registry.mintDJEDFee)
     .mul(amount)
-    .mul(Rational.ONE.add(registry.mintDJEDFee))
     .ceil()
     .toBigInt()
   return lucid
@@ -49,7 +47,7 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
             paymentKeyHash: [paymentKeyHash],
             stakeKeyHash: [[[stakeKeyHash]]],
           },
-          adaUSDExchangeRate,
+          adaUSDExchangeRate: oracleDatum.oracleFields.adaUSDExchangeRate,
           creationDate: BigInt(ttl),
           orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId
         }, OrderDatum)
