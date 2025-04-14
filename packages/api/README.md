@@ -10,7 +10,11 @@ TODO:
   - [ ] Get orders.
   - [ ] Get pool.
   - [ ] Get oracle.
-  - [ ] Evaluate transaction - would love to not have to include this.
+  - [ ] Mint DJED
+  - [ ] Burn DJED
+  - [ ] Mint SHEN
+  - [ ] Burn SHEN
+  - [ ] Cancel order
 
 ```
 bun install
