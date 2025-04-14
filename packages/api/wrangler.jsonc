@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  "name": "api",
+  "name": "reverse-djed-api",
   "main": "src/index.ts",
   "compatibility_date": "2025-04-14",
 	"routes": [

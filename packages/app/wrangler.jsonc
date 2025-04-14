@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "../../node_modules/wrangler/config-schema.json",
-	"name": "reverse-djed",
+	"name": "reverse-djed-app",
 	"compatibility_date": "2025-04-04",
 	"main": "./workers/app.ts",
 	"vars": {},
