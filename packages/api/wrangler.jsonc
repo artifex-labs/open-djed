@@ -2,5 +2,11 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "api",
   "main": "src/index.ts",
-  "compatibility_date": "2025-04-14"
+  "compatibility_date": "2025-04-14",
+	"routes": [
+		{
+			"pattern": "api.djed.kylix.dev",
+			"custom_domain": true,
+		},
+	],
 }
