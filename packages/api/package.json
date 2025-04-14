@@ -1,8 +1,14 @@
 {
   "name": "@reverse-djed/api",
-  "version": "0.0.1",
-  "type": "module",
-  "main": "src/index.ts",
-  "scripts": {},
-  "dependencies": {}
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify"
+  },
+  "dependencies": {
+    "hono": "^4.7.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "wrangler": "^4.4.0"
+  }
 }
