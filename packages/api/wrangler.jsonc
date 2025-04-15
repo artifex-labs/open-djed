@@ -3,10 +3,34 @@
   "name": "reverse-djed-api",
   "main": "src/index.ts",
   "compatibility_date": "2025-04-14",
-	"routes": [
-		{
-			"pattern": "api.djed.kylix.dev",
-			"custom_domain": true,
-		},
-	],
+  "vars": {
+    "BLOCKFROST_URL": "https://cardano-mainnet.blockfrost.io/api/v0",
+    "NETWORK": "Mainnet"
+  },
+  "routes": [
+    {
+      "pattern": "api.djed.kylix.dev",
+
+      "custom_domain": true
+    },
+    {
+      "pattern": "mainnet.api.djed.kylix.dev",
+      "custom_domain": true
+    }
+  ],
+  "env": {
+    "preprod": {
+      "routes": [
+        {
+          "pattern": "preprod.api.djed.kylix.dev",
+          "custom_domain": true
+        }
+      ],
+      "vars": {
+        "BLOCKFROST_URL": "https://cardano-preprod.blockfrost.io/api/v0",
+        "NETWORK": "Preprod"
+      }
+    }
+  },
+  "compatibility_flags": ["nodejs_compat"]
 }
