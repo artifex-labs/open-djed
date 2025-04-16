@@ -8,3 +8,4 @@ node_modules
 build
 .react-router
 *.tsbuildinfo
+.dev.vars*
