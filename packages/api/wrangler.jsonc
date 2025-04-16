@@ -10,7 +10,6 @@
   "routes": [
     {
       "pattern": "api.djed.kylix.dev",
-
       "custom_domain": true
     },
     {
@@ -32,5 +31,12 @@
       }
     }
   },
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true,
+    }
+  }
 }

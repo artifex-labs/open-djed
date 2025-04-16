@@ -9,7 +9,9 @@
 	"main": "./workers/app.ts",
 	"vars": {},
 	"observability": {
-		"enabled": true
+		"logs": {
+			"enabled": true,
+		},
 	},
 	"routes": [
 		{
