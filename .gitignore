@@ -9,3 +9,5 @@ build
 .react-router
 *.tsbuildinfo
 .dev.vars*
+log
+dist

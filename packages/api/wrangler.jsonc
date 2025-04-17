@@ -4,8 +4,8 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-04-14",
   "vars": {
-    "BLOCKFROST_URL": "https://cardano-mainnet.blockfrost.io/api/v0",
-    "NETWORK": "Mainnet"
+    "VITE_BLOCKFROST_URL": "https://cardano-mainnet.blockfrost.io/api/v0",
+    "VITE_NETWORK": "Mainnet"
   },
   "routes": [
     {
@@ -26,8 +26,8 @@
         }
       ],
       "vars": {
-        "BLOCKFROST_URL": "https://cardano-preprod.blockfrost.io/api/v0",
-        "NETWORK": "Preprod"
+        "VITE_BLOCKFROST_URL": "https://cardano-preprod.blockfrost.io/api/v0",
+        "VITE_NETWORK": "Preprod"
       }
     }
   },

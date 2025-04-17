@@ -7,10 +7,10 @@
     "preview": "bun run build && vite preview",
     "deploy": "bun run build && wrangler deploy"
   },
-  "dependencies": {
-    "hono": "^4.7.6"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@t3-oss/env-core": "^0.12.0",
+    "hono": "^4.7.6",
     "@cloudflare/vite-plugin": "^1.0.7",
     "@cloudflare/workers-types": "^4.20250214.0",
     "vite": "^6.3.0",
