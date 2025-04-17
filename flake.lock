@@ -345,20 +345,8 @@
     },
     "devshell": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "haskell-nix", "tullia", "std", "flake-utils"],
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1663445644,
@@ -376,24 +364,8 @@
     },
     "devshell_2": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "flake-utils"],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1663445644,
@@ -411,22 +383,8 @@
     },
     "devshell_3": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "flake-utils"],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1663445644,
@@ -444,24 +402,8 @@
     },
     "devshell_4": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "flake-utils"],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1663445644,
@@ -479,20 +421,8 @@
     },
     "dmerge": {
       "inputs": {
-        "nixlib": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ],
-        "yants": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "yants"
-        ]
+        "nixlib": ["liqwid-nix", "haskell-nix", "tullia", "std", "nixpkgs"],
+        "yants": ["liqwid-nix", "haskell-nix", "tullia", "std", "yants"]
       },
       "locked": {
         "lastModified": 1659548052,
@@ -510,24 +440,8 @@
     },
     "dmerge_2": {
       "inputs": {
-        "nixlib": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ],
-        "yants": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "yants"
-        ]
+        "nixlib": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "nixpkgs"],
+        "yants": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "yants"]
       },
       "locked": {
         "lastModified": 1659548052,
@@ -545,22 +459,8 @@
     },
     "dmerge_3": {
       "inputs": {
-        "nixlib": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "nixpkgs"
-        ],
-        "yants": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "yants"
-        ]
+        "nixlib": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "nixpkgs"],
+        "yants": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "yants"]
       },
       "locked": {
         "lastModified": 1659548052,
@@ -578,24 +478,8 @@
     },
     "dmerge_4": {
       "inputs": {
-        "nixlib": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ],
-        "yants": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "yants"
-        ]
+        "nixlib": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "nixpkgs"],
+        "yants": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "yants"]
       },
       "locked": {
         "lastModified": 1659548052,
@@ -634,12 +518,7 @@
         "haskell-flake": "haskell-flake_2",
         "heist": "heist",
         "heist-extra": "heist-extra",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1670780484,
@@ -839,12 +718,7 @@
     },
     "flake-parts_4": {
       "inputs": {
-        "nixpkgs-lib": [
-          "liqwid-nix",
-          "hercules-ci-effects",
-          "hercules-ci-agent",
-          "nixpkgs"
-        ]
+        "nixpkgs-lib": ["liqwid-nix", "hercules-ci-effects", "hercules-ci-agent", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1678379998,
@@ -880,12 +754,7 @@
     },
     "flake-parts_6": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1664391900,
@@ -1251,13 +1120,7 @@
     },
     "gitignore-nix": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1660459072,
@@ -1275,11 +1138,7 @@
     },
     "gitignore_2": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "pre-commit-hooks",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "pre-commit-hooks", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1660459072,
@@ -1461,11 +1320,7 @@
         "hackage": "hackage",
         "hpc-coveralls": "hpc-coveralls",
         "hydra": "hydra",
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "nixpkgs-unstable"
-        ],
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "nixpkgs-unstable"],
         "nixpkgs-2003": "nixpkgs-2003",
         "nixpkgs-2105": "nixpkgs-2105",
         "nixpkgs-2111": "nixpkgs-2111",
@@ -1504,13 +1359,7 @@
         "hpc-coveralls": "hpc-coveralls_2",
         "hydra": "hydra_2",
         "iserv-proxy": "iserv-proxy",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "nixpkgs-unstable"
-        ],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "nixpkgs-unstable"],
         "nixpkgs-2003": "nixpkgs-2003_2",
         "nixpkgs-2105": "nixpkgs-2105_2",
         "nixpkgs-2111": "nixpkgs-2111_2",
@@ -1545,22 +1394,10 @@
         "flake-compat": "flake-compat_6",
         "flake-utils": "flake-utils_10",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_3",
-        "hackage": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "hackage-nix"
-        ],
+        "hackage": ["liqwid-nix", "plutarch", "tooling", "plutus", "hackage-nix"],
         "hpc-coveralls": "hpc-coveralls_3",
         "hydra": "hydra_3",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "nixpkgs"],
         "nixpkgs-2003": "nixpkgs-2003_3",
         "nixpkgs-2105": "nixpkgs-2105_3",
         "nixpkgs-2111": "nixpkgs-2111_3",
@@ -1707,13 +1544,7 @@
     "hydra": {
       "inputs": {
         "nix": "nix",
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "hydra",
-          "nix",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "hydra", "nix", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1646878427,
@@ -1731,15 +1562,7 @@
     "hydra_2": {
       "inputs": {
         "nix": "nix_2",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "hydra",
-          "nix",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "hydra", "nix", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1646878427,
@@ -1757,16 +1580,7 @@
     "hydra_3": {
       "inputs": {
         "nix": "nix_3",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "haskell-nix",
-          "hydra",
-          "nix",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "haskell-nix", "hydra", "nix", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1646878427,
@@ -1816,13 +1630,7 @@
     },
     "iohk-nix_3": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1666358508,
@@ -1861,14 +1669,8 @@
         "haskell-nix": "haskell-nix",
         "hercules-ci-effects": "hercules-ci-effects",
         "iohk-nix": "iohk-nix",
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "nixpkgs-unstable"
-        ],
-        "nixpkgs-latest": [
-          "nixpkgs-latest"
-        ],
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "nixpkgs-unstable"],
+        "nixpkgs-latest": ["nixpkgs-latest"],
         "plutarch": "plutarch",
         "pre-commit-hooks": "pre-commit-hooks"
       },
@@ -2002,13 +1804,7 @@
     "n2c": {
       "inputs": {
         "flake-utils": "flake-utils_4",
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1665039323,
@@ -2027,15 +1823,7 @@
     "n2c_2": {
       "inputs": {
         "flake-utils": "flake-utils_9",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1665039323,
@@ -2054,14 +1842,7 @@
     "n2c_3": {
       "inputs": {
         "flake-utils": "flake-utils_13",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1665039323,
@@ -2080,15 +1861,7 @@
     "n2c_4": {
       "inputs": {
         "flake-utils": "flake-utils_16",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1665039323,
@@ -2127,12 +1900,7 @@
     },
     "nix-darwin": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "hercules-ci-effects",
-          "hercules-ci-agent",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "hercules-ci-effects", "hercules-ci-agent", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1673295039,
@@ -2151,26 +1919,10 @@
     "nix-nomad": {
       "inputs": {
         "flake-compat": "flake-compat_2",
-        "flake-utils": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "nix2container",
-          "flake-utils"
-        ],
+        "flake-utils": ["liqwid-nix", "haskell-nix", "tullia", "nix2container", "flake-utils"],
         "gomod2nix": "gomod2nix",
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "nixpkgs"
-        ],
-        "nixpkgs-lib": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "tullia", "nixpkgs"],
+        "nixpkgs-lib": ["liqwid-nix", "haskell-nix", "tullia", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1658277770,
@@ -2199,22 +1951,8 @@
           "flake-utils"
         ],
         "gomod2nix": "gomod2nix_2",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "nixpkgs"
-        ],
-        "nixpkgs-lib": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "nixpkgs"],
+        "nixpkgs-lib": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1658277770,
@@ -2243,22 +1981,8 @@
           "flake-utils"
         ],
         "gomod2nix": "gomod2nix_3",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "nixpkgs"
-        ],
-        "nixpkgs-lib": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "nixpkgs"],
+        "nixpkgs-lib": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1658277770,
@@ -2375,27 +2099,9 @@
     },
     "nixago": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "flake-utils"
-        ],
-        "nixago-exts": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "blank"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "haskell-nix", "tullia", "std", "flake-utils"],
+        "nixago-exts": ["liqwid-nix", "haskell-nix", "tullia", "std", "blank"],
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1661824785,
@@ -2413,33 +2119,9 @@
     },
     "nixago_2": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "flake-utils"
-        ],
-        "nixago-exts": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "blank"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "flake-utils"],
+        "nixago-exts": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "blank"],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1661824785,
@@ -2457,30 +2139,9 @@
     },
     "nixago_3": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "flake-utils"
-        ],
-        "nixago-exts": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "blank"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "flake-utils"],
+        "nixago-exts": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "blank"],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1661824785,
@@ -2498,33 +2159,9 @@
     },
     "nixago_4": {
       "inputs": {
-        "flake-utils": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "flake-utils"
-        ],
-        "nixago-exts": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "blank"
-        ],
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "flake-utils": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "flake-utils"],
+        "nixago-exts": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "blank"],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1661824785,
@@ -3362,12 +2999,7 @@
         "flake-compat": "flake-compat_3",
         "flake-utils": "flake-utils_5",
         "gitignore": "gitignore",
-        "nixpkgs": [
-          "liqwid-nix",
-          "hercules-ci-effects",
-          "hercules-ci-agent",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["liqwid-nix", "hercules-ci-effects", "hercules-ci-agent", "nixpkgs"],
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
@@ -3387,13 +3019,7 @@
     "pre-commit-hooks-nix_2": {
       "inputs": {
         "flake-utils": "flake-utils_11",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1663082609,
@@ -3487,21 +3113,9 @@
         "devshell": "devshell",
         "dmerge": "dmerge",
         "flake-utils": "flake-utils_3",
-        "makes": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "blank"
-        ],
+        "makes": ["liqwid-nix", "haskell-nix", "tullia", "std", "blank"],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor",
-        "microvm": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "blank"
-        ],
+        "microvm": ["liqwid-nix", "haskell-nix", "tullia", "std", "blank"],
         "n2c": "n2c",
         "nixago": "nixago",
         "nixpkgs": "nixpkgs_4",
@@ -3527,25 +3141,9 @@
         "devshell": "devshell_2",
         "dmerge": "dmerge_2",
         "flake-utils": "flake-utils_8",
-        "makes": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "blank"
-        ],
+        "makes": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "blank"],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_2",
-        "microvm": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "blank"
-        ],
+        "microvm": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "blank"],
         "n2c": "n2c_2",
         "nixago": "nixago_2",
         "nixpkgs": "nixpkgs_10",
@@ -3571,32 +3169,12 @@
         "devshell": "devshell_3",
         "dmerge": "dmerge_3",
         "flake-utils": "flake-utils_12",
-        "makes": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "blank"
-        ],
+        "makes": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "blank"],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_3",
-        "microvm": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "blank"
-        ],
+        "microvm": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "blank"],
         "n2c": "n2c_3",
         "nixago": "nixago_3",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "nixpkgs"],
         "yants": "yants_3"
       },
       "locked": {
@@ -3619,25 +3197,9 @@
         "devshell": "devshell_4",
         "dmerge": "dmerge_4",
         "flake-utils": "flake-utils_15",
-        "makes": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "blank"
-        ],
+        "makes": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "blank"],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_4",
-        "microvm": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "blank"
-        ],
+        "microvm": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "blank"],
         "n2c": "n2c_4",
         "nixago": "nixago_4",
         "nixpkgs": "nixpkgs_16",
@@ -3685,11 +3247,7 @@
       "inputs": {
         "nix-nomad": "nix-nomad",
         "nix2container": "nix2container",
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "nixpkgs"],
         "std": "std"
       },
       "locked": {
@@ -3710,13 +3268,7 @@
       "inputs": {
         "nix-nomad": "nix-nomad_2",
         "nix2container": "nix2container_2",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "nixpkgs"],
         "std": "std_2"
       },
       "locked": {
@@ -3737,13 +3289,7 @@
       "inputs": {
         "nix-nomad": "nix-nomad_3",
         "nix2container": "nix2container_3",
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "nixpkgs"],
         "std": "std_4"
       },
       "locked": {
@@ -3808,13 +3354,7 @@
     },
     "yants": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1660507851,
@@ -3832,15 +3372,7 @@
     },
     "yants_2": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "haskell-nix",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "haskell-nix", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1660507851,
@@ -3858,14 +3390,7 @@
     },
     "yants_3": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1660507851,
@@ -3883,15 +3408,7 @@
     },
     "yants_4": {
       "inputs": {
-        "nixpkgs": [
-          "liqwid-nix",
-          "plutarch",
-          "tooling",
-          "plutus",
-          "tullia",
-          "std",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["liqwid-nix", "plutarch", "tooling", "plutus", "tullia", "std", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1660507851,

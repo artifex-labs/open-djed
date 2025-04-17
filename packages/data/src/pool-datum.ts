@@ -96,12 +96,15 @@ const PoolDatumSchema = Data.Object({
   adaInReserve: Data.Integer(),
   djedInCirculation: Data.Integer(),
   shenInCirculation: Data.Integer(),
-  lastOrder: Data.Tuple([
-    Data.Object({
-      order: OutputReferenceSchema,
-      time: Data.Integer(),
-    })
-  ], { hasConstr: true }),
+  lastOrder: Data.Tuple(
+    [
+      Data.Object({
+        order: OutputReferenceSchema,
+        time: Data.Integer(),
+      }),
+    ],
+    { hasConstr: true },
+  ),
   minADA: Data.Integer(),
   _1: Data.Integer(),
   _2: Data.Nullable(Data.Any()),

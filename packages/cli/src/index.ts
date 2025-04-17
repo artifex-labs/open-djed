@@ -1,6 +1,13 @@
 import { Lucid } from '@lucid-evolution/lucid'
 import { program } from 'commander'
-import { createMintDjedOrder, createBurnShenOrder, createBurnDjedOrder, createMintShenOrder, registryByNetwork, cancelOrderByOwner } from '@reverse-djed/txs'
+import {
+  createMintDjedOrder,
+  createBurnShenOrder,
+  createBurnDjedOrder,
+  createMintShenOrder,
+  registryByNetwork,
+  cancelOrderByOwner,
+} from '@reverse-djed/txs'
 import { MyBlockfrost } from './blockfrost'
 import { env } from './env'
 import { parseOutRef } from './utils'
@@ -10,8 +17,16 @@ const blockfrostProjectIdByNetwork = {
   Preprod: 'preprodmAhR2Rq99LM1WGxB9DXVS2WOILme1hZF',
 }
 const blockfrostProjectId = blockfrostProjectIdByNetwork[env.NETWORK]
-console.log(`Initializing Lucid with Blockfrost for network "${env.NETWORK}" using project id "${blockfrostProjectId}".`)
-const lucid = await Lucid(new MyBlockfrost(`https://cardano-${env.NETWORK.toLocaleLowerCase()}.blockfrost.io/api/v0`, blockfrostProjectId), env.NETWORK)
+console.log(
+  `Initializing Lucid with Blockfrost for network "${env.NETWORK}" using project id "${blockfrostProjectId}".`,
+)
+const lucid = await Lucid(
+  new MyBlockfrost(
+    `https://cardano-${env.NETWORK.toLocaleLowerCase()}.blockfrost.io/api/v0`,
+    blockfrostProjectId,
+  ),
+  env.NETWORK,
+)
 console.log('Finished initializing Lucid.')
 const registry = registryByNetwork[env.NETWORK]
 
@@ -27,7 +42,12 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createMintDjedOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
+    const tx = await createMintDjedOrder({
+      lucid,
+      registry,
+      amount: BigInt(amount),
+      address: await lucid.wallet().address(),
+    })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')
@@ -46,7 +66,12 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createBurnDjedOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
+    const tx = await createBurnDjedOrder({
+      lucid,
+      registry,
+      amount: BigInt(amount),
+      address: await lucid.wallet().address(),
+    })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')
@@ -65,7 +90,12 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createMintShenOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
+    const tx = await createMintShenOrder({
+      lucid,
+      registry,
+      amount: BigInt(amount),
+      address: await lucid.wallet().address(),
+    })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')
@@ -84,7 +114,12 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createBurnShenOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
+    const tx = await createBurnShenOrder({
+      lucid,
+      registry,
+      amount: BigInt(amount),
+      address: await lucid.wallet().address(),
+    })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')
@@ -105,7 +140,8 @@ program
   .action(async (outRef, options) => {
     const orderUtxo = (await lucid.utxosByOutRef([parseOutRef(outRef)]))[0]
     if (!orderUtxo) throw new Error(`Couldn't find order utxo for outRef: ${outRef}`)
-    if (!Object.keys(orderUtxo.assets).includes(registry.orderAssetId)) throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
+    if (!Object.keys(orderUtxo.assets).includes(registry.orderAssetId))
+      throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
     const tx = await cancelOrderByOwner({ network: env.NETWORK, lucid, registry, orderUtxo })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()

@@ -97,11 +97,14 @@ const OrderDatumSchema = Data.Object({
       BurnSHEN: Data.Object({
         shenAmount: Data.Integer(),
       }),
-    })
+    }),
   ]),
   address: Data.Object({
     paymentKeyHash: Data.Tuple([Data.Bytes()], { hasConstr: true }),
-    stakeKeyHash: Data.Tuple([Data.Tuple([Data.Tuple([Data.Bytes()], { hasConstr: true })], { hasConstr: true })], { hasConstr: true }),
+    stakeKeyHash: Data.Tuple(
+      [Data.Tuple([Data.Tuple([Data.Bytes()], { hasConstr: true })], { hasConstr: true })],
+      { hasConstr: true },
+    ),
   }),
   adaUSDExchangeRate: Data.Object({
     denominator: Data.Integer(),

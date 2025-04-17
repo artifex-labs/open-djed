@@ -1,11 +1,14 @@
-import { type PoolDatum } from "@reverse-djed/data"
-import { Rational, type RationalFields } from "./rational"
+import { type PoolDatum } from '@reverse-djed/data'
+import { Rational, type RationalFields } from './rational'
 
 export type PartialOracleDatum = { oracleFields: { adaUSDExchangeRate: RationalFields } }
 
 export type PartialPoolDatum = Pick<PoolDatum, 'adaInReserve' | 'djedInCirculation' | 'shenInCirculation'>
 
-export const shenADARate = ({ adaInReserve, djedInCirculation, shenInCirculation }: PartialPoolDatum, { oracleFields: { adaUSDExchangeRate } }: PartialOracleDatum): Rational =>
+export const shenADARate = (
+  { adaInReserve, djedInCirculation, shenInCirculation }: PartialPoolDatum,
+  { oracleFields: { adaUSDExchangeRate } }: PartialOracleDatum,
+): Rational =>
   new Rational(adaInReserve)
     .sub(new Rational(adaUSDExchangeRate).invert().mul(djedInCirculation))
     .div(shenInCirculation)
@@ -13,16 +16,25 @@ export const shenADARate = ({ adaInReserve, djedInCirculation, shenInCirculation
 export const adaSHENRate = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum): Rational =>
   shenADARate(poolDatum, oracleDatum).invert()
 
-export const shenADAMintRate = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, shenMintFee: RationalFields): Rational => shenADARate(poolDatum, oracleDatum).mul(new Rational(1n).add(shenMintFee))
+export const shenADAMintRate = (
+  poolDatum: PartialPoolDatum,
+  oracleDatum: PartialOracleDatum,
+  shenMintFee: RationalFields,
+): Rational => shenADARate(poolDatum, oracleDatum).mul(new Rational(1n).add(shenMintFee))
 
-export const shenADABurnRate = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, shenBurnRate: RationalFields): Rational => shenADARate(poolDatum, oracleDatum).mul(new Rational(1n).sub(shenBurnRate))
+export const shenADABurnRate = (
+  poolDatum: PartialPoolDatum,
+  oracleDatum: PartialOracleDatum,
+  shenBurnRate: RationalFields,
+): Rational => shenADARate(poolDatum, oracleDatum).mul(new Rational(1n).sub(shenBurnRate))
 
 export const adaDJEDRate = ({ oracleFields: { adaUSDExchangeRate } }: PartialOracleDatum): Rational =>
   new Rational(adaUSDExchangeRate)
 
-export const djedADARate = (oracleDatum: PartialOracleDatum): Rational =>
-  adaDJEDRate(oracleDatum).invert()
+export const djedADARate = (oracleDatum: PartialOracleDatum): Rational => adaDJEDRate(oracleDatum).invert()
 
-export const djedADAMintRate = (oracleDatum: PartialOracleDatum, djedMintFee: RationalFields): Rational => djedADARate(oracleDatum).mul(new Rational(1n).add(djedMintFee))
+export const djedADAMintRate = (oracleDatum: PartialOracleDatum, djedMintFee: RationalFields): Rational =>
+  djedADARate(oracleDatum).mul(new Rational(1n).add(djedMintFee))
 
-export const djedADABurnRate = (oracleDatum: PartialOracleDatum, djedBurnFee: RationalFields): Rational => djedADARate(oracleDatum).mul(new Rational(1n).sub(djedBurnFee))
+export const djedADABurnRate = (oracleDatum: PartialOracleDatum, djedBurnFee: RationalFields): Rational =>
+  djedADARate(oracleDatum).mul(new Rational(1n).sub(djedBurnFee))
