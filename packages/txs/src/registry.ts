@@ -11,10 +11,13 @@ export type Registry = {
   orderMintingPolicyReferenceUTxO: UTxO
   adaUsdOracleAssetId: string
   // NOTE: need to figure out where I can obtain these fees dynamically.
-  mintDJEDFee: RationalFields
-  burnDJEDFee: RationalFields
-  mintSHENFee: RationalFields
-  burnSHENFee: RationalFields
+  mintDJEDFeePercentage: RationalFields
+  burnDJEDFeePercentage: RationalFields
+  mintSHENFeePercentage: RationalFields
+  burnSHENFeePercentage: RationalFields
+  minOperatorFee: RationalFields
+  maxOperatorFee: RationalFields
+  operatorFeePercentage: RationalFields
 }
 
 export const registryByNetwork = {
@@ -53,10 +56,15 @@ export const registryByNetwork = {
       },
     },
     adaUsdOracleAssetId: '19eb22bf803ab40b064da4ac8e8fb5853ae0454ba0593609598410ba446a65644f7261636c654e4654',
-    mintDJEDFee: { numerator: 3n, denominator: 100n },
-    burnDJEDFee: { numerator: 1n, denominator: 50n },
-    mintSHENFee: { numerator: 1n, denominator: 20n },
-    burnSHENFee: { numerator: 1n, denominator: 25n },
+    mintDJEDFeePercentage: { numerator: 3n, denominator: 100n },
+    burnDJEDFeePercentage: { numerator: 1n, denominator: 50n },
+    mintSHENFeePercentage: { numerator: 1n, denominator: 20n },
+    burnSHENFeePercentage: { numerator: 1n, denominator: 25n },
+    // Already expressed in ADA, not in lovelace.
+    minOperatorFee: { numerator: 1n, denominator: 1n },
+    // Already expressed in ADA, not in lovelace.
+    maxOperatorFee: { numerator: 100n, denominator: 1n },
+    operatorFeePercentage: { numerator: 5n, denominator: 100n },
   },
   Mainnet: {
     orderAddress: 'addr1wypp5vhw2csaf62d78vmaa4652z20nr4hfgmkhacqnrvgug2vdyq4',
@@ -93,10 +101,15 @@ export const registryByNetwork = {
       },
     },
     adaUsdOracleAssetId: '815aca02042ba9188a2ca4f8ce7b276046e2376b4bce56391342299e446a65644f7261636c654e4654',
-    mintDJEDFee: { numerator: 3n, denominator: 200n },
-    burnDJEDFee: { numerator: 3n, denominator: 200n },
-    mintSHENFee: { numerator: 3n, denominator: 200n },
-    burnSHENFee: { numerator: 3n, denominator: 200n },
+    mintDJEDFeePercentage: { numerator: 3n, denominator: 200n },
+    burnDJEDFeePercentage: { numerator: 3n, denominator: 200n },
+    mintSHENFeePercentage: { numerator: 3n, denominator: 200n },
+    burnSHENFeePercentage: { numerator: 3n, denominator: 200n },
+    // Already expressed in ADA, not in lovelace.
+    minOperatorFee: { numerator: 103n, denominator: 20n },
+    // Already expressed in ADA, not in lovelace.
+    maxOperatorFee: { numerator: 25n, denominator: 1n },
+    operatorFeePercentage: { numerator: 1n, denominator: 400n },
   },
 } satisfies Record<string, Registry>
 

@@ -18,7 +18,7 @@ export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: 
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
 
-  const adaAmountToSend = djedADABurnRate(oracleDatum, registry.burnDJEDFee)
+  const adaAmountToSend = djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage)
     .ceil()
     .toBigInt()
   return lucid

@@ -18,7 +18,7 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
 
-  const adaAmountToSend = djedADAMintRate(oracleDatum, registry.mintDJEDFee)
+  const adaAmountToSend = djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage)
     .mul(amount)
     .ceil()
     .toBigInt()

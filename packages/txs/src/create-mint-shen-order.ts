@@ -18,7 +18,7 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
   const poolDatum = Data.from(poolDatumCbor, PoolDatum)
-  const adaAmountToSend = shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFee)
+  const adaAmountToSend = shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFeePercentage)
     .mul(amount)
     .ceil()
     .toBigInt()

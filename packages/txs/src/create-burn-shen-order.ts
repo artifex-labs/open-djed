@@ -18,7 +18,7 @@ export const createBurnShenOrder = async ({ lucid, registry, amount, address }: 
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
   const poolDatum = Data.from(poolDatumCbor, PoolDatum)
-  const adaAmountToSend = shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFee)
+  const adaAmountToSend = shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage)
     .mul(amount)
     .ceil()
     .toBigInt()
