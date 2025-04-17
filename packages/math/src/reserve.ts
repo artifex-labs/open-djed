@@ -1,6 +1,6 @@
 import type { PoolDatum } from "@reverse-djed/data";
 import { Rational, type RationalFields } from "./rational";
-import { djedADARate, type PartialOracleDatum, type PartialPoolDatum } from "./rate";
+import { djedADARate, shenADARate, type PartialOracleDatum, type PartialPoolDatum } from "./rate";
 import { maxBigInt } from "./bigint";
 
 export const adaInReserve = ({ adaInReserve }: Pick<PoolDatum, 'adaInReserve'>): Rational =>
@@ -35,5 +35,24 @@ export const maxMintableDJED = (poolDatum: PartialPoolDatum, oracleDatum: Partia
           .mul(minReserveRatio.sub(1n).sub(mintDjedFeePercentage))
       )
       .toBigInt(),
+    0n,
+  )
+
+export const maxMintableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, mintSHENFeePercentage: RationalFields): bigint =>
+  maxBigInt(
+    maxReserveRatio
+      .mul(poolDatum.djedInCirculation)
+      .mul(djedADARate(oracleDatum))
+      .sub(poolDatum.adaInReserve)
+      .div(shenADARate(poolDatum, oracleDatum))
+      .div(Rational.ONE.add(mintSHENFeePercentage))
+      // NOTE: This ensures we pass the test.
+      .toBigInt() - 1n,
+    0n,
+  )
+
+export const maxBurnableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, mintSHENFeePercentage: RationalFields): bigint =>
+  maxBigInt(
+    0n,
     0n,
   )

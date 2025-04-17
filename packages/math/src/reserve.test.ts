@@ -1,5 +1,5 @@
 import { expect, test } from "vitest"
-import { adaInReserve, maxMintableDJED, reserveRatio } from "./reserve"
+import { adaInReserve, maxMintableDJED, maxMintableSHEN, reserveRatio } from "./reserve"
 import { registryByNetwork } from "@reverse-djed/txs"
 
 test('adaInReserve', () => {
@@ -42,4 +42,22 @@ test('maxMintableDJED', () => {
     },
     registryByNetwork['Mainnet'].mintDJEDFeePercentage)
   ).toEqual(2472333917206n)
+})
+
+test('maxMintableSHEN', () => {
+  expect(maxMintableSHEN({
+    adaInReserve: 31220582824526n,
+    djedInCirculation: 3049627686600n,
+    shenInCirculation: 23920207971999n,
+  },
+    {
+      oracleFields: {
+        adaUSDExchangeRate: {
+          denominator: 200000n,
+          numerator: 124043n,
+        }
+      }
+    },
+    registryByNetwork['Mainnet'].mintSHENFeePercentage)
+  ).toEqual(7271378273795n)
 })
