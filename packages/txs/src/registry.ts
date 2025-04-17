@@ -18,6 +18,8 @@ export type Registry = {
   minOperatorFee: bigint
   maxOperatorFee: bigint
   operatorFeePercentage: RationalFields
+  // Minimum amount of DJED/SHEN to mint/burn.
+  minAmount: bigint
 }
 
 export const registryByNetwork = {
@@ -63,6 +65,7 @@ export const registryByNetwork = {
     minOperatorFee: 1_000_000n,
     maxOperatorFee: 100_000_000n,
     operatorFeePercentage: { numerator: 5n, denominator: 100n },
+    minAmount: 1n,
   },
   Mainnet: {
     orderAddress: 'addr1wypp5vhw2csaf62d78vmaa4652z20nr4hfgmkhacqnrvgug2vdyq4',
@@ -108,6 +111,7 @@ export const registryByNetwork = {
     // Already expressed in ADA, not in lovelace.
     maxOperatorFee: 25_000_000n,
     operatorFeePercentage: { numerator: 1n, denominator: 400n },
+    minAmount: 50_000_000n,
   },
 } satisfies Record<string, Registry>
 
