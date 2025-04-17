@@ -51,8 +51,16 @@ export const maxMintableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: Partia
     0n,
   )
 
-export const maxBurnableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, mintSHENFeePercentage: RationalFields): bigint =>
+export const maxBurnableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, burnSHENFeePercentage: RationalFields): bigint =>
   maxBigInt(
-    0n,
+    adaInReserve(poolDatum)
+      .sub(
+        minReserveRatio
+          .mul(poolDatum.djedInCirculation)
+          .mul(djedADARate(oracleDatum))
+      )
+      .div(shenADARate(poolDatum, oracleDatum))
+      .div(Rational.ONE.sub(burnSHENFeePercentage))
+      .toBigInt(),
     0n,
   )
