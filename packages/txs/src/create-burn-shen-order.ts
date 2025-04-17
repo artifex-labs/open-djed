@@ -1,4 +1,4 @@
-import { shenADABurnRate } from '@reverse-djed/math'
+import { Rational, maxBigInt, minBigInt, shenADABurnRate, shenADARate } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
@@ -18,10 +18,17 @@ export const createBurnShenOrder = async ({ lucid, registry, amount, address }: 
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
   const poolDatum = Data.from(poolDatumCbor, PoolDatum)
-  const adaAmountToSend = shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage)
-    .mul(amount)
-    .ceil()
-    .toBigInt()
+  const operatorFee = maxBigInt(
+    registry.minOperatorFee,
+    minBigInt(
+      new Rational(registry.operatorFeePercentage)
+        .mul(amount)
+        .mul(shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage))
+        .ceil()
+        .toBigInt(),
+      registry.maxOperatorFee
+    )
+  )
   return lucid
     .newTx()
     .readFrom([
@@ -53,8 +60,7 @@ export const createBurnShenOrder = async ({ lucid, registry, amount, address }: 
       },
       {
         [registry.orderAssetId]: 1n,
-        // FIXME: We have a bug in this calculation, hence the +10 ADA. This might be okay though since I'd expect us to get the surplus ADA back during order fulfillment/cancellation.
-        lovelace: adaAmountToSend + poolDatum.minADA + 10_000_000n,
+        lovelace: poolDatum.minADA + operatorFee,
         [registry.shenAssetId]: amount,
       }
     )
