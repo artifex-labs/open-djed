@@ -46,7 +46,7 @@ export const maxMintableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: Partia
       .sub(poolDatum.adaInReserve)
       .div(shenADARate(poolDatum, oracleDatum))
       .div(Rational.ONE.add(mintSHENFeePercentage))
-      // NOTE: This ensures we pass the test.
+      // Here we subtract 1 to work around some round error.
       .toBigInt() - 1n,
     0n,
   )
