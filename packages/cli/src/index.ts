@@ -5,16 +5,15 @@ import { MyBlockfrost } from './blockfrost'
 import { env } from './env'
 import { parseOutRef } from './utils'
 
-const network = 'Preprod'
 const blockfrostProjectIdByNetwork = {
   Mainnet: 'mainnet6nn5cOiVycGeknLTOBNbmw1fgTeoQWfo',
   Preprod: 'preprodmAhR2Rq99LM1WGxB9DXVS2WOILme1hZF',
 }
-const blockfrostProjectId = blockfrostProjectIdByNetwork[network]
-console.log(`Initializing Lucid with Blockfrost for network "${network}" using project id "${blockfrostProjectId}".`)
-const lucid = await Lucid(new MyBlockfrost(`https://cardano-${network.toLocaleLowerCase()}.blockfrost.io/api/v0`, blockfrostProjectId), network)
+const blockfrostProjectId = blockfrostProjectIdByNetwork[env.NETWORK]
+console.log(`Initializing Lucid with Blockfrost for network "${env.NETWORK}" using project id "${blockfrostProjectId}".`)
+const lucid = await Lucid(new MyBlockfrost(`https://cardano-${env.NETWORK.toLocaleLowerCase()}.blockfrost.io/api/v0`, blockfrostProjectId), env.NETWORK)
 console.log('Finished initializing Lucid.')
-const registry = registryByNetwork[network]
+const registry = registryByNetwork[env.NETWORK]
 
 if (env.SEED) {
   lucid.selectWallet.fromSeed(env.SEED)
@@ -107,7 +106,7 @@ program
     const orderUtxo = (await lucid.utxosByOutRef([parseOutRef(outRef)]))[0]
     if (!orderUtxo) throw new Error(`Couldn't find order utxo for outRef: ${outRef}`)
     if (!Object.keys(orderUtxo.assets).includes(registry.orderAssetId)) throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
-    const tx = await cancelOrderByOwner({ network, lucid, registry, orderUtxo })
+    const tx = await cancelOrderByOwner({ network: env.NETWORK, lucid, registry, orderUtxo })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')

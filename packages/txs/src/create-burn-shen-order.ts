@@ -54,7 +54,7 @@ export const createBurnShenOrder = async ({ lucid, registry, amount, address }: 
       {
         [registry.orderAssetId]: 1n,
         // FIXME: We have a bug in this calculation, hence the +10 ADA. This might be okay though since I'd expect us to get the surplus ADA back during order fulfillment/cancellation.
-        lovelace: adaAmountToSend + 10000000n,
+        lovelace: adaAmountToSend + poolDatum.minADA + 10_000_000n,
         [registry.shenAssetId]: amount,
       }
     )

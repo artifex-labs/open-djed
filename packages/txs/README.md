@@ -26,4 +26,5 @@ TODO:
 - [ ] Stop hard-coding reference UTxOs (currently just in registry).
 - [ ] Stop hard-coding asset IDs - separate token names from policy IDs.
 - [ ] Stop hard-coding order validator address (use script hash wherever possible).
-- [ ] Consider operator fees.
+- [x] Consider operator fees for mint transactions.
+- [ ] Consider operator fees for burn transactions.

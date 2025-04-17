@@ -15,8 +15,8 @@ export type Registry = {
   burnDJEDFeePercentage: RationalFields
   mintSHENFeePercentage: RationalFields
   burnSHENFeePercentage: RationalFields
-  minOperatorFee: RationalFields
-  maxOperatorFee: RationalFields
+  minOperatorFee: bigint
+  maxOperatorFee: bigint
   operatorFeePercentage: RationalFields
 }
 
@@ -60,10 +60,8 @@ export const registryByNetwork = {
     burnDJEDFeePercentage: { numerator: 1n, denominator: 50n },
     mintSHENFeePercentage: { numerator: 1n, denominator: 20n },
     burnSHENFeePercentage: { numerator: 1n, denominator: 25n },
-    // Already expressed in ADA, not in lovelace.
-    minOperatorFee: { numerator: 1n, denominator: 1n },
-    // Already expressed in ADA, not in lovelace.
-    maxOperatorFee: { numerator: 100n, denominator: 1n },
+    minOperatorFee: 1_000_000n,
+    maxOperatorFee: 100_000_000n,
     operatorFeePercentage: { numerator: 5n, denominator: 100n },
   },
   Mainnet: {
@@ -106,9 +104,9 @@ export const registryByNetwork = {
     mintSHENFeePercentage: { numerator: 3n, denominator: 200n },
     burnSHENFeePercentage: { numerator: 3n, denominator: 200n },
     // Already expressed in ADA, not in lovelace.
-    minOperatorFee: { numerator: 103n, denominator: 20n },
+    minOperatorFee: 5_150_000n,
     // Already expressed in ADA, not in lovelace.
-    maxOperatorFee: { numerator: 25n, denominator: 1n },
+    maxOperatorFee: 25_000_000n,
     operatorFeePercentage: { numerator: 1n, denominator: 400n },
   },
 } satisfies Record<string, Registry>

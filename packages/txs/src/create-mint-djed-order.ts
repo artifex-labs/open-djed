@@ -1,7 +1,7 @@
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OracleDatum, OrderMintRedeemer } from '@reverse-djed/data'
-import { djedADAMintRate } from '@reverse-djed/math'
+import { OrderDatum, OracleDatum, OrderMintRedeemer, PoolDatum } from '@reverse-djed/data'
+import { Rational, djedADAMintRate, maxBigInt, minBigInt } from '@reverse-djed/math'
 
 export const createMintDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
@@ -17,11 +17,22 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
   const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
+  const poolDatum = Data.from(poolDatumCbor, PoolDatum)
 
   const adaAmountToSend = djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage)
     .mul(amount)
     .ceil()
     .toBigInt()
+  const operatorFee = maxBigInt(
+    registry.minOperatorFee,
+    minBigInt(
+      new Rational(registry.operatorFeePercentage)
+        .mul(adaAmountToSend)
+        .ceil()
+        .toBigInt(),
+      registry.maxOperatorFee
+    )
+  )
   return lucid
     .newTx()
     .readFrom([
@@ -54,8 +65,7 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
       },
       {
         [registry.orderAssetId]: 1n,
-        // FIXME: We have a bug in this calculation, hence the +10 ADA. This might be okay though since I'd expect us to get the surplus ADA back during order fulfillment/cancellation.
-        lovelace: adaAmountToSend + 10_000_000n,
+        lovelace: adaAmountToSend + poolDatum.minADA + operatorFee,
       }
     )
     .mintAssets({

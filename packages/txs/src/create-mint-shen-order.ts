@@ -1,4 +1,4 @@
-import { shenADAMintRate } from '@reverse-djed/math'
+import { Rational, maxBigInt, minBigInt, shenADAMintRate } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
@@ -22,6 +22,16 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
     .mul(amount)
     .ceil()
     .toBigInt()
+  const operatorFee = maxBigInt(
+    registry.minOperatorFee,
+    minBigInt(
+      new Rational(registry.operatorFeePercentage)
+        .mul(adaAmountToSend)
+        .ceil()
+        .toBigInt(),
+      registry.maxOperatorFee
+    )
+  )
   return lucid
     .newTx()
     .readFrom([
@@ -54,8 +64,7 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
       },
       {
         [registry.orderAssetId]: 1n,
-        // FIXME: We have a bug in this calculation, hence the +10 ADA. This might be okay though since I'd expect us to get the surplus ADA back during order fulfillment/cancellation.
-        lovelace: adaAmountToSend + 10000000n,
+        lovelace: adaAmountToSend + poolDatum.minADA + operatorFee,
       }
     )
     .mintAssets({

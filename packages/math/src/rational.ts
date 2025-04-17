@@ -1,3 +1,5 @@
+import { absBigInt } from "./bigint"
+
 export type RationalFields = {
   numerator: bigint
   denominator: bigint
@@ -35,8 +37,6 @@ export const ceil = (r: RationalFields): RationalFields => {
 }
 
 export const toBigInt = (r: RationalFields): bigint => r.numerator / r.denominator
-
-const absBigInt = (n: bigint): bigint => n < 0n ? -n : n
 
 const gcd = (a: bigint, b: bigint): bigint => {
   a = absBigInt(a)

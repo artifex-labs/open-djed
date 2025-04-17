@@ -1,6 +1,6 @@
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OracleDatum, OrderMintRedeemer } from '@reverse-djed/data'
+import { OrderDatum, OracleDatum, OrderMintRedeemer, PoolDatum } from '@reverse-djed/data'
 import { djedADABurnRate } from '@reverse-djed/math'
 
 export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
@@ -17,6 +17,7 @@ export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: 
   const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
+  const poolDatum = Data.from(poolDatumCbor, PoolDatum)
 
   const adaAmountToSend = djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage)
     .ceil()
@@ -53,7 +54,7 @@ export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: 
       {
         [registry.orderAssetId]: 1n,
         // FIXME: We have a bug in this calculation, hence the +10 ADA. This might be okay though since I'd expect us to get the surplus ADA back during order fulfillment/cancellation.
-        lovelace: adaAmountToSend + 10_000_000n,
+        lovelace: adaAmountToSend + poolDatum.minADA + 10_000_000n,
         [registry.djedAssetId]: amount,
       }
     )
