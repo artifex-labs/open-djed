@@ -10,3 +10,7 @@ TODO (test before marking as complete):
 - [x] `DjedOrderTicket` token mint redeemer.
 - [x] Oracle datum (the datum stored in the UTxO that holds the `DjedOracleNFT` token).
 - [ ] Figure out what unknown fields mean in the various datum.
+- [ ] Support mint both and burn both (`actionFields` and potentially redeemer?).
+- [ ] Support enterprise addresses (no stake credential).
+- [ ] Support script addresses (?).
+- [ ] Backtest against real data (?).

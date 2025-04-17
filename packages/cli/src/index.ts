@@ -1,9 +1,11 @@
-import { Lucid } from '@lucid-evolution/lucid'
+import { Data, Lucid } from '@lucid-evolution/lucid'
 import { program } from 'commander'
 import { createMintDjedOrder, createBurnShenOrder, createBurnDjedOrder, createMintShenOrder, registryByNetwork, cancelOrderByOwner } from '@reverse-djed/txs'
 import { MyBlockfrost } from './blockfrost'
 import { env } from './env'
 import { parseOutRef } from './utils'
+import { OracleDatum, PoolDatum } from '@reverse-djed/data'
+import { djedADABurnRate, djedADAMintRate, maxBurnableSHEN, maxMintableDJED, maxMintableSHEN, reserveRatio, shenADABurnRate, shenADAMintRate } from '@reverse-djed/math'
 
 const blockfrostProjectIdByNetwork = {
   Mainnet: 'mainnet6nn5cOiVycGeknLTOBNbmw1fgTeoQWfo',
@@ -117,6 +119,38 @@ program
       await signedTx.submit()
       console.log('Transaction submitted')
     }
+  })
+
+program
+  .command('protocol-data')
+  .action(async (amount, options) => {
+    const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
+    const oracleInlineDatum = oracleUtxo.datum
+    if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
+    const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)
+    const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
+    const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
+    const poolDatum = Data.from(poolDatumCbor, PoolDatum)
+    console.log(JSON.stringify({
+      djed: {
+        buyPrice: djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
+        sellPrice: djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage).toNumber(),
+        circulatingSupply: Number(poolDatum.djedInCirculation) / 1e6,
+        mintableAmount: Number(maxMintableDJED(poolDatum, oracleDatum, registry.mintDJEDFeePercentage)) / 1e6,
+        burnableAmount: Number.POSITIVE_INFINITY,
+      },
+      shen: {
+        buyPrice: shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFeePercentage).toNumber(),
+        sellPrice: shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage).toNumber(),
+        circulatingSupply: Number(poolDatum.shenInCirculation) / 1e6,
+        mintableAmount: Number(maxMintableSHEN(poolDatum, oracleDatum, registry.mintSHENFeePercentage)) / 1e6,
+        burnableAmount: Number(maxBurnableSHEN(poolDatum, oracleDatum, registry.burnSHENFeePercentage)) / 1e6,
+      },
+      reserve: {
+        amount: Number(poolDatum.adaInReserve) / 1e6,
+        ratio: reserveRatio(poolDatum, oracleDatum).toNumber(),
+      }
+    }, undefined, 2))
   })
 
 await program.parseAsync()
