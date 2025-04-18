@@ -1,12 +1,10 @@
-import { Constr, Data, credentialToAddress, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
+import { Constr, Data, credentialToAddress, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Network, type Registry } from './registry'
-import { OrderDatum, CancelOrderSpendRedeemer, OrderBurnRedeemer } from '@reverse-djed/data'
+import { CancelOrderSpendRedeemer, OrderBurnRedeemer, toBech32 } from '@reverse-djed/data'
+import type { OrderUTxO } from './types'
 
-export const cancelOrderByOwner = async ({ lucid, registry, orderUtxo, network }: { lucid: LucidEvolution, registry: Registry, orderUtxo: UTxO, network: Network }) => {
-  const orderInlineDatum = orderUtxo.datum
-  if (!orderInlineDatum) throw new Error('Couldn\'t get order inline datum.')
-  const { address: { paymentKeyHash: [paymentKeyHash], stakeKeyHash: [[[stakeKeyHash]]] } } = Data.from(orderInlineDatum, OrderDatum)
-  const address = credentialToAddress(network, { type: 'Key', hash: paymentKeyHash }, { type: 'Key', hash: stakeKeyHash })
+export const cancelOrderByOwner = async ({ lucid, registry, orderUTxO, network }: { lucid: LucidEvolution, registry: Registry, orderUTxO: OrderUTxO, network: Network }) => {
+  const address = toBech32(orderUTxO.orderDatum.address, network)
 
   return lucid
     .newTx()
@@ -15,11 +13,11 @@ export const cancelOrderByOwner = async ({ lucid, registry, orderUtxo, network }
       registry.orderMintingPolicyReferenceUTxO,
     ])
     .addSigner(address)
-    .collectFrom([orderUtxo], CancelOrderSpendRedeemer)
+    .collectFrom([orderUTxO], CancelOrderSpendRedeemer)
     .pay.ToAddressWithData(address, {
       kind: 'inline',
       // NOTE: This is temporary. Need to figure out the actual format of this datum.
-      value: Data.to(new Constr(0, [new Constr(11, []), new Constr(0, [new Constr(0, [orderUtxo.txHash]), BigInt(orderUtxo.outputIndex)])]))
+      value: Data.to(new Constr(0, [new Constr(11, []), new Constr(0, [new Constr(0, [orderUTxO.txHash]), BigInt(orderUTxO.outputIndex)])]))
     }, {})
     .mintAssets({
       [registry.orderAssetId]: -1n,

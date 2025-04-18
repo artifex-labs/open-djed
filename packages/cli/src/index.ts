@@ -105,10 +105,11 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (outRef, options) => {
-    const orderUtxo = (await lucid.utxosByOutRef([parseOutRef(outRef)]))[0]
-    if (!orderUtxo) throw new Error(`Couldn't find order utxo for outRef: ${outRef}`)
-    if (!Object.keys(orderUtxo.assets).includes(registry.orderAssetId)) throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
-    const tx = await cancelOrderByOwner({ network: env.NETWORK, lucid, registry, orderUtxo })
+    const rawOrderUTxO = (await lucid.utxosByOutRef([parseOutRef(outRef)]))[0]
+    if (!rawOrderUTxO) throw new Error(`Couldn't find order utxo for outRef: ${outRef}`)
+    if (!Object.keys(rawOrderUTxO.assets).includes(registry.orderAssetId)) throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
+    const orderUTxO = { ...rawOrderUTxO, orderDatum: Data.from(Data.to(await lucid.datumOf(rawOrderUTxO)), OrderDatum) }
+    const tx = await cancelOrderByOwner({ network: env.NETWORK, lucid, registry, orderUTxO })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')

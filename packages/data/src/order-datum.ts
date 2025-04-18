@@ -1,4 +1,5 @@
 import { Data } from '@lucid-evolution/lucid'
+import { AddressSchema } from './address'
 
 /*
 {
@@ -99,10 +100,7 @@ const OrderDatumSchema = Data.Object({
       }),
     })
   ]),
-  address: Data.Object({
-    paymentKeyHash: Data.Tuple([Data.Bytes()], { hasConstr: true }),
-    stakeKeyHash: Data.Tuple([Data.Tuple([Data.Tuple([Data.Bytes()], { hasConstr: true })], { hasConstr: true })], { hasConstr: true }),
-  }),
+  address: AddressSchema,
   adaUSDExchangeRate: Data.Object({
     denominator: Data.Integer(),
     numerator: Data.Integer(),

@@ -1,16 +1,11 @@
-import { Rational, maxBigInt, minBigInt, operatorFee, shenADABurnRate, shenADARate } from '@reverse-djed/math'
+import { operatorFee, shenADABurnRate } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
+import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum, fromBech32 } from '@reverse-djed/data'
 
 export const createBurnShenOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }): Promise<TxBuilder> => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
   const ttl = now + 3 * 60 * 1000 // 3 minutes
-  const { paymentCredential, stakeCredential } = getAddressDetails(address)
-  const paymentKeyHash = paymentCredential?.hash
-  if (!paymentKeyHash) throw new Error('Couldn\'t get payment key hash from address.')
-  const stakeKeyHash = stakeCredential?.hash
-  if (!stakeKeyHash) throw new Error('Couldn\'t get stake key hash from address.')
   const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
   if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
@@ -38,10 +33,7 @@ export const createBurnShenOrder = async ({ lucid, registry, amount, address }: 
               shenAmount: amount,
             }
           },
-          address: {
-            paymentKeyHash: [paymentKeyHash],
-            stakeKeyHash: [[[stakeKeyHash]]],
-          },
+          address: fromBech32(address),
           adaUSDExchangeRate: oracleDatum.oracleFields.adaUSDExchangeRate,
           creationDate: BigInt(ttl),
           orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId
