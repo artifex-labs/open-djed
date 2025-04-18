@@ -23,6 +23,13 @@ if (env.SEED) {
   lucid.selectWallet.fromAddress(env.ADDRESS, await lucid.utxosAt(env.ADDRESS))
 }
 
+const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
+if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
+const poolUTxO = { ...rawPoolUTxO, poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum) }
+const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
+if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
+const oracleUTxO = { ...rawOracleUTxO, oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum) }
+
 program
   .command('create-mint-djed-order')
   .argument('<amount>', 'Amount of DJED to mint')
@@ -48,7 +55,7 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createBurnDjedOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address() })
+    const tx = createBurnDjedOrder({ lucid, registry, amount: BigInt(amount), address: await lucid.wallet().address(), poolUTxO, oracleUTxO })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')

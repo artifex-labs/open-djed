@@ -3,6 +3,7 @@ import { Rational, type RationalFields } from "@reverse-djed/math"
 
 export type Registry = {
   orderAddress: string
+  poolAddress: string
   orderSpendingValidatorReferenceUTxO: UTxO
   poolAssetId: string
   djedAssetId: string
@@ -26,6 +27,7 @@ export const registryByNetwork = {
   Preprod: {
     // This assumes no stake credential... Idea: use script1 bech32 format.
     orderAddress: 'addr_test1wpuhvcav0c2guyyz3s6ap7l43gq3jm59xazgvugm4hwlugg35kxhn',
+    poolAddress: 'addr_test1zpdvkxnvvxt7ju0hf70mckluzfn4s8z95lthf8t7klnhah2vpmpraw365fayhrtpzpl4nulq6f9hhdkh4cdyh0tgnjxsjyvp3v',
     // Idea: discriminate asset names only, share policy ID in other field.
     poolAssetId: 'c3a654d54ddc60c669665a8fc415ba67402c63b58fe65c821d63ba07446a6564537461626c65436f696e4e4654',
     djedAssetId: 'c3a654d54ddc60c669665a8fc415ba67402c63b58fe65c821d63ba07446a65644d6963726f555344',
@@ -71,6 +73,7 @@ export const registryByNetwork = {
   },
   Mainnet: {
     orderAddress: 'addr1wypp5vhw2csaf62d78vmaa4652z20nr4hfgmkhacqnrvgug2vdyq4',
+    poolAddress: 'addr1z8mcpc26j64fmhhd6sv5qj5mk9xqnfxgm6k8zmk7h2rlu4qm5kjdmrpmng059yellupyvwgay2v0lz6663swmds7hp0qhxg9gt',
     orderSpendingValidatorReferenceUTxO: {
       txHash: "1a757d9840dfd77f5aa0223245b553d412328dadb10abc5225f4f8e53ae90ee0",
       outputIndex: 0,
