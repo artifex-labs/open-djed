@@ -1,10 +1,10 @@
-import { Data, Lucid } from '@lucid-evolution/lucid'
+import { Data, Lucid, getAddressDetails, type UTxO } from '@lucid-evolution/lucid'
 import { program } from 'commander'
 import { createMintDjedOrder, createBurnShenOrder, createBurnDjedOrder, createMintShenOrder, registryByNetwork, cancelOrderByOwner } from '@reverse-djed/txs'
 import { MyBlockfrost } from './blockfrost'
 import { env } from './env'
 import { parseOutRef } from './utils'
-import { OracleDatum, PoolDatum } from '@reverse-djed/data'
+import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import { djedADABurnRate, djedADAMintRate, maxBurnableSHEN, maxMintableDJED, maxMintableSHEN, reserveRatio, shenADABurnRate, shenADAMintRate } from '@reverse-djed/math'
 
 const blockfrostProjectIdByNetwork = {
@@ -151,6 +151,43 @@ program
         ratio: reserveRatio(poolDatum, oracleDatum).toNumber(),
       }
     }, undefined, 2))
+  })
+
+program
+  .command('orders')
+  .action(async () => {
+    const orderUtxos = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
+    type OrderUTxO = UTxO & { orderDatum: OrderDatum }
+    const orderUtxosWithDatum: OrderUTxO[] = await Promise.all(
+      orderUtxos.map(async o => {
+        try {
+          return { ...o, orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum) }
+        } catch (e) {
+          console.warn(`Couldn't decode datum for order utxo ${o.txHash}#${o.outputIndex} with error ${e}`)
+          return undefined
+        }
+      })
+    ).then(orderUtxos => orderUtxos.filter((o): o is OrderUTxO => Boolean(o)))
+    const addressDetails = getAddressDetails(await lucid.wallet().address())
+    const myOrderUtxos = orderUtxosWithDatum.filter(o => o.orderDatum.address.paymentKeyHash[0] === addressDetails.paymentCredential?.hash && o.orderDatum.address.stakeKeyHash[0][0][0] === addressDetails.stakeCredential?.hash)
+    // TODO: Need to query Blockfrost for previous orders in order to capture those that have been fulfilled or cancelled.
+    console.log(JSON.stringify(myOrderUtxos.map(o => ({
+      // TODO: Need to query Blockfrost for datetime instead of setting `date` to `null` here.
+      date: null,
+      txHash: o.txHash,
+      status: 'Pending',
+      ...(
+        'MintDJED' in o.orderDatum.actionFields
+          ? { action: 'Mint', amount: `${o.orderDatum.actionFields.MintDJED.djedAmount} DJED` }
+          : 'BurnDJED' in o.orderDatum.actionFields
+            ? { action: 'Burn', amount: `${o.orderDatum.actionFields.BurnDJED.djedAmount} DJED` }
+            : 'MintSHEN' in o.orderDatum.actionFields
+              ? { action: 'Mint', amount: `${o.orderDatum.actionFields.MintSHEN.shenAmount} SHEN` }
+              : 'BurnSHEN' in o.orderDatum.actionFields
+                ? { action: 'Burn', amount: `${o.orderDatum.actionFields.BurnSHEN.shenAmount} SHEN` }
+                : {}
+      )
+    })), undefined, 2))
   })
 
 await program.parseAsync()
