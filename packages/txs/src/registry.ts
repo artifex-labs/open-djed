@@ -20,6 +20,7 @@ export type Registry = {
   operatorFeeConfig: OperatorFeeConfig
   // Minimum amount of DJED/SHEN to mint/burn.
   minAmount: bigint
+  validityLength: number
 }
 
 export const registryByNetwork = {
@@ -75,6 +76,7 @@ export const registryByNetwork = {
       percentage: new Rational({ numerator: 1n, denominator: 20n }),
     },
     minAmount: 1n,
+    validityLength: 3 * 60 * 1000, // 3 minutes
   },
   Mainnet: {
     orderAddress: 'addr1wypp5vhw2csaf62d78vmaa4652z20nr4hfgmkhacqnrvgug2vdyq4',
@@ -126,6 +128,7 @@ export const registryByNetwork = {
       percentage: new Rational({ numerator: 1n, denominator: 400n }),
     },
     minAmount: 50_000_000n,
+    validityLength: 3 * 60 * 1000, // 3 minutes
   },
 } satisfies Record<string, Registry>
 

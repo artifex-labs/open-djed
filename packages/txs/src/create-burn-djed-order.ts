@@ -1,71 +1,38 @@
-import { Data, fromUnit, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
-import { type Registry } from './registry'
-import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
+import { Data, fromUnit } from '@lucid-evolution/lucid'
+import { OrderDatum, fromBech32 } from '@reverse-djed/data'
 import { djedADABurnRate, operatorFee } from '@reverse-djed/math'
-import type { OracleUTxO, PoolUTxO } from './types'
+import { createOrder, type CreateOrderConfig } from './create-order'
 
-export const createBurnDjedOrder = ({
-  lucid,
-  registry,
-  amount,
-  address,
-  oracleUTxO,
-  poolUTxO,
-  orderMintingPolicyRefUTxO,
-  now,
-}: {
-  lucid: LucidEvolution
-  registry: Registry
+export const createBurnDjedOrder = (config: {
   amount: bigint
-  address: string
-  oracleUTxO: OracleUTxO
-  poolUTxO: PoolUTxO
-  orderMintingPolicyRefUTxO: UTxO
-  now: number
-}) => {
-  const ttl = now + 3 * 60 * 1000 // 3 minutes
-
-  return lucid
-    .newTx()
-    .readFrom([oracleUTxO, poolUTxO, orderMintingPolicyRefUTxO])
-    .validFrom(now)
-    .validTo(ttl)
-    .addSigner(address)
-    .pay.ToContract(
-      registry.orderAddress,
-      {
-        kind: 'inline',
-        value: Data.to(
-          {
-            actionFields: {
-              BurnDJED: {
-                djedAmount: amount,
-              },
+} & CreateOrderConfig) =>
+  createOrder(config).pay.ToContract(
+    config.registry.orderAddress,
+    {
+      kind: 'inline',
+      value: Data.to(
+        {
+          actionFields: {
+            BurnDJED: {
+              djedAmount: config.amount,
             },
-            address: fromBech32(address),
-            adaUSDExchangeRate: oracleUTxO.oracleDatum.oracleFields.adaUSDExchangeRate,
-            creationDate: BigInt(ttl),
-            orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId,
           },
-          OrderDatum,
+          address: fromBech32(config.address),
+          adaUSDExchangeRate: config.oracleUTxO.oracleDatum.oracleFields.adaUSDExchangeRate,
+          creationDate: BigInt(config.now + config.registry.validityLength),
+          orderStateTokenMintingPolicyId: fromUnit(config.registry.orderAssetId).policyId,
+        },
+        OrderDatum,
+      ),
+    },
+    {
+      [config.registry.orderAssetId]: 1n,
+      lovelace:
+        config.poolUTxO.poolDatum.minADA +
+        operatorFee(
+          djedADABurnRate(config.oracleUTxO.oracleDatum, config.registry.burnDJEDFeePercentage).mul(config.amount),
+          config.registry.operatorFeeConfig,
         ),
-      },
-      {
-        [registry.orderAssetId]: 1n,
-        lovelace:
-          poolUTxO.poolDatum.minADA +
-          operatorFee(
-            djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage).mul(amount),
-            registry.operatorFeeConfig,
-          ),
-        [registry.djedAssetId]: amount,
-      },
-    )
-    .mintAssets(
-      {
-        [registry.orderAssetId]: 1n,
-      },
-      OrderMintRedeemer,
-    )
-    .pay.ToAddressWithData(address, { kind: 'asHash', value: Data.to(poolUTxO.poolDatum, PoolDatum) }, {})
-}
+      [config.registry.djedAssetId]: config.amount,
+    },
+  )
