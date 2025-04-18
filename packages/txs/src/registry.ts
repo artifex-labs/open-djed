@@ -1,5 +1,5 @@
 import type { UTxO } from "@lucid-evolution/lucid"
-import type { RationalFields } from "@reverse-djed/math"
+import { Rational, type RationalFields } from "@reverse-djed/math"
 
 export type Registry = {
   orderAddress: string
@@ -17,14 +17,16 @@ export type Registry = {
   burnSHENFeePercentage: RationalFields
   minOperatorFee: bigint
   maxOperatorFee: bigint
-  operatorFeePercentage: RationalFields
+  operatorFeePercentage: Rational
   // Minimum amount of DJED/SHEN to mint/burn.
   minAmount: bigint
 }
 
 export const registryByNetwork = {
   Preprod: {
+    // This assumes no stake credential... Idea: use script1 bech32 format.
     orderAddress: 'addr_test1wpuhvcav0c2guyyz3s6ap7l43gq3jm59xazgvugm4hwlugg35kxhn',
+    // Idea: discriminate asset names only, share policy ID in other field.
     poolAssetId: 'c3a654d54ddc60c669665a8fc415ba67402c63b58fe65c821d63ba07446a6564537461626c65436f696e4e4654',
     djedAssetId: 'c3a654d54ddc60c669665a8fc415ba67402c63b58fe65c821d63ba07446a65644d6963726f555344',
     shenAssetId: 'c3a654d54ddc60c669665a8fc415ba67402c63b58fe65c821d63ba075368656e4d6963726f555344',
@@ -64,7 +66,7 @@ export const registryByNetwork = {
     burnSHENFeePercentage: { numerator: 1n, denominator: 25n },
     minOperatorFee: 1_000_000n,
     maxOperatorFee: 100_000_000n,
-    operatorFeePercentage: { numerator: 5n, denominator: 100n },
+    operatorFeePercentage: new Rational({ numerator: 1n, denominator: 20n }),
     minAmount: 1n,
   },
   Mainnet: {
@@ -106,11 +108,9 @@ export const registryByNetwork = {
     burnDJEDFeePercentage: { numerator: 3n, denominator: 200n },
     mintSHENFeePercentage: { numerator: 3n, denominator: 200n },
     burnSHENFeePercentage: { numerator: 3n, denominator: 200n },
-    // Already expressed in ADA, not in lovelace.
     minOperatorFee: 5_150_000n,
-    // Already expressed in ADA, not in lovelace.
     maxOperatorFee: 25_000_000n,
-    operatorFeePercentage: { numerator: 1n, denominator: 400n },
+    operatorFeePercentage: new Rational({ numerator: 1n, denominator: 400n }),
     minAmount: 50_000_000n,
   },
 } satisfies Record<string, Registry>

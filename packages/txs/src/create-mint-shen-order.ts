@@ -1,4 +1,4 @@
-import { Rational, maxBigInt, minBigInt, shenADAMintRate } from '@reverse-djed/math'
+import { Rational, maxBigInt, minBigInt, shenADAMintRate, operatorFee } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
@@ -22,16 +22,6 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
     .mul(amount)
     .ceil()
     .toBigInt()
-  const operatorFee = maxBigInt(
-    registry.minOperatorFee,
-    minBigInt(
-      new Rational(registry.operatorFeePercentage)
-        .mul(adaAmountToSend)
-        .ceil()
-        .toBigInt(),
-      registry.maxOperatorFee
-    )
-  )
   return lucid
     .newTx()
     .readFrom([
@@ -64,7 +54,7 @@ export const createMintShenOrder = async ({ lucid, registry, amount, address }: 
       },
       {
         [registry.orderAssetId]: 1n,
-        lovelace: adaAmountToSend + poolDatum.minADA + operatorFee,
+        lovelace: adaAmountToSend + poolDatum.minADA + operatorFee(adaAmountToSend, registry.minOperatorFee, registry.maxOperatorFee, registry.operatorFeePercentage),
       }
     )
     .mintAssets({

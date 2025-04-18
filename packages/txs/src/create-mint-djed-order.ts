@@ -1,7 +1,7 @@
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OracleDatum, OrderMintRedeemer, PoolDatum } from '@reverse-djed/data'
-import { Rational, djedADAMintRate, maxBigInt, minBigInt } from '@reverse-djed/math'
+import { Rational, djedADAMintRate, maxBigInt, minBigInt, operatorFee } from '@reverse-djed/math'
 
 export const createMintDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
@@ -23,16 +23,6 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
     .mul(amount)
     .ceil()
     .toBigInt()
-  const operatorFee = maxBigInt(
-    registry.minOperatorFee,
-    minBigInt(
-      new Rational(registry.operatorFeePercentage)
-        .mul(adaAmountToSend)
-        .ceil()
-        .toBigInt(),
-      registry.maxOperatorFee
-    )
-  )
   return lucid
     .newTx()
     .readFrom([
@@ -65,7 +55,7 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
       },
       {
         [registry.orderAssetId]: 1n,
-        lovelace: adaAmountToSend + poolDatum.minADA + operatorFee,
+        lovelace: adaAmountToSend + poolDatum.minADA + operatorFee(adaAmountToSend, registry.minOperatorFee, registry.maxOperatorFee, registry.operatorFeePercentage),
       }
     )
     .mintAssets({

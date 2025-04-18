@@ -28,3 +28,14 @@ TODO:
 - [ ] Stop hard-coding order validator address (use script hash wherever possible).
 - [x] Consider operator fees for mint transactions.
 - [x] Consider operator fees for burn transactions.
+- [ ] Custom Blockfrost lib:
+  - [ ] `getUtxosByAddressWithUnit`: `/utxos/:address/utxos/:unit`
+  - [ ] `getBlockByHash`: `/blocks/:hash`
+  - [ ] `getLatestBlock`: `/blocks/latest`
+- [ ] DJED db:
+  - [ ] Protocol data
+  - [ ] DJED & SHEN data
+  - [ ] Chain tip slot
+  - [ ] Pool UTxO with datum and computed fields
+  - [ ] Order UTxOs with datum and computed fields
+  - [ ] Oracle UTxO with datum and computed fields

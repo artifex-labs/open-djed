@@ -1,4 +1,4 @@
-import { Rational, maxBigInt, minBigInt, shenADABurnRate, shenADARate } from '@reverse-djed/math'
+import { Rational, maxBigInt, minBigInt, operatorFee, shenADABurnRate, shenADARate } from '@reverse-djed/math'
 import { Data, fromUnit, getAddressDetails, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum } from '@reverse-djed/data'
@@ -18,17 +18,6 @@ export const createBurnShenOrder = async ({ lucid, registry, amount, address }: 
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
   const poolDatum = Data.from(poolDatumCbor, PoolDatum)
-  const operatorFee = maxBigInt(
-    registry.minOperatorFee,
-    minBigInt(
-      new Rational(registry.operatorFeePercentage)
-        .mul(amount)
-        .mul(shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage))
-        .ceil()
-        .toBigInt(),
-      registry.maxOperatorFee
-    )
-  )
   return lucid
     .newTx()
     .readFrom([
@@ -60,7 +49,7 @@ export const createBurnShenOrder = async ({ lucid, registry, amount, address }: 
       },
       {
         [registry.orderAssetId]: 1n,
-        lovelace: poolDatum.minADA + operatorFee,
+        lovelace: poolDatum.minADA + operatorFee(shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage).mul(amount), registry.minOperatorFee, registry.maxOperatorFee, registry.operatorFeePercentage),
         [registry.shenAssetId]: amount,
       }
     )

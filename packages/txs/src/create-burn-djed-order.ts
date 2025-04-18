@@ -1,7 +1,7 @@
 import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OracleDatum, OrderMintRedeemer, PoolDatum } from '@reverse-djed/data'
-import { Rational, djedADABurnRate, maxBigInt, minBigInt } from '@reverse-djed/math'
+import { Rational, djedADABurnRate, maxBigInt, minBigInt, operatorFee } from '@reverse-djed/math'
 
 export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
@@ -19,17 +19,6 @@ export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: 
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
   const poolDatum = Data.from(poolDatumCbor, PoolDatum)
 
-  const operatorFee = maxBigInt(
-    registry.minOperatorFee,
-    minBigInt(
-      new Rational(registry.operatorFeePercentage)
-        .mul(amount)
-        .mul(djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage))
-        .ceil()
-        .toBigInt(),
-      registry.maxOperatorFee
-    )
-  )
   return lucid
     .newTx()
     .readFrom([
@@ -61,7 +50,7 @@ export const createBurnDjedOrder = async ({ lucid, registry, amount, address }: 
       },
       {
         [registry.orderAssetId]: 1n,
-        lovelace: poolDatum.minADA + operatorFee,
+        lovelace: poolDatum.minADA + operatorFee(djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage).mul(amount), registry.minOperatorFee, registry.maxOperatorFee, registry.operatorFeePercentage),
         [registry.djedAssetId]: amount,
       }
     )
