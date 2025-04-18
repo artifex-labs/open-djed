@@ -1,4 +1,4 @@
-import type { OutRef } from "@lucid-evolution/lucid"
+import type { OutRef } from '@lucid-evolution/lucid'
 
 export const parseOutRef = (outRefStr: string): OutRef => {
   const txOutRef = outRefStr.match(

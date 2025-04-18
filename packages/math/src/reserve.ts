@@ -1,7 +1,7 @@
-import type { PoolDatum } from "@reverse-djed/data";
-import { Rational, type RationalFields } from "./rational";
-import { djedADARate, shenADARate, type PartialOracleDatum, type PartialPoolDatum } from "./rate";
-import { maxBigInt } from "./bigint";
+import type { PoolDatum } from '@reverse-djed/data'
+import { Rational, type RationalFields } from './rational'
+import { djedADARate, shenADARate, type PartialOracleDatum, type PartialPoolDatum } from './rate'
+import { maxBigInt } from './bigint'
 
 export const adaInReserve = ({ adaInReserve }: Pick<PoolDatum, 'adaInReserve'>): Rational =>
   new Rational(adaInReserve)
@@ -21,24 +21,24 @@ export const minReserveRatio = new Rational({
   denominator: 1n,
 })
 
-export const maxMintableDJED = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, mintDjedFeePercentage: RationalFields): bigint =>
+export const maxMintableDJED = (
+  poolDatum: PartialPoolDatum,
+  oracleDatum: PartialOracleDatum,
+  mintDjedFeePercentage: RationalFields,
+): bigint =>
   maxBigInt(
     adaInReserve(poolDatum)
-      .sub(
-        minReserveRatio
-          .mul(poolDatum.djedInCirculation)
-          .mul(djedADARate(oracleDatum)
-          )
-      )
-      .div(
-        djedADARate(oracleDatum)
-          .mul(minReserveRatio.sub(1n).sub(mintDjedFeePercentage))
-      )
+      .sub(minReserveRatio.mul(poolDatum.djedInCirculation).mul(djedADARate(oracleDatum)))
+      .div(djedADARate(oracleDatum).mul(minReserveRatio.sub(1n).sub(mintDjedFeePercentage)))
       .toBigInt(),
     0n,
   )
 
-export const maxMintableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, mintSHENFeePercentage: RationalFields): bigint =>
+export const maxMintableSHEN = (
+  poolDatum: PartialPoolDatum,
+  oracleDatum: PartialOracleDatum,
+  mintSHENFeePercentage: RationalFields,
+): bigint =>
   maxBigInt(
     maxReserveRatio
       .mul(poolDatum.djedInCirculation)
@@ -51,14 +51,14 @@ export const maxMintableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: Partia
     0n,
   )
 
-export const maxBurnableSHEN = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum, burnSHENFeePercentage: RationalFields): bigint =>
+export const maxBurnableSHEN = (
+  poolDatum: PartialPoolDatum,
+  oracleDatum: PartialOracleDatum,
+  burnSHENFeePercentage: RationalFields,
+): bigint =>
   maxBigInt(
     adaInReserve(poolDatum)
-      .sub(
-        minReserveRatio
-          .mul(poolDatum.djedInCirculation)
-          .mul(djedADARate(oracleDatum))
-      )
+      .sub(minReserveRatio.mul(poolDatum.djedInCirculation).mul(djedADARate(oracleDatum)))
       .div(shenADARate(poolDatum, oracleDatum))
       .div(Rational.ONE.sub(burnSHENFeePercentage))
       .toBigInt(),

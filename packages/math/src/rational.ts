@@ -1,4 +1,4 @@
-import { absBigInt } from "./bigint"
+import { absBigInt } from './bigint'
 
 export type RationalFields = {
   numerator: bigint
@@ -20,7 +20,8 @@ export const add = (a: RationalFields, b: RationalFields): RationalFields => ({
   denominator: a.denominator * b.denominator,
 })
 
-export const sub = (a: RationalFields, b: RationalFields): RationalFields => add(a, { numerator: -b.numerator, denominator: b.denominator })
+export const sub = (a: RationalFields, b: RationalFields): RationalFields =>
+  add(a, { numerator: -b.numerator, denominator: b.denominator })
 
 export const fromBigInt = (n: bigint): RationalFields => ({
   numerator: n,

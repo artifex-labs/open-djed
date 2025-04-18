@@ -8,5 +8,5 @@ export const env = createEnv({
     NETWORK: z.enum(['Mainnet', 'Preprod']).default('Preprod'),
   },
   clientPrefix: '',
-  runtimeEnv: process.env
+  runtimeEnv: process.env,
 })

@@ -98,7 +98,7 @@ const OrderDatumSchema = Data.Object({
       BurnSHEN: Data.Object({
         shenAmount: Data.Integer(),
       }),
-    })
+    }),
   ]),
   address: AddressSchema,
   adaUSDExchangeRate: Data.Object({

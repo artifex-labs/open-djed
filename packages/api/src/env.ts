@@ -8,5 +8,5 @@ export const env = createEnv({
     VITE_BLOCKFROST_PROJECT_ID: z.string(),
   },
   clientPrefix: 'VITE_',
-  runtimeEnv: process.env
+  runtimeEnv: process.env,
 })

@@ -5,38 +5,36 @@
   "compatibility_date": "2025-04-14",
   "vars": {
     "VITE_BLOCKFROST_URL": "https://cardano-mainnet.blockfrost.io/api/v0",
-    "VITE_NETWORK": "Mainnet"
+    "VITE_NETWORK": "Mainnet",
   },
   "routes": [
     {
       "pattern": "api.djed.kylix.dev",
-      "custom_domain": true
+      "custom_domain": true,
     },
     {
       "pattern": "mainnet.api.djed.kylix.dev",
-      "custom_domain": true
-    }
+      "custom_domain": true,
+    },
   ],
   "env": {
     "preprod": {
       "routes": [
         {
           "pattern": "preprod.api.djed.kylix.dev",
-          "custom_domain": true
-        }
+          "custom_domain": true,
+        },
       ],
       "vars": {
         "VITE_BLOCKFROST_URL": "https://cardano-preprod.blockfrost.io/api/v0",
-        "VITE_NETWORK": "Preprod"
-      }
-    }
+        "VITE_NETWORK": "Preprod",
+      },
+    },
   },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "logs": {
       "enabled": true,
-    }
-  }
+    },
+  },
 }

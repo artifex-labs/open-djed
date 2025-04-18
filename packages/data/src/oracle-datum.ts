@@ -8,16 +8,28 @@ const OracleDatumSchema = Data.Object({
       numerator: Data.Integer(),
     }),
     validityRange: Data.Object({
-      lowerBound: Data.Tuple([
-        Data.Enum([Data.Object({ _1: Data.Object({ _2: Data.Any() }) }), Data.Object({ Value: Data.Tuple([Data.Integer()]) })]),
-        Data.Nullable(Data.Any()),
-      ], { hasConstr: true }),
-      upperBound: Data.Tuple([
-        Data.Enum([Data.Object({ _3: Data.Object({ _4: Data.Any() }) }), Data.Object({ Value: Data.Tuple([Data.Integer()]) })]),
-        Data.Nullable(Data.Any()),
-      ], { hasConstr: true }),
+      lowerBound: Data.Tuple(
+        [
+          Data.Enum([
+            Data.Object({ _1: Data.Object({ _2: Data.Any() }) }),
+            Data.Object({ Value: Data.Tuple([Data.Integer()]) }),
+          ]),
+          Data.Nullable(Data.Any()),
+        ],
+        { hasConstr: true },
+      ),
+      upperBound: Data.Tuple(
+        [
+          Data.Enum([
+            Data.Object({ _3: Data.Object({ _4: Data.Any() }) }),
+            Data.Object({ Value: Data.Tuple([Data.Integer()]) }),
+          ]),
+          Data.Nullable(Data.Any()),
+        ],
+        { hasConstr: true },
+      ),
     }),
-    expressedIn: Data.Bytes()
+    expressedIn: Data.Bytes(),
   }),
   oracleTokenPolicyId: Data.Bytes(),
 })

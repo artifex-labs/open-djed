@@ -3,12 +3,22 @@ import { type Registry } from './registry'
 import { OrderDatum, OracleDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import { djedADAMintRate, operatorFee } from '@reverse-djed/math'
 
-export const createMintDjedOrder = async ({ lucid, registry, amount, address }: { lucid: LucidEvolution, registry: Registry, amount: bigint, address: string }) => {
+export const createMintDjedOrder = async ({
+  lucid,
+  registry,
+  amount,
+  address,
+}: {
+  lucid: LucidEvolution
+  registry: Registry
+  amount: bigint
+  address: string
+}) => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
   const ttl = now + 3 * 60 * 1000 // 3 minutes
   const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
-  if (!oracleInlineDatum) throw new Error('Couldn\'t get oracle inline datum.')
+  if (!oracleInlineDatum) throw new Error("Couldn't get oracle inline datum.")
   const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)
   const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
   const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
@@ -20,11 +30,7 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
     .toBigInt()
   return lucid
     .newTx()
-    .readFrom([
-      oracleUtxo,
-      poolUtxo,
-      registry.orderMintingPolicyReferenceUTxO,
-    ])
+    .readFrom([oracleUtxo, poolUtxo, registry.orderMintingPolicyReferenceUTxO])
     .validFrom(now)
     .validTo(ttl)
     .addSigner(address)
@@ -32,26 +38,40 @@ export const createMintDjedOrder = async ({ lucid, registry, amount, address }: 
       registry.orderAddress,
       {
         kind: 'inline',
-        value: Data.to({
-          actionFields: {
-            MintDJED: {
-              djedAmount: amount,
-              adaAmount: adaAmountToSend,
-            }
+        value: Data.to(
+          {
+            actionFields: {
+              MintDJED: {
+                djedAmount: amount,
+                adaAmount: adaAmountToSend,
+              },
+            },
+            address: fromBech32(address),
+            adaUSDExchangeRate: oracleDatum.oracleFields.adaUSDExchangeRate,
+            creationDate: BigInt(ttl),
+            orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId,
           },
-          address: fromBech32(address),
-          adaUSDExchangeRate: oracleDatum.oracleFields.adaUSDExchangeRate,
-          creationDate: BigInt(ttl),
-          orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId
-        }, OrderDatum)
+          OrderDatum,
+        ),
       },
       {
         [registry.orderAssetId]: 1n,
-        lovelace: adaAmountToSend + poolDatum.minADA + operatorFee(adaAmountToSend, registry.minOperatorFee, registry.maxOperatorFee, registry.operatorFeePercentage),
-      }
+        lovelace:
+          adaAmountToSend +
+          poolDatum.minADA +
+          operatorFee(
+            adaAmountToSend,
+            registry.minOperatorFee,
+            registry.maxOperatorFee,
+            registry.operatorFeePercentage,
+          ),
+      },
     )
-    .mintAssets({
-      [registry.orderAssetId]: 1n,
-    }, OrderMintRedeemer)
+    .mintAssets(
+      {
+        [registry.orderAssetId]: 1n,
+      },
+      OrderMintRedeemer,
+    )
     .pay.ToAddressWithData(address, { kind: 'asHash', value: poolDatumCbor }, {})
 }

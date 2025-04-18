@@ -1,3 +1,3 @@
-import { Actions } from "../content/actions"
+import { Actions } from '../content/actions'
 
 export default () => Actions({ token: 'SHEN' })
