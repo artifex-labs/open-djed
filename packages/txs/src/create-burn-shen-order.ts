@@ -1,13 +1,7 @@
 import { operatorFee, shenADABurnRate } from '@reverse-djed/math'
-import {
-  Data,
-  fromUnit,
-  getAddressDetails,
-  type LucidEvolution,
-  type TxBuilder,
-} from '@lucid-evolution/lucid'
+import { Data, fromUnit, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum, fromBech32 } from '@reverse-djed/data'
+import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import type { OracleUTxO, PoolUTxO } from './types'
 
 export const createBurnShenOrder = async ({
@@ -60,9 +54,7 @@ export const createBurnShenOrder = async ({
             shenADABurnRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.burnSHENFeePercentage).mul(
               amount,
             ),
-            registry.minOperatorFee,
-            registry.maxOperatorFee,
-            registry.operatorFeePercentage,
+            registry.operatorFeeConfig,
           ),
         [registry.shenAssetId]: amount,
       },

@@ -1,6 +1,6 @@
-import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-evolution/lucid'
+import { Data, fromUnit, type LucidEvolution } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OracleDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
+import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import { djedADAMintRate, operatorFee } from '@reverse-djed/math'
 import type { OracleUTxO, PoolUTxO } from './types'
 
@@ -57,12 +57,7 @@ export const createMintDjedOrder = async ({
         lovelace:
           adaAmountToSend +
           poolUTxO.poolDatum.minADA +
-          operatorFee(
-            adaAmountToSend,
-            registry.minOperatorFee,
-            registry.maxOperatorFee,
-            registry.operatorFeePercentage,
-          ),
+          operatorFee(adaAmountToSend, registry.operatorFeeConfig),
       },
     )
     .mintAssets(

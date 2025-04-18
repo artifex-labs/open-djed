@@ -1,13 +1,7 @@
 import { shenADAMintRate, operatorFee } from '@reverse-djed/math'
-import {
-  Data,
-  fromUnit,
-  getAddressDetails,
-  type LucidEvolution,
-  type TxBuilder,
-} from '@lucid-evolution/lucid'
+import { Data, fromUnit, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
-import { OrderDatum, OrderMintRedeemer, OracleDatum, PoolDatum, fromBech32 } from '@reverse-djed/data'
+import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import type { OracleUTxO, PoolUTxO } from './types'
 
 export const createMintShenOrder = async ({
@@ -66,12 +60,7 @@ export const createMintShenOrder = async ({
         lovelace:
           adaAmountToSend +
           poolUTxO.poolDatum.minADA +
-          operatorFee(
-            adaAmountToSend,
-            registry.minOperatorFee,
-            registry.maxOperatorFee,
-            registry.operatorFeePercentage,
-          ),
+          operatorFee(adaAmountToSend, registry.operatorFeeConfig),
       },
     )
     .mintAssets(

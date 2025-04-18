@@ -1,5 +1,5 @@
 import type { UTxO } from '@lucid-evolution/lucid'
-import { Rational, type RationalFields } from '@reverse-djed/math'
+import { Rational, type OperatorFeeConfig, type RationalFields } from '@reverse-djed/math'
 
 export type Registry = {
   orderAddress: string
@@ -17,9 +17,7 @@ export type Registry = {
   burnDJEDFeePercentage: RationalFields
   mintSHENFeePercentage: RationalFields
   burnSHENFeePercentage: RationalFields
-  minOperatorFee: bigint
-  maxOperatorFee: bigint
-  operatorFeePercentage: Rational
+  operatorFeeConfig: OperatorFeeConfig
   // Minimum amount of DJED/SHEN to mint/burn.
   minAmount: bigint
 }
@@ -71,9 +69,11 @@ export const registryByNetwork = {
     burnDJEDFeePercentage: { numerator: 1n, denominator: 50n },
     mintSHENFeePercentage: { numerator: 1n, denominator: 20n },
     burnSHENFeePercentage: { numerator: 1n, denominator: 25n },
-    minOperatorFee: 1_000_000n,
-    maxOperatorFee: 100_000_000n,
-    operatorFeePercentage: new Rational({ numerator: 1n, denominator: 20n }),
+    operatorFeeConfig: {
+      min: 1_000_000n,
+      max: 100_000_000n,
+      percentage: new Rational({ numerator: 1n, denominator: 20n }),
+    },
     minAmount: 1n,
   },
   Mainnet: {
@@ -120,9 +120,11 @@ export const registryByNetwork = {
     burnDJEDFeePercentage: { numerator: 3n, denominator: 200n },
     mintSHENFeePercentage: { numerator: 3n, denominator: 200n },
     burnSHENFeePercentage: { numerator: 3n, denominator: 200n },
-    minOperatorFee: 5_150_000n,
-    maxOperatorFee: 25_000_000n,
-    operatorFeePercentage: new Rational({ numerator: 1n, denominator: 400n }),
+    operatorFeeConfig: {
+      min: 5_150_000n,
+      max: 25_000_000n,
+      percentage: new Rational({ numerator: 1n, denominator: 400n }),
+    },
     minAmount: 50_000_000n,
   },
 } satisfies Record<string, Registry>
