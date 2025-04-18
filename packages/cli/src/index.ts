@@ -53,7 +53,7 @@ const poolUTxO = {
   ...rawPoolUTxO,
   poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
 }
-const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
+const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
 if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
 const oracleUTxO = {
   ...rawOracleUTxO,
@@ -71,6 +71,8 @@ program
       registry,
       amount: BigInt(amount),
       address: await lucid.wallet().address(),
+      poolUTxO,
+      oracleUTxO,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
@@ -121,6 +123,8 @@ program
       registry,
       amount: BigInt(amount),
       address: await lucid.wallet().address(),
+      poolUTxO,
+      oracleUTxO,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
@@ -145,6 +149,8 @@ program
       registry,
       amount: BigInt(amount),
       address: await lucid.wallet().address(),
+      poolUTxO,
+      oracleUTxO,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
@@ -186,7 +192,7 @@ program
   })
 
 program.command('protocol-data').action(async (amount, options) => {
-  const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
+  const oracleUtxo = await lucid.utxoByUnit(registry.oracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
   if (!oracleInlineDatum) throw new Error("Couldn't get oracle inline datum.")
   const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)

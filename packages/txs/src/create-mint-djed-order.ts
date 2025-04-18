@@ -2,35 +2,33 @@ import { Data, fromUnit, getAddressDetails, type LucidEvolution } from '@lucid-e
 import { type Registry } from './registry'
 import { OrderDatum, OracleDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import { djedADAMintRate, operatorFee } from '@reverse-djed/math'
+import type { OracleUTxO, PoolUTxO } from './types'
 
 export const createMintDjedOrder = async ({
   lucid,
   registry,
   amount,
   address,
+  oracleUTxO,
+  poolUTxO,
 }: {
   lucid: LucidEvolution
   registry: Registry
   amount: bigint
   address: string
+  oracleUTxO: OracleUTxO
+  poolUTxO: PoolUTxO
 }) => {
   const now = Math.round((Date.now() - 20_000) / 1000) * 1000
   const ttl = now + 3 * 60 * 1000 // 3 minutes
-  const oracleUtxo = await lucid.utxoByUnit(registry.adaUsdOracleAssetId)
-  const oracleInlineDatum = oracleUtxo.datum
-  if (!oracleInlineDatum) throw new Error("Couldn't get oracle inline datum.")
-  const oracleDatum = Data.from(oracleInlineDatum, OracleDatum)
-  const poolUtxo = await lucid.utxoByUnit(registry.poolAssetId)
-  const poolDatumCbor = poolUtxo.datum ?? Data.to(await lucid.datumOf(poolUtxo))
-  const poolDatum = Data.from(poolDatumCbor, PoolDatum)
 
-  const adaAmountToSend = djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage)
+  const adaAmountToSend = djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage)
     .mul(amount)
     .ceil()
     .toBigInt()
   return lucid
     .newTx()
-    .readFrom([oracleUtxo, poolUtxo, registry.orderMintingPolicyReferenceUTxO])
+    .readFrom([oracleUTxO, poolUTxO, registry.orderMintingPolicyReferenceUTxO])
     .validFrom(now)
     .validTo(ttl)
     .addSigner(address)
@@ -47,7 +45,7 @@ export const createMintDjedOrder = async ({
               },
             },
             address: fromBech32(address),
-            adaUSDExchangeRate: oracleDatum.oracleFields.adaUSDExchangeRate,
+            adaUSDExchangeRate: oracleUTxO.oracleDatum.oracleFields.adaUSDExchangeRate,
             creationDate: BigInt(ttl),
             orderStateTokenMintingPolicyId: fromUnit(registry.orderAssetId).policyId,
           },
@@ -58,7 +56,7 @@ export const createMintDjedOrder = async ({
         [registry.orderAssetId]: 1n,
         lovelace:
           adaAmountToSend +
-          poolDatum.minADA +
+          poolUTxO.poolDatum.minADA +
           operatorFee(
             adaAmountToSend,
             registry.minOperatorFee,
@@ -73,5 +71,5 @@ export const createMintDjedOrder = async ({
       },
       OrderMintRedeemer,
     )
-    .pay.ToAddressWithData(address, { kind: 'asHash', value: poolDatumCbor }, {})
+    .pay.ToAddressWithData(address, { kind: 'asHash', value: Data.to(poolUTxO.poolDatum, PoolDatum) }, {})
 }
