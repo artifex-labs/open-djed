@@ -1,4 +1,4 @@
-import { Data, fromUnit, type LucidEvolution } from '@lucid-evolution/lucid'
+import { Data, fromUnit, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import { djedADAMintRate, operatorFee } from '@reverse-djed/math'
@@ -11,6 +11,8 @@ export const createMintDjedOrder = async ({
   address,
   oracleUTxO,
   poolUTxO,
+  orderMintingPolicyRefUTxO,
+  now,
 }: {
   lucid: LucidEvolution
   registry: Registry
@@ -18,8 +20,9 @@ export const createMintDjedOrder = async ({
   address: string
   oracleUTxO: OracleUTxO
   poolUTxO: PoolUTxO
+  orderMintingPolicyRefUTxO: UTxO
+  now: number
 }) => {
-  const now = Math.round((Date.now() - 20_000) / 1000) * 1000
   const ttl = now + 3 * 60 * 1000 // 3 minutes
 
   const adaAmountToSend = djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage)
@@ -28,7 +31,7 @@ export const createMintDjedOrder = async ({
     .toBigInt()
   return lucid
     .newTx()
-    .readFrom([oracleUTxO, poolUTxO, registry.orderMintingPolicyReferenceUTxO])
+    .readFrom([oracleUTxO, poolUTxO, orderMintingPolicyRefUTxO])
     .validFrom(now)
     .validTo(ttl)
     .addSigner(address)

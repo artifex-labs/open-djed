@@ -1,4 +1,4 @@
-import { Constr, Data, credentialToAddress, type LucidEvolution } from '@lucid-evolution/lucid'
+import { Constr, Data, credentialToAddress, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
 import { type Network, type Registry } from './registry'
 import { CancelOrderSpendRedeemer, OrderBurnRedeemer, toBech32 } from '@reverse-djed/data'
 import type { OrderUTxO } from './types'
@@ -7,18 +7,22 @@ export const cancelOrderByOwner = async ({
   lucid,
   registry,
   orderUTxO,
+  orderSpendingValidatorRefUTxO,
+  orderMintingPolicyRefUTxO,
   network,
 }: {
   lucid: LucidEvolution
   registry: Registry
   orderUTxO: OrderUTxO
+  orderSpendingValidatorRefUTxO: UTxO
+  orderMintingPolicyRefUTxO: UTxO
   network: Network
 }) => {
   const address = toBech32(orderUTxO.orderDatum.address, network)
 
   return lucid
     .newTx()
-    .readFrom([registry.orderSpendingValidatorReferenceUTxO, registry.orderMintingPolicyReferenceUTxO])
+    .readFrom([orderSpendingValidatorRefUTxO, orderMintingPolicyRefUTxO])
     .addSigner(address)
     .collectFrom([orderUTxO], CancelOrderSpendRedeemer)
     .pay.ToAddressWithData(

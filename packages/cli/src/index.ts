@@ -60,6 +60,10 @@ const oracleUTxO = {
   oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
 }
 
+const now = Math.round((Date.now() - 20_000) / 1000) * 1000
+
+const { orderMintingPolicyRefUTxO, orderSpendingValidatorRefUTxO } = registry
+
 program
   .command('create-mint-djed-order')
   .argument('<amount>', 'Amount of DJED to mint')
@@ -73,6 +77,8 @@ program
       address: await lucid.wallet().address(),
       poolUTxO,
       oracleUTxO,
+      orderMintingPolicyRefUTxO,
+      now,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
@@ -99,6 +105,8 @@ program
       address: await lucid.wallet().address(),
       poolUTxO,
       oracleUTxO,
+      orderMintingPolicyRefUTxO,
+      now,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
@@ -125,6 +133,8 @@ program
       address: await lucid.wallet().address(),
       poolUTxO,
       oracleUTxO,
+      orderMintingPolicyRefUTxO,
+      now,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
@@ -151,6 +161,8 @@ program
       address: await lucid.wallet().address(),
       poolUTxO,
       oracleUTxO,
+      orderMintingPolicyRefUTxO,
+      now,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
@@ -178,7 +190,14 @@ program
       ...rawOrderUTxO,
       orderDatum: Data.from(Data.to(await lucid.datumOf(rawOrderUTxO)), OrderDatum),
     }
-    const tx = await cancelOrderByOwner({ network: env.NETWORK, lucid, registry, orderUTxO })
+    const tx = await cancelOrderByOwner({
+      network: env.NETWORK,
+      lucid,
+      registry,
+      orderUTxO,
+      orderMintingPolicyRefUTxO,
+      orderSpendingValidatorRefUTxO,
+    })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
     console.log('Transaction CBOR')

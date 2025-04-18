@@ -1,5 +1,5 @@
 import { operatorFee, shenADABurnRate } from '@reverse-djed/math'
-import { Data, fromUnit, type LucidEvolution, type TxBuilder } from '@lucid-evolution/lucid'
+import { Data, fromUnit, type LucidEvolution, type TxBuilder, type UTxO } from '@lucid-evolution/lucid'
 import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import type { OracleUTxO, PoolUTxO } from './types'
@@ -11,6 +11,8 @@ export const createBurnShenOrder = async ({
   address,
   oracleUTxO,
   poolUTxO,
+  orderMintingPolicyRefUTxO,
+  now,
 }: {
   lucid: LucidEvolution
   registry: Registry
@@ -18,12 +20,13 @@ export const createBurnShenOrder = async ({
   address: string
   oracleUTxO: OracleUTxO
   poolUTxO: PoolUTxO
+  orderMintingPolicyRefUTxO: UTxO
+  now: number
 }): Promise<TxBuilder> => {
-  const now = Math.round((Date.now() - 20_000) / 1000) * 1000
   const ttl = now + 3 * 60 * 1000 // 3 minutes
   return lucid
     .newTx()
-    .readFrom([oracleUTxO, poolUTxO, registry.orderMintingPolicyReferenceUTxO])
+    .readFrom([oracleUTxO, poolUTxO, orderMintingPolicyRefUTxO])
     .validFrom(now)
     .validTo(ttl)
     .addSigner(address)
