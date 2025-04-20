@@ -11,7 +11,7 @@ TODO:
 - [x] `maxDJEDMintAmount`
 - [x] `maxSHENMintAmount`
 - [x] `maxSHENBurnAmount`
-- [ ] Figure out operator fees.
+- [x] Figure out operator fees.
 - [ ] Generalize code:
   - [ ] Single method supporting mint, burn, djed, shen instead of four separate methods.
   - [ ] Refer to DJED as stablecoins, SHEN as reserve coins.
