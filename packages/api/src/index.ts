@@ -1,11 +1,17 @@
-import * as _CML from '@anastasia-labs/cardano-multiplatform-lib-browser'
-import { Blockfrost, Lucid, Data } from '@lucid-evolution/lucid'
-import { registryByNetwork } from '@reverse-djed/txs'
+import * as CML from '@anastasia-labs/cardano-multiplatform-lib-browser'
+import { Lucid, Data, coreToUtxo } from '@lucid-evolution/lucid'
+import {
+  createBurnDjedOrder,
+  createBurnShenOrder,
+  createMintDjedOrder,
+  createMintShenOrder,
+  registryByNetwork,
+} from '@reverse-djed/txs'
 import { Hono } from 'hono'
 import { env } from './env'
 import { z } from 'zod'
 import { MyBlockfrost } from '../../cli/src/blockfrost'
-import { OracleDatum, PoolDatum } from '@reverse-djed/data'
+import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import {
   djedADABurnRate,
   djedADAMintRate,
@@ -14,9 +20,32 @@ import {
   reserveRatio,
   shenADABurnRate,
   shenADAMintRate,
+  operatorFee as getOperatorFee,
 } from '@reverse-djed/math'
 
 const app = new Hono()
+
+const lucid = await Lucid(
+  new MyBlockfrost(
+    `https://cardano-${env.VITE_NETWORK.toLocaleLowerCase()}.blockfrost.io/api/v0`,
+    env.VITE_BLOCKFROST_PROJECT_ID,
+  ),
+  env.VITE_NETWORK,
+)
+const registry = registryByNetwork[env.VITE_NETWORK]
+
+const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
+if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
+const poolUTxO = {
+  ...rawPoolUTxO,
+  poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
+}
+const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
+if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
+const oracleUTxO = {
+  ...rawOracleUTxO,
+  oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
+}
 
 const tokenSchema = z.enum(['DJED', 'SHEN'])
 const actionSchema = z.enum(['mint', 'burn'])
@@ -24,56 +53,113 @@ const actionSchema = z.enum(['mint', 'burn'])
 app.get('/api/:token/:action/:quantity/data', (c) => {
   const token = tokenSchema.parse(c.req.param('token'))
   const action = actionSchema.parse(c.req.param('action'))
-  const quantity = BigInt(Math.floor(Number(c.req.param('quantity')) * 10e6))
+  const quantity = BigInt(Math.floor(Number(c.req.param('quantity')) * 10e5))
+  console.log(quantity)
   if (quantity < 0n) {
     throw new Error('Quantity must be positive number.')
   }
+  let baseCost = 0
+  let operatorFee = 0
+  if (token === 'DJED' && action === 'mint') {
+    baseCost = djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage)
+      .mul(quantity)
+      .div(BigInt(1e6))
+      .toNumber()
+    operatorFee =
+      Number(
+        getOperatorFee(
+          djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage),
+          registry.operatorFeeConfig,
+        ),
+      ) / 1e6
+  } else if (token === 'DJED' && action === 'burn') {
+    baseCost = djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage)
+      .mul(quantity)
+      .div(BigInt(1e6))
+      .toNumber()
+    operatorFee =
+      Number(
+        getOperatorFee(
+          djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage),
+          registry.operatorFeeConfig,
+        ),
+      ) / 1e6
+  } else if (token === 'SHEN' && action === 'mint') {
+    baseCost = shenADAMintRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintSHENFeePercentage)
+      .mul(quantity)
+      .div(BigInt(1e6))
+      .toNumber()
+    operatorFee =
+      Number(
+        getOperatorFee(
+          shenADAMintRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintSHENFeePercentage),
+          registry.operatorFeeConfig,
+        ),
+      ) / 1e6
+  } else if (token === 'SHEN' && action === 'burn') {
+    baseCost = shenADABurnRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.burnSHENFeePercentage)
+      .mul(quantity)
+      .div(BigInt(1e6))
+      .toNumber()
+    operatorFee =
+      Number(
+        getOperatorFee(
+          shenADABurnRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.burnSHENFeePercentage),
+          registry.operatorFeeConfig,
+        ),
+      ) / 1e6
+  }
   return c.json({
-    base_cost: 0,
-    operator_fee: 0n,
-    cost: 0,
-    min_ada: 0,
+    base_cost: baseCost,
+    // NOTE: Need to figure out how to share code between this and txs.
+    operator_fee: operatorFee,
+    cost: baseCost + operatorFee,
+    min_ada: Number(poolUTxO.poolDatum.minADA) / 1e6,
   })
 })
 
-const txRequestBodySchema = z.object({
-  address: z.string(),
-  utxos: z.array(z.string()),
-})
+const txRequestBodySchema = z
+  .object({
+    address: z.string(),
+    utxosCborHex: z.array(z.string()),
+  })
+  .transform(({ address, utxosCborHex }) => ({
+    address,
+    utxos: utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
+  }))
 
-app.post('/api/:token/:action/:quantity/tx', async (c) => {
+app.post('/api/:token/:action/:amount/tx', async (c) => {
   const token = tokenSchema.parse(c.req.param('token'))
   const action = actionSchema.parse(c.req.param('action'))
-  const quantity = BigInt(Math.floor(Number(c.req.param('quantity')) * 10e6))
-  if (quantity < 0n) {
+  const amount = BigInt(Math.floor(Number(c.req.param('amount')) * 10e6))
+  if (amount < 0n) {
     throw new Error('Quantity must be positive number.')
   }
   const { address, utxos } = txRequestBodySchema.parse(await c.req.json())
-  return c.text('<cbor-here>')
+  lucid.selectWallet.fromAddress(address, utxos)
+  const config = {
+    lucid,
+    registry,
+    amount: amount,
+    address,
+    oracleUTxO,
+    poolUTxO,
+    orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
+    now: Math.round((Date.now() - 20_000) / 1000) * 1000,
+  }
+  if (token === 'DJED') {
+    if (action === 'mint') {
+      return c.text((await (await createMintDjedOrder(config)).complete()).toCBOR())
+    }
+    return c.text((await (await createBurnDjedOrder(config)).complete()).toCBOR())
+  }
+  if (action === 'mint') {
+    return c.text((await (await createMintShenOrder(config)).complete()).toCBOR())
+  }
+  return c.text((await (await createBurnShenOrder(config)).complete()).toCBOR())
 })
 
 app.get('/api/protocol_data', async (c) => {
-  const lucid = await Lucid(
-    new MyBlockfrost(
-      `https://cardano-${env.VITE_NETWORK.toLocaleLowerCase()}.blockfrost.io/api/v0`,
-      env.VITE_BLOCKFROST_PROJECT_ID,
-    ),
-    env.VITE_NETWORK,
-  )
-  const registry = registryByNetwork[env.VITE_NETWORK]
-
-  const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
-  if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
-  const poolUTxO = {
-    ...rawPoolUTxO,
-    poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
-  }
-  const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
-  if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
-  const oracleUTxO = {
-    ...rawOracleUTxO,
-    oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
-  }
   return c.json({
     djed: {
       buy_price: djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
@@ -106,12 +192,19 @@ app.get('/api/protocol_data', async (c) => {
   })
 })
 
-app.get('/api/orders', (c) => {
-  return c.json([])
+app.get('/api/orders', async (c) => {
+  const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
+  const orderUTxOs = await Promise.all(
+    rawOrderUTxOs.map(async (o) => ({
+      ...o,
+      orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
+    })),
+  )
+  return c.json(orderUTxOs)
 })
 
 app.post('/api/cancel-order-tx/:order_out_ref', async (c) => {
-  const orderOutRef = tokenSchema.parse(c.req.param('order_out_ref'))
+  const orderOutRef = c.req.param('order_out_ref')
   const { address, utxos } = txRequestBodySchema.parse(await c.req.json())
   return c.text('<cbor-here>')
 })
