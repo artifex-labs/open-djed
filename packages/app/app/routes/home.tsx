@@ -1,4 +1,7 @@
+import { hc } from 'hono/client'
+import type { AppType } from '@reverse-djed/api'
 import type { Route } from './+types/home'
+import { useQuery } from '@tanstack/react-query'
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'Reverse DJED' }, { name: 'description', content: 'Welcome to reverse DJED!' }]
@@ -9,32 +12,45 @@ export function loader() {
 }
 
 const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
-  const { buyPrice = 0, sellPrice = 0, circulatingSupply = 0, mintableAmount = 0 } = {} // appData.tokenData[token]
+  const client = hc<AppType>('http://localhost:3002')
+  const { isPending, error, data } = useQuery({
+    queryKey: ['protocol-data'],
+    queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
+  })
+  if (isPending) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
   return (
     <div className="flex-column border-2 border-black rounded-md p-4 m-4 w-full">
       <span className="font-black">{token}</span>
       <br />
       <div className="flex justify-between">
         <span>Buy price</span>
-        <span>{buyPrice} ADA</span>
+        <span>{data[token].buy_price.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>Sell price</span>
-        <span>{sellPrice} ADA</span>
+        <span>{data[token].sell_price.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>Circulating supply</span>
-        <span>{circulatingSupply} DJED</span>
+        <span>{data[token].circulating_supply.toFixed(4)} DJED</span>
       </div>
       <div className="flex justify-between">
         <span>Mintable amount</span>
-        <span>{mintableAmount} DJED</span>
+        <span>{data[token].mintable_amount.toFixed(4)} DJED</span>
       </div>
     </div>
   )
 }
 
 export default function Home() {
+  const client = hc<AppType>('http://localhost:3002')
+  const { isPending, error, data } = useQuery({
+    queryKey: ['protocol-data'],
+    queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
+  })
+  if (isPending) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
   return (
     <div className="flex justify-center items-center w-full">
       <div className="w-1/2 flex-column border-2 border-black rounded-md p-4 m-4">
@@ -47,11 +63,11 @@ export default function Home() {
           <br />
           <div className="flex justify-between">
             <span>Ratio</span>
-            <span>457%</span>
+            <span>{Math.round(data.reserve.ratio * 100)}%</span>
           </div>
           <div className="flex justify-between">
             <span>Value</span>
-            <span>0 ADA</span>
+            <span>{data.reserve.amount.toFixed(4)} ADA</span>
           </div>
         </div>
       </div>

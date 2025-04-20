@@ -158,7 +158,7 @@ const app = new Hono()
   )
   .get('/api/protocol-data', async (c) => {
     return c.json({
-      djed: {
+      DJED: {
         buy_price: djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
         sell_price: djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage).toNumber(),
         circulating_supply: Number(poolUTxO.poolDatum.djedInCirculation) / 1e6,
@@ -167,7 +167,7 @@ const app = new Hono()
             maxMintableDJED(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage),
           ) / 1e6,
       },
-      shen: {
+      SHEN: {
         buy_price: shenADAMintRate(
           poolUTxO.poolDatum,
           oracleUTxO.oracleDatum,
