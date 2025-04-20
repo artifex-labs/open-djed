@@ -54,60 +54,39 @@ app.get('/api/:token/:action/:quantity/data', (c) => {
   const token = tokenSchema.parse(c.req.param('token'))
   const action = actionSchema.parse(c.req.param('action'))
   const quantity = BigInt(Math.floor(Number(c.req.param('quantity')) * 10e5))
-  console.log(quantity)
   if (quantity < 0n) {
     throw new Error('Quantity must be positive number.')
   }
   let baseCost = 0
   let operatorFee = 0
   if (token === 'DJED' && action === 'mint') {
-    baseCost = djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage)
-      .mul(quantity)
-      .div(BigInt(1e6))
-      .toNumber()
-    operatorFee =
-      Number(
-        getOperatorFee(
-          djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage),
-          registry.operatorFeeConfig,
-        ),
-      ) / 1e6
+    const baseCostRational = djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage).mul(
+      quantity,
+    )
+    baseCost = baseCostRational.div(BigInt(1e6)).toNumber()
+    operatorFee = Number(getOperatorFee(baseCostRational, registry.operatorFeeConfig)) / 1e6
   } else if (token === 'DJED' && action === 'burn') {
-    baseCost = djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage)
-      .mul(quantity)
-      .div(BigInt(1e6))
-      .toNumber()
-    operatorFee =
-      Number(
-        getOperatorFee(
-          djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage),
-          registry.operatorFeeConfig,
-        ),
-      ) / 1e6
+    const baseCostRational = djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage).mul(
+      quantity,
+    )
+    const baseCost = baseCostRational.div(BigInt(1e6)).toNumber()
+    operatorFee = Number(getOperatorFee(baseCostRational, registry.operatorFeeConfig)) / 1e6
   } else if (token === 'SHEN' && action === 'mint') {
-    baseCost = shenADAMintRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintSHENFeePercentage)
-      .mul(quantity)
-      .div(BigInt(1e6))
-      .toNumber()
-    operatorFee =
-      Number(
-        getOperatorFee(
-          shenADAMintRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintSHENFeePercentage),
-          registry.operatorFeeConfig,
-        ),
-      ) / 1e6
+    const baseCostRational = shenADAMintRate(
+      poolUTxO.poolDatum,
+      oracleUTxO.oracleDatum,
+      registry.mintSHENFeePercentage,
+    ).mul(quantity)
+    baseCost = baseCostRational.div(BigInt(1e6)).toNumber()
+    operatorFee = Number(getOperatorFee(baseCostRational, registry.operatorFeeConfig)) / 1e6
   } else if (token === 'SHEN' && action === 'burn') {
-    baseCost = shenADABurnRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.burnSHENFeePercentage)
-      .mul(quantity)
-      .div(BigInt(1e6))
-      .toNumber()
-    operatorFee =
-      Number(
-        getOperatorFee(
-          shenADABurnRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.burnSHENFeePercentage),
-          registry.operatorFeeConfig,
-        ),
-      ) / 1e6
+    const baseCostRational = shenADABurnRate(
+      poolUTxO.poolDatum,
+      oracleUTxO.oracleDatum,
+      registry.burnSHENFeePercentage,
+    ).mul(quantity)
+    baseCost = baseCostRational.div(BigInt(1e6)).toNumber()
+    operatorFee = Number(getOperatorFee(baseCostRational, registry.operatorFeeConfig)) / 1e6
   }
   return c.json({
     base_cost: baseCost,
