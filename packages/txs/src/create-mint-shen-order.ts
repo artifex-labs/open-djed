@@ -4,7 +4,7 @@ import { type Registry } from './registry'
 import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import type { OracleUTxO, PoolUTxO } from './types'
 
-export const createMintShenOrder = async ({
+export const createMintShenOrder = ({
   lucid,
   registry,
   amount,
@@ -22,7 +22,7 @@ export const createMintShenOrder = async ({
   poolUTxO: PoolUTxO
   orderMintingPolicyRefUTxO: UTxO
   now: number
-}): Promise<TxBuilder> => {
+}) => {
   const ttl = now + 3 * 60 * 1000 // 3 minutes
   const adaAmountToSend = shenADAMintRate(
     poolUTxO.poolDatum,

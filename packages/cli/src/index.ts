@@ -70,7 +70,7 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createMintDjedOrder({
+    const tx = createMintDjedOrder({
       lucid,
       registry,
       amount: BigInt(amount),
@@ -126,7 +126,7 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createMintShenOrder({
+    const tx = createMintShenOrder({
       lucid,
       registry,
       amount: BigInt(amount),
@@ -154,7 +154,7 @@ program
   .option('--sign', 'Sign the transaction')
   .option('--submit', 'Submit the transaction')
   .action(async (amount, options) => {
-    const tx = await createBurnShenOrder({
+    const tx = createBurnShenOrder({
       lucid,
       registry,
       amount: BigInt(amount),

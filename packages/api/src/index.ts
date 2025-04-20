@@ -128,14 +128,14 @@ app.post('/api/:token/:action/:amount/tx', async (c) => {
   }
   if (token === 'DJED') {
     if (action === 'mint') {
-      return c.text((await (await createMintDjedOrder(config)).complete()).toCBOR())
+      return c.text((await createMintDjedOrder(config).complete()).toCBOR())
     }
-    return c.text((await (await createBurnDjedOrder(config)).complete()).toCBOR())
+    return c.text((await createBurnDjedOrder(config).complete()).toCBOR())
   }
   if (action === 'mint') {
-    return c.text((await (await createMintShenOrder(config)).complete()).toCBOR())
+    return c.text((await createMintShenOrder(config).complete()).toCBOR())
   }
-  return c.text((await (await createBurnShenOrder(config)).complete()).toCBOR())
+  return c.text((await createBurnShenOrder(config).complete()).toCBOR())
 })
 
 app.get('/api/protocol_data', async (c) => {
