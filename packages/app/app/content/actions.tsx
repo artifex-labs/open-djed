@@ -8,7 +8,10 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
   const [amount, setAmount] = useState(0)
   const { isPending, error, data } = useQuery({
     queryKey: [token, action, amount, 'data'],
-    queryFn: () => client.api[':token'][':action'][':amount']['data'].$get({ param: { token, action, amount: amount.toString() } }).then((r) => r.json()),
+    queryFn: () =>
+      client.api[':token'][':action'][':amount']['data']
+        .$get({ param: { token, action, amount: amount.toString() } })
+        .then((r) => r.json()),
   })
   if (isPending) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
@@ -18,19 +21,19 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
       <br />
       <div className="flex justify-between">
         <span>Cost</span>
-        <span>{data.base_cost} ADA</span>
+        <span>{data.base_cost.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>Fees</span>
-        <span>{data.operator_fee} ADA</span>
+        <span>{data.operator_fee.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>You will pay</span>
-        <span>{data.cost}</span>
+        <span>{data.cost.toFixed(4)}</span>
       </div>
       <div className="flex justify-between">
         <span>Minimum ADA requirement</span>
-        <span>{data.min_ada} ADA</span>
+        <span>{data.min_ada.toFixed(4)} ADA</span>
       </div>
       <input
         className="border-1 border-black w-full my-4"

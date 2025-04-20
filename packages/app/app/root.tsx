@@ -43,7 +43,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
-    </QueryClientProvider >
+    </QueryClientProvider>
   )
 }
 

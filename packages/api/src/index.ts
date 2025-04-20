@@ -28,11 +28,10 @@ import {
   operatorFee as getOperatorFee,
 } from '@reverse-djed/math'
 
-const txRequestBodySchema = z
-  .object({
-    address: z.string(),
-    utxosCborHex: z.array(z.string()),
-  })
+const txRequestBodySchema = z.object({
+  address: z.string(),
+  utxosCborHex: z.array(z.string()),
+})
 
 const network = env.VITE_NETWORK
 
@@ -71,11 +70,12 @@ const actionSchema = z.enum(['mint', 'burn'])
 
 const app = new Hono()
   .use('/api/*', cors())
-  .get('/api/:token/:action/:amount/data',
+  .get(
+    '/api/:token/:action/:amount/data',
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     (c) => {
       const { token, action, amount: amountStr } = c.req.valid('param')
-      const amount = BigInt(amountStr)
+      const amount = BigInt(Math.round(Number(amountStr) * 1e6))
       if (amount < 0n) {
         throw new Error('Quantity must be positive number.')
       }
@@ -117,17 +117,23 @@ const app = new Hono()
         cost: baseCost + operatorFee,
         min_ada: Number(poolUTxO.poolDatum.minADA) / 1e6,
       })
-    })
-  .post('/api/:token/:action/:amount/tx',
-    zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.bigint() })),
+    },
+  )
+  .post(
+    '/api/:token/:action/:amount/tx',
+    zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
-      const { token, action, amount } = c.req.valid('param')
+      const { token, action, amount: amountStr } = c.req.valid('param')
+      const amount = BigInt(Math.round(Number(amountStr) * 1e6))
       if (amount < 0n) {
         throw new Error('Quantity must be positive number.')
       }
       const { address, utxosCborHex } = c.req.valid('json')
-      lucid.selectWallet.fromAddress(address, utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))))
+      lucid.selectWallet.fromAddress(
+        address,
+        utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
+      )
       const config = {
         lucid,
         registry,
@@ -148,7 +154,8 @@ const app = new Hono()
         return c.text((await createMintShenOrder(config).complete()).toCBOR())
       }
       return c.text((await createBurnShenOrder(config).complete()).toCBOR())
-    })
+    },
+  )
   .get('/api/protocol-data', async (c) => {
     return c.json({
       djed: {
@@ -210,7 +217,10 @@ const app = new Hono()
         throw new Error(`Couldn't find order utxo for ref ${orderUTxORef.txHash}#${orderUTxORef.outputIndex}`)
 
       const { address, utxosCborHex } = c.req.valid('json')
-      lucid.selectWallet.fromAddress(address, utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))))
+      lucid.selectWallet.fromAddress(
+        address,
+        utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
+      )
       return c.text(
         (
           await cancelOrderByOwner({
