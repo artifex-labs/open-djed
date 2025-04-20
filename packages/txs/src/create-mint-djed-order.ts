@@ -4,7 +4,7 @@ import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-d
 import { djedADAMintRate, operatorFee } from '@reverse-djed/math'
 import type { OracleUTxO, PoolUTxO } from './types'
 
-export const createMintDjedOrder = async ({
+export const createMintDjedOrder = ({
   lucid,
   registry,
   amount,
