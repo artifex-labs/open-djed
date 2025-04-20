@@ -1,6 +1,7 @@
 {
   "name": "@reverse-djed/api",
   "type": "module",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",

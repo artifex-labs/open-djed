@@ -11,6 +11,7 @@ import {
 } from '@reverse-djed/txs'
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
+import { cors } from 'hono/cors'
 import { env } from './env'
 import { z } from 'zod'
 // FIXME: This import.
@@ -69,6 +70,7 @@ const tokenSchema = z.enum(['DJED', 'SHEN'])
 const actionSchema = z.enum(['mint', 'burn'])
 
 const app = new Hono()
+  .use('/api/*', cors())
   .get('/api/:token/:action/:amount/data',
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     (c) => {
