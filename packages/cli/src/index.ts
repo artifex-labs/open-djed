@@ -10,7 +10,7 @@ import {
 } from '@reverse-djed/txs'
 import { MyBlockfrost } from './blockfrost'
 import { env } from './env'
-import { parseOutRef } from './utils'
+import { parseOutRef } from '@reverse-djed/txs'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import {
   djedADABurnRate,

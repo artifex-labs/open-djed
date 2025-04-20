@@ -6,10 +6,13 @@ import {
   createMintDjedOrder,
   createMintShenOrder,
   registryByNetwork,
+  parseOutRef,
+  cancelOrderByOwner,
 } from '@reverse-djed/txs'
 import { Hono } from 'hono'
 import { env } from './env'
 import { z } from 'zod'
+// FIXME: This import.
 import { MyBlockfrost } from '../../cli/src/blockfrost'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import {
@@ -25,14 +28,16 @@ import {
 
 const app = new Hono()
 
+const network = env.VITE_NETWORK
+
 const lucid = await Lucid(
   new MyBlockfrost(
-    `https://cardano-${env.VITE_NETWORK.toLocaleLowerCase()}.blockfrost.io/api/v0`,
+    `https://cardano-${network.toLocaleLowerCase()}.blockfrost.io/api/v0`,
     env.VITE_BLOCKFROST_PROJECT_ID,
   ),
-  env.VITE_NETWORK,
+  network,
 )
-const registry = registryByNetwork[env.VITE_NETWORK]
+const registry = registryByNetwork[network]
 
 const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
 if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
@@ -46,6 +51,14 @@ const oracleUTxO = {
   ...rawOracleUTxO,
   oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
 }
+
+const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
+const orderUTxOs = await Promise.all(
+  rawOrderUTxOs.map(async (o) => ({
+    ...o,
+    orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
+  })),
+)
 
 const tokenSchema = z.enum(['DJED', 'SHEN'])
 const actionSchema = z.enum(['mint', 'burn'])
@@ -69,7 +82,7 @@ app.get('/api/:token/:action/:quantity/data', (c) => {
     const baseCostRational = djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage).mul(
       quantity,
     )
-    const baseCost = baseCostRational.div(BigInt(1e6)).toNumber()
+    baseCost = baseCostRational.div(BigInt(1e6)).toNumber()
     operatorFee = Number(getOperatorFee(baseCostRational, registry.operatorFeeConfig)) / 1e6
   } else if (token === 'SHEN' && action === 'mint') {
     const baseCostRational = shenADAMintRate(
@@ -172,20 +185,40 @@ app.get('/api/protocol_data', async (c) => {
 })
 
 app.get('/api/orders', async (c) => {
-  const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
-  const orderUTxOs = await Promise.all(
-    rawOrderUTxOs.map(async (o) => ({
-      ...o,
-      orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
+  return c.json(
+    orderUTxOs.map((o) => ({
+      date: Number(o.orderDatum.creationDate),
+      txHash: o.txHash,
+      action:
+        'MintDJED' in o.orderDatum.actionFields || 'MintSHEN' in o.orderDatum.actionFields ? 'Mint' : 'Burn',
+      status: 'Pending',
     })),
   )
-  return c.json(orderUTxOs)
 })
 
 app.post('/api/cancel-order-tx/:order_out_ref', async (c) => {
-  const orderOutRef = c.req.param('order_out_ref')
+  const orderUTxORef = parseOutRef(c.req.param('order_out_ref'))
+  const orderUTxO = orderUTxOs.find(
+    (o) => o.txHash === orderUTxORef.txHash && o.outputIndex === orderUTxORef.outputIndex,
+  )
+
+  if (!orderUTxO)
+    throw new Error(`Couldn't find order utxo for ref ${orderUTxORef.txHash}#${orderUTxORef.outputIndex}`)
+
   const { address, utxos } = txRequestBodySchema.parse(await c.req.json())
-  return c.text('<cbor-here>')
+  lucid.selectWallet.fromAddress(address, utxos)
+  return c.text(
+    (
+      await cancelOrderByOwner({
+        lucid,
+        registry,
+        orderUTxO,
+        orderSpendingValidatorRefUTxO: registry.orderSpendingValidatorRefUTxO,
+        orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
+        network,
+      }).complete()
+    ).toCBOR(),
+  )
 })
 
 export default app
