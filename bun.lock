@@ -378,7 +378,7 @@
 
     "@multiformats/multiaddr": ["@multiformats/multiaddr@12.4.0", "", { "dependencies": { "@chainsafe/is-ip": "^2.0.1", "@chainsafe/netmask": "^2.0.0", "@multiformats/dns": "^1.0.3", "multiformats": "^13.0.0", "uint8-varint": "^2.0.1", "uint8arrays": "^5.0.0" } }, "sha512-FL7yBTLijJ5JkO044BGb2msf+uJLrwpD6jD6TkXlbjA9N12+18HT40jvd4o5vL4LOJMc86dPX6tGtk/uI9kYKg=="],
 
-    "@noble/hashes": ["@noble/hashes@1.7.2", "", {}, "sha512-biZ0NUSxyjLLqo6KxEJ1b+C2NAx0wtDoFvCaXHGgUkeHzf3Xc1xKumFKREuT7f7DARNZ/slvYUwFG6B0f2b6hQ=="],
+    "@noble/hashes": ["@noble/hashes@1.8.0", "", {}, "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="],
 
     "@npmcli/git": ["@npmcli/git@4.1.0", "", { "dependencies": { "@npmcli/promise-spawn": "^6.0.0", "lru-cache": "^7.4.4", "npm-pick-manifest": "^8.0.0", "proc-log": "^3.0.0", "promise-inflight": "^1.0.1", "promise-retry": "^2.0.1", "semver": "^7.3.5", "which": "^3.0.0" } }, "sha512-9hwoB3gStVfa0N31ymBmrX+GuDGdVA/QWShZVqE0HK2Af+7QGGrCTbZia/SW0ImUTjTne7SP91qxDmtXvDHRPQ=="],
 
