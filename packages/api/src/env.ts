@@ -3,10 +3,10 @@ import { z } from 'zod'
 
 export const env = createEnv({
   client: {
-    VITE_NETWORK: z.enum(['Mainnet', 'Preprod']),
-    VITE_BLOCKFROST_URL: z.string().url(),
-    VITE_BLOCKFROST_PROJECT_ID: z.string(),
+    NETWORK: z.enum(['Mainnet', 'Preprod']),
+    BLOCKFROST_URL: z.string().url(),
+    BLOCKFROST_PROJECT_ID: z.string(),
   },
-  clientPrefix: 'VITE_',
+  clientPrefix: '',
   runtimeEnv: process.env,
 })

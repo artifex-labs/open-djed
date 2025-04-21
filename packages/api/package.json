@@ -3,10 +3,9 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "bun run build && vite preview",
-    "deploy": "bun run build && wrangler deploy"
+    "dev": "wrangler dev",
+    "preview": "wrangler preview",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.3"
@@ -14,10 +13,7 @@
   "devDependencies": {
     "@t3-oss/env-core": "^0.12.0",
     "hono": "^4.7.6",
-    "@cloudflare/vite-plugin": "^1.0.7",
     "@cloudflare/workers-types": "^4.20250214.0",
-    "vite": "^6.3.0",
-    "vite-plugin-wasm": "^3.4.1",
     "wrangler": "^4.4.0"
   }
 }

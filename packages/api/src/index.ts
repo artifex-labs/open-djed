@@ -32,34 +32,44 @@ const txRequestBodySchema = z.object({
   utxosCborHex: z.array(z.string()),
 })
 
-const network = env.VITE_NETWORK
+const network = env.NETWORK
 
-const blockfrost = new Blockfrost(env.VITE_BLOCKFROST_URL, env.VITE_BLOCKFROST_PROJECT_ID)
-const lucid = await Lucid(blockfrost, network)
+const blockfrost = new Blockfrost(env.BLOCKFROST_URL, env.BLOCKFROST_PROJECT_ID)
 const registry = registryByNetwork[network]
 
-const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
-if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
-const poolUTxO = {
-  ...rawPoolUTxO,
-  poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
-}
-const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
-if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
-const oracleUTxO = {
-  ...rawOracleUTxO,
-  oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
-}
+export const getContext = async () => {
+  const lucid = await Lucid(blockfrost, network)
 
-const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
-const orderUTxOs = await Promise.all(
-  rawOrderUTxOs.map(async (o) => ({
-    ...o,
-    orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
-  })),
-)
+  const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
+  if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
+  const poolUTxO = {
+    ...rawPoolUTxO,
+    poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
+  }
+  const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
+  if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
+  const oracleUTxO = {
+    ...rawOracleUTxO,
+    oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
+  }
 
-const now = slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
+  const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
+  const orderUTxOs = await Promise.all(
+    rawOrderUTxOs.map(async (o) => ({
+      ...o,
+      orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
+    })),
+  )
+
+  const now = slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
+  return {
+    lucid,
+    poolUTxO,
+    oracleUTxO,
+    orderUTxOs,
+    now,
+  }
+}
 
 const tokenSchema = z.enum(['DJED', 'SHEN'])
 const actionSchema = z.enum(['mint', 'burn'])
@@ -69,7 +79,8 @@ const app = new Hono()
   .get(
     '/api/:token/:action/:amount/data',
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
-    (c) => {
+    async (c) => {
+      const { oracleUTxO, poolUTxO } = await getContext()
       const { token, action, amount: amountStr } = c.req.valid('param')
       const amount = BigInt(Math.round(Number(amountStr) * 1e6))
       if (amount < 0n) {
@@ -120,6 +131,7 @@ const app = new Hono()
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
+      const { oracleUTxO, poolUTxO, now, lucid } = await getContext()
       const { token, action, amount: amountStr } = c.req.valid('param')
       const amount = BigInt(Math.round(Number(amountStr) * 1e6))
       if (amount < 0n) {
@@ -153,6 +165,7 @@ const app = new Hono()
     },
   )
   .get('/api/protocol-data', async (c) => {
+    const { oracleUTxO, poolUTxO } = await getContext()
     return c.json({
       DJED: {
         buy_price: djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
@@ -187,6 +200,7 @@ const app = new Hono()
     })
   })
   .get('/api/orders', async (c) => {
+    const { orderUTxOs } = await getContext()
     return c.json(
       orderUTxOs.map((o) => ({
         date: Number(o.orderDatum.creationDate),
@@ -204,6 +218,7 @@ const app = new Hono()
     zValidator('param', z.object({ order_out_ref: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
+      const { orderUTxOs, lucid } = await getContext()
       const orderUTxORef = parseOutRef(c.req.valid('param').order_out_ref)
       const orderUTxO = orderUTxOs.find(
         (o) => o.txHash === orderUTxORef.txHash && o.outputIndex === orderUTxORef.outputIndex,
