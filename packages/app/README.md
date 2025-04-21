@@ -6,9 +6,12 @@ TODO:
 
 - [ ] Implement layout.
 - [ ] Integrate wallet support.
-- [ ] Support Testnet (Preprod).
+- [ ] Support Testnet (Preprod) with a select next to home logo.
 - [ ] Show user's pending orders.
 - [ ] Allow cancelling orders.
+- [ ] Refactor hono client usage, use shared context.
+- [ ] Environment variables for API address and port.
+- [ ] Fix weird re-render on djed and shen page when introducing numbers.
 - [x] Show DJED price (in ADA).
 - [x] Show DJED circulating supply.
 - [x] Show DJED mintable amount.

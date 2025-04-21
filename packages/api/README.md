@@ -6,8 +6,7 @@ TODO:
 
 - [ ] Separate Mainnet and Preprod production deployments.
 - [ ] Deploy Mainnet and Preprod staging deployments of API and app per PR.
-- [ ] Poll and cache order, pool and oracle UTxOs from SaaS Blockfrost and precompute as much data as possible.
-- [ ] Failover to Demeter in case SaaS Blockfrost is down.
+- [ ] Poll data on demand.
 - [x] API endpoints.
   - [x] Get orders.
   - [x] Get protocol data.
