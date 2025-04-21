@@ -5,7 +5,9 @@ export const env = createEnv({
   client: {
     ADDRESS: z.string().optional(),
     SEED: z.string().optional(),
-    NETWORK: z.enum(['Mainnet', 'Preprod']).default('Preprod'),
+    NETWORK: z.enum(['Mainnet', 'Preprod']),
+    BLOCKFROST_URL: z.string().url(),
+    BLOCKFROST_PROJECT_ID: z.string(),
   },
   clientPrefix: '',
   runtimeEnv: process.env,

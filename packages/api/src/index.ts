@@ -1,5 +1,5 @@
 import * as CML from '@anastasia-labs/cardano-multiplatform-lib-browser'
-import { Lucid, Data, coreToUtxo } from '@lucid-evolution/lucid'
+import { Lucid, Data, coreToUtxo, slotToUnixTime } from '@lucid-evolution/lucid'
 import {
   createBurnDjedOrder,
   createBurnShenOrder,
@@ -14,8 +14,7 @@ import { zValidator } from '@hono/zod-validator'
 import { cors } from 'hono/cors'
 import { env } from './env'
 import { z } from 'zod'
-// FIXME: This import.
-import { MyBlockfrost } from '../../cli/src/blockfrost'
+import { Blockfrost } from '@reverse-djed/blockfrost'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import {
   djedADABurnRate,
@@ -35,13 +34,8 @@ const txRequestBodySchema = z.object({
 
 const network = env.VITE_NETWORK
 
-const lucid = await Lucid(
-  new MyBlockfrost(
-    `https://cardano-${network.toLocaleLowerCase()}.blockfrost.io/api/v0`,
-    env.VITE_BLOCKFROST_PROJECT_ID,
-  ),
-  network,
-)
+const blockfrost = new Blockfrost(env.VITE_BLOCKFROST_URL, env.VITE_BLOCKFROST_PROJECT_ID)
+const lucid = await Lucid(blockfrost, network)
 const registry = registryByNetwork[network]
 
 const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
@@ -64,6 +58,8 @@ const orderUTxOs = await Promise.all(
     orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
   })),
 )
+
+const now = slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
 
 const tokenSchema = z.enum(['DJED', 'SHEN'])
 const actionSchema = z.enum(['mint', 'burn'])
@@ -142,7 +138,7 @@ const app = new Hono()
         oracleUTxO,
         poolUTxO,
         orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
-        now: Math.round((Date.now() - 20_000) / 1000) * 1000,
+        now,
       }
       if (token === 'DJED') {
         if (action === 'mint') {

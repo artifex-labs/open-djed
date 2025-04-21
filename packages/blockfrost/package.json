@@ -1,0 +1,10 @@
+{
+  "name": "@reverse-djed/blockfrost",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {},
+  "dependencies": {
+    "zod": "^3.24.2"
+  }
+}

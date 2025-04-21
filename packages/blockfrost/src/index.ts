@@ -1,10 +1,35 @@
-import { Blockfrost, type RedeemerTag } from '@lucid-evolution/lucid'
+import * as Lucid from '@lucid-evolution/lucid'
 import { type EvalRedeemer, type Transaction, type UTxO } from '@lucid-evolution/core-types'
-import packageJson from '../package.json' with { type: 'json' }
+import packageJson from '../../cli/package.json' with { type: 'json' }
+import { z } from 'zod'
 
-export class MyBlockfrost extends Blockfrost {
+const BlockSchema = z.object({
+  slot: z.number(),
+})
+
+export const getLatestBlockSlot = ({
+  url,
+  projectId,
+  lucid,
+}: {
+  url: string
+  projectId?: string
+  lucid: string
+}) =>
+  fetch(`${url}/blocks/latest`, {
+    headers: {
+      ...(projectId ? { project_id: projectId } : {}),
+      lucid,
+    },
+  }).then(async (res) => BlockSchema.parse(await res.json()).slot)
+
+export class Blockfrost extends Lucid.Blockfrost {
   constructor(url: string, projectId?: string) {
     super(url, projectId)
+  }
+
+  getLatestBlockSlot() {
+    return getLatestBlockSlot({ url: this.url, projectId: this.projectId, lucid })
   }
 
   async evaluateTx(
@@ -71,7 +96,7 @@ const lucid = packageJson.version // Lucid version
 
 export type LegacyRedeemerTag = 'spend' | 'mint' | 'certificate' | 'withdrawal'
 
-export const fromLegacyRedeemerTag = (redeemerTag: LegacyRedeemerTag): RedeemerTag => {
+export const fromLegacyRedeemerTag = (redeemerTag: LegacyRedeemerTag) => {
   switch (redeemerTag) {
     case 'certificate':
       return 'publish'

@@ -1,4 +1,4 @@
-import { Data, Lucid, getAddressDetails, type UTxO } from '@lucid-evolution/lucid'
+import { Data, Lucid, getAddressDetails, slotToUnixTime, type UTxO } from '@lucid-evolution/lucid'
 import { program } from 'commander'
 import {
   createMintDjedOrder,
@@ -8,7 +8,7 @@ import {
   registryByNetwork,
   cancelOrderByOwner,
 } from '@reverse-djed/txs'
-import { MyBlockfrost } from './blockfrost'
+import { Blockfrost } from '../../blockfrost/src'
 import { env } from './env'
 import { parseOutRef } from '@reverse-djed/txs'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
@@ -23,21 +23,13 @@ import {
   shenADAMintRate,
 } from '@reverse-djed/math'
 
-const blockfrostProjectIdByNetwork = {
-  Mainnet: 'mainnet6nn5cOiVycGeknLTOBNbmw1fgTeoQWfo',
-  Preprod: 'preprodmAhR2Rq99LM1WGxB9DXVS2WOILme1hZF',
-}
-const blockfrostProjectId = blockfrostProjectIdByNetwork[env.NETWORK]
 console.log(
-  `Initializing Lucid with Blockfrost for network "${env.NETWORK}" using project id "${blockfrostProjectId}".`,
+  `Initializing Lucid with Blockfrost for network "${env.NETWORK}" using project id "${env.BLOCKFROST_PROJECT_ID.slice(8)}...".`,
 )
-const lucid = await Lucid(
-  new MyBlockfrost(
-    `https://cardano-${env.NETWORK.toLocaleLowerCase()}.blockfrost.io/api/v0`,
-    blockfrostProjectId,
-  ),
-  env.NETWORK,
-)
+
+const blockfrost = new Blockfrost(env.BLOCKFROST_URL, env.BLOCKFROST_PROJECT_ID)
+
+const lucid = await Lucid(blockfrost, env.NETWORK)
 console.log('Finished initializing Lucid.')
 const registry = registryByNetwork[env.NETWORK]
 
@@ -60,7 +52,7 @@ const oracleUTxO = {
   oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
 }
 
-const now = Math.round((Date.now() - 20_000) / 1000) * 1000
+const now = slotToUnixTime(env.NETWORK, await blockfrost.getLatestBlockSlot())
 
 const { orderMintingPolicyRefUTxO, orderSpendingValidatorRefUTxO } = registry
 
