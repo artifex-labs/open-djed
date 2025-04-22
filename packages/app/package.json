@@ -11,25 +11,25 @@
     "typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
   },
   "dependencies": {
-    "@lucid-evolution/lucid": "^0.4.26",
+    "@lucid-evolution/lucid": "^0.4.27",
     "@tanstack/react-query": "^5.74.4",
-    "isbot": "^5.1.17",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router": "^7.5.0"
+    "isbot": "^5.1.26",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.5.1"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.0.0",
-    "@cloudflare/workers-types": "^4.20250413.0",
-    "@react-router/dev": "^7.5.0",
-    "@tailwindcss/vite": "^4.0.0",
-    "@types/node": "^20",
-    "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.1",
-    "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.2",
-    "vite": "^6.2.1",
+    "@cloudflare/vite-plugin": "^1.0.9",
+    "@cloudflare/workers-types": "^4.20250422.0",
+    "@react-router/dev": "^7.5.1",
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/node": "^20.17.30",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "tailwindcss": "^4.1.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^4.10.0"
+    "wrangler": "^4.12.1"
   }
 }

@@ -5,6 +5,6 @@
   "scripts": {},
   "type": "module",
   "dependencies": {
-    "@lucid-evolution/lucid": "^0.4.25"
+    "@lucid-evolution/lucid": "^0.4.27"
   }
 }
