@@ -15,7 +15,7 @@
   },
   "routes": [
     {
-      "pattern": "djed.kylix.dev",
+      "pattern": "djed.artifex.finance",
       "custom_domain": true,
     },
   ],
