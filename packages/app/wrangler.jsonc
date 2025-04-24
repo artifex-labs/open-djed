@@ -7,7 +7,10 @@
   "name": "reverse-djed-app",
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
-  "vars": {},
+  "vars": {
+    "API_URL": "https://api.djed.artifex.finance",
+    "NETWORK": "Mainnet",
+  },
   "observability": {
     "logs": {
       "enabled": true,
@@ -19,6 +22,20 @@
       "custom_domain": true,
     },
   ],
+  "env": {
+    "preprod": {
+      "routes": [
+        {
+          "pattern": "preprod.djed.artifex.finance",
+          "custom_domain": true,
+        },
+      ],
+      "vars": {
+        "API_URL": "https://preprod.api.djed.artifex.finance",
+        "NETWORK": "Preprod",
+      },
+    },
+  },
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

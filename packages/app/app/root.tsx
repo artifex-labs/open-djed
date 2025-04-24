@@ -1,10 +1,19 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router'
 
 import type { Route } from './+types/root'
 import './app.css'
 import { Header } from './nav/header'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 import { hc } from 'hono/client'
 import type { AppType } from '@reverse-djed/api'
 
@@ -21,7 +30,32 @@ export const links: Route.LinksFunction = () => [
   },
 ]
 
-export const ClientContext = createContext(hc<AppType>('http://localhost:3002'))
+type LoaderData = {
+  apiUrl: string
+  network: string
+}
+
+export async function loader({ context }: LoaderFunctionArgs): Promise<LoaderData> {
+  const { API_URL, NETWORK } = context.cloudflare.env
+  if (!API_URL || !NETWORK) throw new Error('Missing env vars')
+
+  return { apiUrl: API_URL, network: NETWORK }
+}
+
+export const ClientContext = createContext<ReturnType<typeof hc<AppType>> | null>(null)
+export const EnvContext = createContext<{ apiUrl: string; network: string } | null>(null)
+
+export const useApiClient = () => {
+  const ctx = useContext(ClientContext)
+  if (!ctx) throw new Error('ClientContext not found')
+  return ctx
+}
+
+export const useEnv = () => {
+  const ctx = useContext(EnvContext)
+  if (!ctx) throw new Error('EnvContext not found')
+  return ctx
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -45,10 +79,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 const queryClient = new QueryClient()
 
 export default function App() {
+  const { apiUrl, network } = useLoaderData() as LoaderData
+
+  const client = hc<AppType>(apiUrl)
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />
-    </QueryClientProvider>
+    <EnvContext.Provider value={{ apiUrl, network }}>
+      <ClientContext.Provider value={client}>
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
+      </ClientContext.Provider>
+    </EnvContext.Provider>
   )
 }
 
