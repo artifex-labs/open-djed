@@ -1,7 +1,7 @@
-import { hc } from 'hono/client'
-import type { AppType } from '@reverse-djed/api'
 import type { Route } from './+types/home'
 import { useQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
+import { ClientContext } from '~/root'
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'Reverse DJED' }, { name: 'description', content: 'Welcome to reverse DJED!' }]
@@ -12,7 +12,7 @@ export function loader() {
 }
 
 const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
-  const client = hc<AppType>('http://localhost:3002')
+  const client = useContext(ClientContext)
   const { isPending, error, data } = useQuery({
     queryKey: ['protocol-data'],
     queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
@@ -44,7 +44,7 @@ const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
 }
 
 export default function Home() {
-  const client = hc<AppType>('http://localhost:3002')
+  const client = useContext(ClientContext)
   const { isPending, error, data } = useQuery({
     queryKey: ['protocol-data'],
     queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),

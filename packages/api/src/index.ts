@@ -71,6 +71,7 @@ export const getContext = async () => {
   }
 }
 
+
 const tokenSchema = z.enum(['DJED', 'SHEN'])
 const actionSchema = z.enum(['mint', 'burn'])
 
