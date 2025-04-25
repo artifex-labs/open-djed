@@ -4,14 +4,21 @@ Package holding reverse-djed web app.
 
 TODO:
 
-- [ ] Implement layout.
-- [ ] Integrate wallet support.
-- [ ] Support Testnet (Preprod) with a select next to home logo.
+- [x] Implement layout.
+- [x] Integrate wallet support.
+- [x] Support Testnet (Preprod) with a select next to home logo.
 - [ ] Show user's pending orders.
 - [ ] Allow cancelling orders.
-- [ ] Refactor hono client usage, use shared context.
-- [ ] Environment variables for API address and port.
+- [ ] Fix auto-deploy from `main`.
+- [ ] Auto-deploy for both environments from PRs.
+- [x] Refactor hono client usage, use shared context.
+- [x] Environment variables for API address
+- [ ] Environment variable for API port.
 - [ ] Fix weird re-render on djed and shen page when introducing numbers.
+- [ ] Clean up logo.
+- [ ] Clean up wallet connect colors.
+- [ ] Dark mode.
+- [ ] Support minting both, burning both.
 - [x] Show DJED price (in ADA).
 - [x] Show DJED circulating supply.
 - [x] Show DJED mintable amount.
