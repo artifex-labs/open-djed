@@ -1,18 +1,13 @@
 import type { Route } from './+types/home'
 import { useQuery } from '@tanstack/react-query'
-import { useContext } from 'react'
-import { ClientContext } from '~/root'
+import { useApiClient } from '~/root'
 
-export function meta({}: Route.MetaArgs) {
+export function meta(_: Route.MetaArgs) {
   return [{ title: 'Reverse DJED' }, { name: 'description', content: 'Welcome to reverse DJED!' }]
 }
 
-export function loader() {
-  return {}
-}
-
 const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
-  const client = useContext(ClientContext)
+  const client = useApiClient()
   const { isPending, error, data } = useQuery({
     queryKey: ['protocol-data'],
     queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
@@ -44,7 +39,7 @@ const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
 }
 
 export default function Home() {
-  const client = useContext(ClientContext)
+  const client = useApiClient()
   const { isPending, error, data } = useQuery({
     queryKey: ['protocol-data'],
     queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),

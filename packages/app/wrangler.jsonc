@@ -10,6 +10,10 @@
   "vars": {
     "API_URL": "https://api.djed.artifex.finance",
     "NETWORK": "Mainnet",
+    "CONFIG": {
+      "Mainnet": "https://djed.artifex.finance",
+      "Preprod": "https://preprod.djed.artifex.finance",
+    },
   },
   "observability": {
     "logs": {

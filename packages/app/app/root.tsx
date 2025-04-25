@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createContext, useContext } from 'react'
 import { hc } from 'hono/client'
 import type { AppType } from '@reverse-djed/api'
+import type { Network } from '@reverse-djed/txs'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -32,18 +33,23 @@ export const links: Route.LinksFunction = () => [
 
 type LoaderData = {
   apiUrl: string
-  network: string
+  network: Network
+  config: Record<string, string>
 }
 
-export async function loader({ context }: LoaderFunctionArgs): Promise<LoaderData> {
-  const { API_URL, NETWORK } = context.cloudflare.env
+export function loader({ context }: LoaderFunctionArgs): LoaderData {
+  const { API_URL, NETWORK, CONFIG } = context.cloudflare.env
   if (!API_URL || !NETWORK) throw new Error('Missing env vars')
 
-  return { apiUrl: API_URL, network: NETWORK }
+  return { apiUrl: API_URL, network: NETWORK, config: JSON.parse(CONFIG) }
 }
 
 export const ClientContext = createContext<ReturnType<typeof hc<AppType>> | null>(null)
-export const EnvContext = createContext<{ apiUrl: string; network: string } | null>(null)
+export const EnvContext = createContext<{
+  apiUrl: string
+  network: Network
+  config: Record<string, string>
+} | null>(null)
 
 export const useApiClient = () => {
   const ctx = useContext(ClientContext)
@@ -58,6 +64,8 @@ export const useEnv = () => {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { apiUrl, network, config } = useLoaderData<LoaderData>()
+
   return (
     <html lang="en">
       <head>
@@ -67,10 +75,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header />
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+        <EnvContext.Provider value={{ apiUrl, network, config }}>
+          <Header />
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </EnvContext.Provider>
       </body>
     </html>
   )
@@ -79,18 +89,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 const queryClient = new QueryClient()
 
 export default function App() {
-  const { apiUrl, network } = useLoaderData() as LoaderData
+  const { apiUrl } = useLoaderData<LoaderData>()
 
   const client = hc<AppType>(apiUrl)
 
   return (
-    <EnvContext.Provider value={{ apiUrl, network }}>
-      <ClientContext.Provider value={client}>
-        <QueryClientProvider client={queryClient}>
-          <Outlet />
-        </QueryClientProvider>
-      </ClientContext.Provider>
-    </EnvContext.Provider>
+    <ClientContext.Provider value={client}>
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    </ClientContext.Provider>
   )
 }
 

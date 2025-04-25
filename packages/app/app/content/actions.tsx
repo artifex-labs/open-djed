@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useContext } from 'react'
-import { ClientContext } from '~/root'
+import { useApiClient } from '~/root'
 
 const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'SHEN' }) => {
   const [amount, setAmount] = useState(0)
-  const client = useContext(ClientContext)
+  const client = useApiClient()
 
   const { isPending, error, data } = useQuery({
     queryKey: [token, action, amount, 'data'],
