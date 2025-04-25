@@ -1,11 +1,11 @@
-import type { AppType } from '@reverse-djed/api'
 import { useState } from 'react'
-import { hc } from 'hono/client'
 import { useQuery } from '@tanstack/react-query'
+import { useApiClient } from '~/root'
 
 const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'SHEN' }) => {
   const [amount, setAmount] = useState(0)
-  const client = hc<AppType>('http://localhost:3002')
+  const client = useApiClient()
+
   const { isPending, error, data } = useQuery({
     queryKey: [token, action, amount, 'data'],
     queryFn: () =>

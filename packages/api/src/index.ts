@@ -12,6 +12,7 @@ import {
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { cors } from 'hono/cors'
+import { logger } from 'hono/logger'
 import { env } from './env'
 import { z } from 'zod'
 import { Blockfrost } from '@reverse-djed/blockfrost'
@@ -75,9 +76,11 @@ const tokenSchema = z.enum(['DJED', 'SHEN'])
 const actionSchema = z.enum(['mint', 'burn'])
 
 const app = new Hono()
-  .use('/api/*', cors())
+  .basePath('/api')
+  .use(cors())
+  .use(logger())
   .get(
-    '/api/:token/:action/:amount/data',
+    '/:token/:action/:amount/data',
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     async (c) => {
       const { oracleUTxO, poolUTxO } = await getContext()
@@ -127,7 +130,7 @@ const app = new Hono()
     },
   )
   .post(
-    '/api/:token/:action/:amount/tx',
+    '/:token/:action/:amount/tx',
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
@@ -164,7 +167,7 @@ const app = new Hono()
       return c.text((await createBurnShenOrder(config).complete()).toCBOR())
     },
   )
-  .get('/api/protocol-data', async (c) => {
+  .get('/protocol-data', async (c) => {
     const { oracleUTxO, poolUTxO } = await getContext()
     return c.json({
       DJED: {
@@ -199,7 +202,7 @@ const app = new Hono()
       },
     })
   })
-  .get('/api/orders', async (c) => {
+  .get('/orders', async (c) => {
     const { orderUTxOs } = await getContext()
     return c.json(
       orderUTxOs.map((o) => ({
@@ -214,7 +217,7 @@ const app = new Hono()
     )
   })
   .post(
-    '/api/cancel-order-tx/:order_out_ref',
+    '/cancel-order-tx/:order_out_ref',
     zValidator('param', z.object({ order_out_ref: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
