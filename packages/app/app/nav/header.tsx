@@ -17,10 +17,15 @@ const networkIds = {
   Mainnet: 1,
 } as const
 
-export const Header = () => {
+export const Header = ({
+  setWallet,
+  wallet,
+}: {
+  setWallet: (wallet: WalletApi) => void
+  wallet: WalletApi | null
+}) => {
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
   const [isOpen, setOpen] = useState(false)
-  const [walletApi, setWalletApi] = useState<WalletApi | null>(null)
   const [balance, setBalance] = useState<number>(0)
   const { network, config } = useEnv()
 
@@ -43,7 +48,7 @@ export const Header = () => {
   const connect = async (id: string) => {
     try {
       const api = await window.cardano[id].enable()
-      setWalletApi(api)
+      setWallet(api)
       setOpen(false)
 
       const balance = decode<number>(await api.getBalance()) / 10 ** 6
@@ -94,7 +99,7 @@ export const Header = () => {
         </ul>
       </nav>
       <Button onClick={() => setOpen(true)} className="w-48">
-        {walletApi ? `${balance}$` : 'Connect your wallet'}
+        {wallet ? `${balance}$` : 'Connect your wallet'}
       </Button>
       <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
         <div className="grid gap-4">

@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useApiClient } from '~/root'
+import { WalletContext, useApiClient } from '~/root'
+import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
 
 const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'SHEN' }) => {
   const [amount, setAmount] = useState(0)
@@ -13,6 +14,7 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
         .$get({ param: { token, action, amount: amount.toString() } })
         .then((r) => r.json()),
   })
+  const wallet = useContext(WalletContext)
   if (isPending) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   return (
@@ -42,7 +44,29 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
         onChange={(i) => setAmount(Number(i.target.value))}
       ></input>
       <br />
-      <button className="border-1 border-black rounded-md p-2 w-full font-bold">{action}</button>
+      <button
+        className="border-1 border-black rounded-md p-2 w-full font-bold"
+        onClick={async () => {
+          if (!wallet) return
+          const hexAddress = await wallet.getChangeAddress()
+          const address = CML.Address.from_hex(hexAddress).to_bech32()
+          console.log('address ', address)
+          const utxosCborHex = await wallet.getUtxos()
+          console.log('utxos cbor hex ', utxosCborHex)
+          if (!utxosCborHex) return
+          const txCbor = await client.api[':token'][':action'][':amount']['tx']
+            .$post({ param: { token, action, amount: amount.toString() }, json: { address, utxosCborHex } })
+            .then((r) => r.text())
+          console.log('tx cbor ', txCbor)
+          const signedTx = await wallet.signTx(txCbor, false)
+          console.log('signed tx cbor ', signedTx)
+          const txHash = await wallet.submitTx(signedTx)
+          console.log('tx hash ', txHash)
+        }}
+        disabled={wallet === null || amount <= 0}
+      >
+        {action}
+      </button>
     </div>
   )
 }
