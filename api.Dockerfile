@@ -16,7 +16,7 @@ COPY packages/cli/package.json ./packages/cli/
 
 RUN bun i --frozen-lockfile
 
-FROM oven/bun:1-slim
+FROM node:22-slim
 
 WORKDIR /usr/src/app
 
@@ -26,4 +26,4 @@ WORKDIR /usr/src/app/packages/api
 
 EXPOSE 8080
 
-ENTRYPOINT ["bun", "src/index.ts"]
+ENTRYPOINT ["npm", "run", "start"]

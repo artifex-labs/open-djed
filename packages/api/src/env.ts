@@ -6,7 +6,7 @@ export const env = createEnv({
     NETWORK: z.enum(['Mainnet', 'Preprod']),
     BLOCKFROST_URL: z.string().url(),
     BLOCKFROST_PROJECT_ID: z.string(),
-    PORT: z.number().default(8080),
+    PORT: z.string().transform((port) => Number(port)).default("8080"),
   },
   clientPrefix: '',
   runtimeEnv: process.env,
