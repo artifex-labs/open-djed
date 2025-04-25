@@ -1,48 +1,47 @@
-import type { WalletApi } from '@lucid-evolution/lucid';
-import { useEffect, useState } from 'react';
+import type { WalletApi } from '@lucid-evolution/lucid'
+import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
-import Button from '~/components/Button';
-import Modal from '~/components/Modal';
+import Button from '~/components/Button'
+import Modal from '~/components/Modal'
 
 type WalletMetadata = {
-  id: string;
-  name: string;
-  icon: string;
-};
+  id: string
+  name: string
+  icon: string
+}
 
 export const Header = () => {
-  const [wallets, setWallets] = useState<WalletMetadata[]>([]);
-  const [isOpen, setOpen] = useState(false);
-  const [walletApi, setWalletApi] = useState<WalletApi | null>(null);
-  const [balance, setBalance] = useState<string>('');
+  const [wallets, setWallets] = useState<WalletMetadata[]>([])
+  const [isOpen, setOpen] = useState(false)
+  const [walletApi, setWalletApi] = useState<WalletApi | null>(null)
+  const [balance, setBalance] = useState<string>('')
 
   useEffect(() => {
-    if (isOpen && typeof window !== "undefined") {
+    if (isOpen && typeof window !== 'undefined') {
       const detected = Object.keys(window.cardano || {}).map((id) => {
-        const prov = window.cardano[id]!;
+        const prov = window.cardano[id]!
         return {
           id,
           name: prov.name,
           icon: prov.icon,
-        };
-      });
-      setWallets(detected);
+        }
+      })
+      setWallets(detected)
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   const connect = async (id: string) => {
     try {
-      const api = await window.cardano[id].enable();
-      setWalletApi(api);
-      setOpen(false);
+      const api = await window.cardano[id].enable()
+      setWalletApi(api)
+      setOpen(false)
 
-      const balance = await api.getBalance();
-      setBalance(balance);
+      const balance = await api.getBalance()
+      setBalance(balance)
     } catch (err) {
-      console.error(`Failed to enable ${id}`, err);
+      console.error(`Failed to enable ${id}`, err)
     }
-  };
-
+  }
 
   return (
     <header className="flex-column flex items-center justify-between py-4 px-4">
@@ -65,10 +64,10 @@ export const Header = () => {
           </li>
         </ul>
       </nav>
-      <Button onClick={() => setOpen(true)} className='w-48'>
-        {walletApi ? `${balance}$` : "Connect your wallet"}
+      <Button onClick={() => setOpen(true)} className="w-48">
+        {walletApi ? `${balance}$` : 'Connect your wallet'}
       </Button>
-       <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
+      <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
         <div className="grid gap-4">
           {wallets.length === 0 && <p>No wallets detected.</p>}
           {wallets.map(({ id, name, icon }) => (

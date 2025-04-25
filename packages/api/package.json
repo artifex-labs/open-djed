@@ -3,13 +3,16 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "bun run ./src/index.ts"
+    "dev": "bun run src/index.ts",
+    "start": "tsx src/index.ts"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.4.3"
-  },
-  "devDependencies": {
+    "@lucid-evolution/lucid": "^0.4.27",
     "@t3-oss/env-core": "^0.12.0",
-    "hono": "^4.7.7"
-  }
+    "hono": "^4.7.7",
+    "@hono/node-server": "^1.14.1",
+    "@hono/zod-validator": "^0.4.3",
+    "tsx": "^4.19.3"
+  },
+  "devDependencies": {}
 }

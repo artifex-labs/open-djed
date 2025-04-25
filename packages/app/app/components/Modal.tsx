@@ -1,14 +1,14 @@
-import React, { type ReactNode } from 'react';
+import React, { type ReactNode } from 'react'
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: ReactNode;
+  isOpen: boolean
+  onClose: () => void
+  title: string
+  children: ReactNode
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div
@@ -21,20 +21,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
       >
         <div className="border-b border-gray-300 pb-2 mb-4 sticky top-0 z-10 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-secondary">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-2xl font-semibold text-secondary transition"
-          >
+          <button onClick={onClose} className="text-2xl font-semibold text-secondary transition">
             &times;
           </button>
         </div>
 
-        <div className="overflow-auto">
-          {children}
-        </div>
+        <div className="overflow-auto">{children}</div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Modal;
+export default Modal

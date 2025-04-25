@@ -38,6 +38,7 @@
               pkgs.vscode-langservers-extracted
               pkgs.prettierd
               pkgs.nodePackages.ts-node
+              pkgs.google-cloud-sdk
             ];
 
             # We unset NODE_PATH here, because it means node_modules is local, 

@@ -1,4 +1,4 @@
-import * as CML from '@anastasia-labs/cardano-multiplatform-lib-browser'
+import { serve } from '@hono/node-server'
 import { Lucid, Data, coreToUtxo, slotToUnixTime } from '@lucid-evolution/lucid'
 import {
   createBurnDjedOrder,
@@ -247,6 +247,14 @@ const app = new Hono()
     },
   )
 
-export default app
+serve(
+  {
+    fetch: app.fetch,
+    port: env.PORT,
+  },
+  (info) => {
+    console.log(`Server is running on http://localhost:${info.port}`)
+  },
+)
 
 export type AppType = typeof app
