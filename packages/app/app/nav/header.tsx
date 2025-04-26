@@ -2,6 +2,7 @@ import type { WalletApi } from '@lucid-evolution/lucid'
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import Button from '~/components/Button'
+import Select from '~/components/Select'
 import Modal from '~/components/Modal'
 import { useEnv } from '~/root'
 
@@ -57,59 +58,62 @@ export const Header = () => {
   }
 
   return (
-    <header className="flex items-center justify-between py-4 px-4">
-      <div className="flex items-center">
-        <Link to="/">
-          <div className="text-xl flex items-center">
-            <img src="/reverse-djed.svg" alt="Reverse DJED" />
-            Reverse DJED
-          </div>
-        </Link>
-        <select
-          className="ml-4 p-2 border rounded"
-          value={network}
-          onChange={(e) => {
-            window.location.href = config[e.target.value]
-          }}
-        >
-          {Object.keys(config).map((key) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
-      </div>
-      <nav className="absolute left-1/2 transform -translate-x-1/2">
-        <ul className="flex items-center">
-          <li className="m-3">
-            <NavLink to="/">Home</NavLink>
-          </li>
-          <li className="m-3">
-            <NavLink to="/djed">DJED</NavLink>
-          </li>
-          <li className="m-3">
-            <NavLink to="/shen">SHEN</NavLink>
-          </li>
-        </ul>
-      </nav>
-      <Button onClick={() => setOpen(true)} className="w-48">
-        {walletApi ? `${balance}$` : 'Connect your wallet'}
-      </Button>
-      <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
-        <div className="grid gap-4">
-          {wallets.length === 0 && <p>No wallets detected.</p>}
-          {wallets.map(({ id, name, icon }) => (
-            <button
-              key={id}
-              onClick={() => connect(id)}
-              className="flex items-center p-3 border rounded hover:bg-gray-100"
-            >
-              <img src={icon} alt={`${name} icon`} className="w-8 h-8 mr-3" />
-              <span>{name}</span>
-            </button>
-          ))}
+    <header className="py-4 px-4">
+      <nav className="flex items-center">
+        <div className="flex-1">
+          <Link to="/">
+            <div className="align-left text-xl flex flex-column">
+              <img src="/reverse-djed.svg" alt="Reverse DJED" />
+              Reverse DJED
+            </div>
+          </Link>
+        
         </div>
-      </Modal>
+        <div className="flex-1 flex justify-center">
+          <ul className="flex items-center">
+            <li className="m-3">
+              <NavLink to="/">Home</NavLink>
+            </li>
+            <li className="m-3">
+              <NavLink to="/djed">DJED</NavLink>
+            </li>
+            <li className="m-3">
+              <NavLink to="/shen">SHEN</NavLink>
+            </li>
+          </ul>
+        </div>
+        <div className="flex flex-1 justify-end space-x-4">
+          <Select
+            defaultValue={network}
+            size='md'
+            onChange={(e) => {
+              window.location.href = config[e.target.value]
+            }}
+            options={Object.keys(config).map((key) => ({
+              value: key,
+              label: key,
+            }))}>
+          </Select>
+          <Button onClick={() => setOpen(true)} className="w-48">
+            {walletApi ? `${balance}$` : 'Connect your wallet'}
+          </Button>
+          <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
+            <div className="grid gap-4">
+              {wallets.length === 0 && <p>No wallets detected.</p>}
+              {wallets.map(({ id, name, icon }) => (
+                <button
+                  key={id}
+                  onClick={() => connect(id)}
+                  className="flex items-center p-3 border rounded hover:bg-gray-100"
+                >
+                  <img src={icon} alt={`${name} icon`} className="w-8 h-8 mr-3" />
+                  <span>{name}</span>
+                </button>
+              ))}
+            </div>
+          </Modal>
+        </div>
+      </nav>
     </header>
   )
 }
