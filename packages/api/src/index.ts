@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server'
-import { Lucid, Data, coreToUtxo, slotToUnixTime } from '@lucid-evolution/lucid'
+import { Lucid, Data, coreToUtxo, slotToUnixTime, CML } from '@lucid-evolution/lucid'
 import {
   createBurnDjedOrder,
   createBurnShenOrder,
@@ -36,40 +36,40 @@ const txRequestBodySchema = z.object({
 const network = env.NETWORK
 
 const blockfrost = new Blockfrost(env.BLOCKFROST_URL, env.BLOCKFROST_PROJECT_ID)
+const lucid = await Lucid(blockfrost, network)
+
 const registry = registryByNetwork[network]
 
-export const getContext = async () => {
-  const lucid = await Lucid(blockfrost, network)
-
+export const getPoolUTxO = async () => {
   const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
-  if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
-  const poolUTxO = {
+  if (!rawPoolUTxO) throw new Error(`Couldn't get pool utxo.`)
+  return {
     ...rawPoolUTxO,
     poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
   }
+}
+
+export const getOracleUTxO = async () => {
   const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
-  if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
-  const oracleUTxO = {
+  if (!rawOracleUTxO) throw new Error(`Couldn't get oracle utxo.`)
+  return {
     ...rawOracleUTxO,
     oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
   }
+}
 
+export const getOrderUTxOs = async () => {
   const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
-  const orderUTxOs = await Promise.all(
+  return await Promise.all(
     rawOrderUTxOs.map(async (o) => ({
       ...o,
       orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
     })),
   )
+}
 
-  const now = slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
-  return {
-    lucid,
-    poolUTxO,
-    oracleUTxO,
-    orderUTxOs,
-    now,
-  }
+export const getChainTime = async () => {
+  return slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
 }
 
 const tokenSchema = z.enum(['DJED', 'SHEN'])
@@ -83,7 +83,7 @@ const app = new Hono()
     '/:token/:action/:amount/data',
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     async (c) => {
-      const { oracleUTxO, poolUTxO } = await getContext()
+      const [oracleUTxO, poolUTxO] = await Promise.all([getOracleUTxO(), getPoolUTxO()])
       const { token, action, amount: amountStr } = c.req.valid('param')
       const amount = BigInt(Math.round(Number(amountStr) * 1e6))
       if (amount < 0n) {
@@ -134,7 +134,7 @@ const app = new Hono()
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
-      const { oracleUTxO, poolUTxO, now, lucid } = await getContext()
+      const [oracleUTxO, poolUTxO, now] = await Promise.all([getOracleUTxO(), getPoolUTxO(), getChainTime()])
       const { token, action, amount: amountStr } = c.req.valid('param')
       const amount = BigInt(Math.round(Number(amountStr) * 1e6))
       if (amount < 0n) {
@@ -168,7 +168,7 @@ const app = new Hono()
     },
   )
   .get('/protocol-data', async (c) => {
-    const { oracleUTxO, poolUTxO } = await getContext()
+    const [oracleUTxO, poolUTxO] = await Promise.all([getOracleUTxO(), getPoolUTxO()])
     return c.json({
       DJED: {
         buy_price: djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
@@ -203,7 +203,7 @@ const app = new Hono()
     })
   })
   .get('/orders', async (c) => {
-    const { orderUTxOs } = await getContext()
+    const orderUTxOs = await getOrderUTxOs()
     return c.json(
       orderUTxOs.map((o) => ({
         date: Number(o.orderDatum.creationDate),
@@ -221,7 +221,7 @@ const app = new Hono()
     zValidator('param', z.object({ order_out_ref: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
-      const { orderUTxOs, lucid } = await getContext()
+      const orderUTxOs = await getOrderUTxOs()
       const orderUTxORef = parseOutRef(c.req.valid('param').order_out_ref)
       const orderUTxO = orderUTxOs.find(
         (o) => o.txHash === orderUTxORef.txHash && o.outputIndex === orderUTxORef.outputIndex,
