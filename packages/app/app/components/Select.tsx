@@ -39,7 +39,7 @@ const Select = ({
 
   const handleSelect = (option: Option) => {
 
-    setSelected(option); 
+    setSelected(option);
 
     if (onChange) {
       const syntheticEvent = {
@@ -53,8 +53,8 @@ const Select = ({
           value: option.value,
           selectedOptions: [{ text: option.label, value: option.value }]
         },
-        preventDefault: () => {},
-        stopPropagation: () => {},
+        preventDefault: () => { },
+        stopPropagation: () => { },
         nativeEvent: new Event('change')
       } as unknown as React.ChangeEvent<HTMLSelectElement>;
 
@@ -89,6 +89,7 @@ const Select = ({
   }[size];
 
   return (
+    selected &&
     <div className={`relative ${sizeClass} ${className}`}>
       <button
         ref={buttonRef}
@@ -99,9 +100,8 @@ const Select = ({
       >
         {selected.label}
         <svg
-          className={`h-4 w-4 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`h-4 w-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
         >
@@ -110,7 +110,7 @@ const Select = ({
       </button>
 
       {isOpen && (
-        <ul 
+        <ul
           ref={dropdownRef}
           className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded shadow z-10"
         >
