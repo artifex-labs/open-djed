@@ -27,6 +27,7 @@ import {
   shenADAMintRate,
   operatorFee as getOperatorFee,
 } from '@reverse-djed/math'
+import TTLCache from '@isaacs/ttlcache'
 
 const txRequestBodySchema = z.object({
   address: z.string(),
@@ -40,36 +41,54 @@ const lucid = await Lucid(blockfrost, network)
 
 const registry = registryByNetwork[network]
 
+const chainDataCache = new TTLCache({ ttl: 10_000, checkAgeOnGet: true })
+
 export const getPoolUTxO = async () => {
+  const cached = chainDataCache.get('poolUTxO')
+  if (cached) return cached
   const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
   if (!rawPoolUTxO) throw new Error(`Couldn't get pool utxo.`)
-  return {
+  const poolUTxO = {
     ...rawPoolUTxO,
     poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
   }
+  chainDataCache.set('poolUTxO', poolUTxO)
+  return poolUTxO
 }
 
 export const getOracleUTxO = async () => {
+  const cached = chainDataCache.get('oracleUTxO')
+  if (cached) return cached
   const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
   if (!rawOracleUTxO) throw new Error(`Couldn't get oracle utxo.`)
-  return {
+  const oracleUTxO = {
     ...rawOracleUTxO,
     oracleDatum: Data.from(Data.to(await lucid.datumOf(rawOracleUTxO)), OracleDatum),
   }
+  chainDataCache.set('oracleUTxO', oracleUTxO)
+  return oracleUTxO
 }
 
 export const getOrderUTxOs = async () => {
+  const cached = chainDataCache.get('orderUTxOs')
+  if (cached) return cached
   const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
-  return await Promise.all(
+  const orderUTxOs = await Promise.all(
     rawOrderUTxOs.map(async (o) => ({
       ...o,
       orderDatum: Data.from(Data.to(await lucid.datumOf(o)), OrderDatum),
     })),
   )
+  chainDataCache.set('orderUTxOs', orderUTxOs)
+  return orderUTxOs
 }
 
 export const getChainTime = async () => {
-  return slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
+  const cached = chainDataCache.get('now')
+  if (cached) return cached
+  const now = slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
+  chainDataCache.set('now', now)
+  return now
 }
 
 const tokenSchema = z.enum(['DJED', 'SHEN'])
