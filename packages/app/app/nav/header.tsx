@@ -1,4 +1,5 @@
 import type { WalletApi } from '@lucid-evolution/lucid'
+import { decode } from 'cbor2'
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import Button from '~/components/Button'
@@ -20,7 +21,7 @@ export const Header = () => {
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
   const [isOpen, setOpen] = useState(false)
   const [walletApi, setWalletApi] = useState<WalletApi | null>(null)
-  const [balance, setBalance] = useState<string>('')
+  const [balance, setBalance] = useState<number>(0)
   const { network, config } = useEnv()
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export const Header = () => {
       setWalletApi(api)
       setOpen(false)
 
-      const balance = await api.getBalance()
+      const balance = decode<number>(await api.getBalance()) / 10 ** 6
       setBalance(balance)
 
       if ((await api.getNetworkId()) !== networkIds[network]) {
