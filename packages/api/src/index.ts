@@ -8,6 +8,9 @@ import {
   registryByNetwork,
   parseOutRef,
   cancelOrderByOwner,
+  type OracleUTxO,
+  type OrderUTxO,
+  type PoolUTxO,
 } from '@reverse-djed/txs'
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
@@ -44,7 +47,7 @@ const registry = registryByNetwork[network]
 const chainDataCache = new TTLCache({ ttl: 10_000, checkAgeOnGet: true })
 
 export const getPoolUTxO = async () => {
-  const cached = chainDataCache.get('poolUTxO')
+  const cached = chainDataCache.get<PoolUTxO>('poolUTxO')
   if (cached) return cached
   const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
   if (!rawPoolUTxO) throw new Error(`Couldn't get pool utxo.`)
@@ -57,7 +60,7 @@ export const getPoolUTxO = async () => {
 }
 
 export const getOracleUTxO = async () => {
-  const cached = chainDataCache.get('oracleUTxO')
+  const cached = chainDataCache.get<OracleUTxO>('oracleUTxO')
   if (cached) return cached
   const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
   if (!rawOracleUTxO) throw new Error(`Couldn't get oracle utxo.`)
@@ -70,7 +73,7 @@ export const getOracleUTxO = async () => {
 }
 
 export const getOrderUTxOs = async () => {
-  const cached = chainDataCache.get('orderUTxOs')
+  const cached = chainDataCache.get<OrderUTxO[]>('orderUTxOs')
   if (cached) return cached
   const rawOrderUTxOs = await lucid.utxosAtWithUnit(registry.orderAddress, registry.orderAssetId)
   const orderUTxOs = await Promise.all(
@@ -84,7 +87,7 @@ export const getOrderUTxOs = async () => {
 }
 
 export const getChainTime = async () => {
-  const cached = chainDataCache.get('now')
+  const cached = chainDataCache.get<number>('now')
   if (cached) return cached
   const now = slotToUnixTime(network, await blockfrost.getLatestBlockSlot())
   chainDataCache.set('now', now)
