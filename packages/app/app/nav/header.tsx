@@ -105,14 +105,14 @@ export const Header = ({
         <div className="grid gap-4">
           {wallets.length === 0 && <p>No wallets detected.</p>}
           {wallets.map(({ id, name, icon }) => (
-            <button
+            <Button
               key={id}
               onClick={() => connect(id)}
-              className="flex items-center p-3 border rounded hover:bg-gray-100"
+              className="flex items-center p-3 border rounded font-normal"
             >
               <img src={icon} alt={`${name} icon`} className="w-8 h-8 mr-3" />
               <span>{name}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </Modal>

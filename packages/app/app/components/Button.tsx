@@ -9,10 +9,10 @@ interface ButtonProps {
   dark?: boolean
 }
 
-const Button: React.FC<ButtonProps> = ({ children, onClick, className, ref, disabled, dark }) => {
+const Button: React.FC<ButtonProps> = ({ children, onClick, className, ref, disabled }) => {
   return (
     <button
-      className={`bg-purple-600 text-white ${disabled ? 'bg-gray-500 text-secondary cursor-not-allowed' : ''}  hover:opacity-40 transition-opacity px-4 py-2 rounded-lg cursor-pointer ${className} `}
+      className={`border-1 border-black rounded-md p-2 font-bold ${disabled ? 'bg-gray-500 text-secondary cursor-not-allowed' : ''}  hover:bg-gray-100 transition-opacity px-4 py-2 rounded-lg cursor-pointer ${className} `}
       onClick={onClick}
       disabled={disabled}
       ref={ref}

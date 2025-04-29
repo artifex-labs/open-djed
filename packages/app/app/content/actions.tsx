@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { WalletContext, useApiClient } from '~/root'
 import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
+import Button from '~/components/Button'
 
 const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'SHEN' }) => {
   const [amount, setAmount] = useState(0)
@@ -43,8 +44,8 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
         onChange={(i) => setAmount(Math.abs(Number(i.target.value)))}
       ></input>
       <br />
-      <button
-        className="border-1 border-black rounded-md p-2 w-full font-bold"
+      <Button
+        className="w-full bg-white"
         onClick={async () => {
           if (!wallet) return
           const hexAddress = await wallet.getChangeAddress()
@@ -65,7 +66,7 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
         disabled={wallet === null || amount <= 0}
       >
         {action}
-      </button>
+      </Button>
     </div>
   )
 }

@@ -16,7 +16,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
       onClick={onClose}
     >
       <div
-        className="bg-purple-400 rounded-lg border-2 p-4 max-w-full max-h-full sm:max-w-[800px] sm:max-h-[85vh] overflow-auto flex flex-col"
+        className="rounded-lg border-2 p-4 max-w-full max-h-full sm:max-w-[800px] sm:max-h-[85vh] overflow-auto flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="border-b border-gray-300 pb-2 mb-4 sticky top-0 z-10 flex items-center justify-between">
