@@ -13,10 +13,11 @@ import type { Route } from './+types/root'
 import './app.css'
 import { Header } from './nav/header'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { hc } from 'hono/client'
 import type { AppType } from '@reverse-djed/api'
 import type { Network } from '@reverse-djed/txs'
+import type { WalletApi } from '@lucid-evolution/lucid'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -50,6 +51,7 @@ export const EnvContext = createContext<{
   network: Network
   config: Record<string, string>
 } | null>(null)
+export const WalletContext = createContext<WalletApi | null>(null)
 
 export const useApiClient = () => {
   const ctx = useContext(ClientContext)
@@ -65,6 +67,7 @@ export const useEnv = () => {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { apiUrl, network, config } = useLoaderData<LoaderData>()
+  const [wallet, setWallet] = useState<WalletApi | null>(null)
 
   return (
     <html lang="en">
@@ -76,10 +79,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <EnvContext.Provider value={{ apiUrl, network, config }}>
-          <Header />
-          {children}
-          <ScrollRestoration />
-          <Scripts />
+          <WalletContext.Provider value={wallet}>
+            <Header setWallet={setWallet} wallet={wallet} />
+            {children}
+            <ScrollRestoration />
+            <Scripts />
+          </WalletContext.Provider>
         </EnvContext.Provider>
       </body>
     </html>

@@ -157,14 +157,14 @@ const app = new Hono()
       }
       if (token === 'DJED') {
         if (action === 'mint') {
-          return c.text((await createMintDjedOrder(config).complete()).toCBOR())
+          return c.text((await createMintDjedOrder(config).complete({ localUPLCEval: false })).toCBOR())
         }
-        return c.text((await createBurnDjedOrder(config).complete()).toCBOR())
+        return c.text((await createBurnDjedOrder(config).complete({ localUPLCEval: false })).toCBOR())
       }
       if (action === 'mint') {
-        return c.text((await createMintShenOrder(config).complete()).toCBOR())
+        return c.text((await createMintShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
       }
-      return c.text((await createBurnShenOrder(config).complete()).toCBOR())
+      return c.text((await createBurnShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
     },
   )
   .get('/protocol-data', async (c) => {
