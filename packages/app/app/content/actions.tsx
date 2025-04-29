@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { WalletContext, useApiClient } from '~/root'
 import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
+import { ShimmerText } from 'react-shimmer-effects'
 
 const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'SHEN' }) => {
   const [amount, setAmount] = useState(0)
@@ -15,7 +16,6 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
         .then((r) => r.json()),
   })
   const wallet = useContext(WalletContext)
-  if (isPending) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   return (
     <div className="flex-column border-2 border-black rounded-md p-4 m-4 w-full">
@@ -23,19 +23,19 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
       <br />
       <div className="flex justify-between">
         <span>Cost</span>
-        <span>{data.base_cost.toFixed(4)} ADA</span>
+        <span>{isPending ? 'Loading...' : data.base_cost.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>Fees</span>
-        <span>{data.operator_fee.toFixed(4)} ADA</span>
+        <span>{isPending ? 'Loading...' : data.operator_fee.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>You will pay</span>
-        <span>{data.cost.toFixed(4)}</span>
+        <span>{isPending ? 'Loading...' : data.cost.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>Minimum ADA requirement</span>
-        <span>{data.min_ada.toFixed(4)} ADA</span>
+        <span>{isPending ? 'Loading...' : data.min_ada.toFixed(4)} ADA</span>
       </div>
       <input
         className="border-1 border-black w-full my-4"

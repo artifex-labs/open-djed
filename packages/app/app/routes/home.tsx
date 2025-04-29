@@ -12,7 +12,6 @@ const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
     queryKey: ['protocol-data'],
     queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
   })
-  if (isPending) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   return (
     <div className="flex-column border-2 border-black rounded-md p-4 m-4 w-full">
@@ -20,19 +19,19 @@ const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
       <br />
       <div className="flex justify-between">
         <span>Buy price</span>
-        <span>{data[token].buy_price.toFixed(4)} ADA</span>
+        <span>{isPending ? 'Loading...' : data[token].buy_price.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>Sell price</span>
-        <span>{data[token].sell_price.toFixed(4)} ADA</span>
+        <span>{isPending ? 'Loading...' : data[token].sell_price.toFixed(4)} ADA</span>
       </div>
       <div className="flex justify-between">
         <span>Circulating supply</span>
-        <span>{data[token].circulating_supply.toFixed(4)} DJED</span>
+        <span>{isPending ? 'Loading...' : data[token].circulating_supply.toFixed(4)} DJED</span>
       </div>
       <div className="flex justify-between">
         <span>Mintable amount</span>
-        <span>{data[token].mintable_amount.toFixed(4)} DJED</span>
+        <span>{isPending ? 'Loading...' : data[token].mintable_amount.toFixed(4)} DJED</span>
       </div>
     </div>
   )
@@ -44,7 +43,6 @@ export default function Home() {
     queryKey: ['protocol-data'],
     queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
   })
-  if (isPending) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
   return (
     <div className="flex justify-center items-center w-full">
@@ -58,11 +56,11 @@ export default function Home() {
           <br />
           <div className="flex justify-between">
             <span>Ratio</span>
-            <span>{Math.round(data.reserve.ratio * 100)}%</span>
+            <span>{isPending ? 'Loading...' : Math.round(data.reserve.ratio * 100)}%</span>
           </div>
           <div className="flex justify-between">
             <span>Value</span>
-            <span>{data.reserve.amount.toFixed(4)} ADA</span>
+            <span>{isPending ? 'Loading...' : data.reserve.amount.toFixed(4)} ADA</span>
           </div>
         </div>
       </div>
