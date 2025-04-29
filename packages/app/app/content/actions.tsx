@@ -2,7 +2,6 @@ import { useContext, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { WalletContext, useApiClient } from '~/root'
 import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
-import { ShimmerText } from 'react-shimmer-effects'
 
 const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'SHEN' }) => {
   const [amount, setAmount] = useState(0)
@@ -40,8 +39,8 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
       <input
         className="border-1 border-black w-full my-4"
         type="number"
-        value={amount}
-        onChange={(i) => setAmount(Number(i.target.value))}
+        value={amount.toString()}
+        onChange={(i) => setAmount(Math.abs(Number(i.target.value)))}
       ></input>
       <br />
       <button
