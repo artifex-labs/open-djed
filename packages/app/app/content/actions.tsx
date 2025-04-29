@@ -4,6 +4,69 @@ import { WalletContext, useApiClient } from '~/root'
 import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
 import Button from '~/components/Button'
 
+type Order = {
+  date: number
+  txHash: string
+  action: string
+  status: string
+}
+
+const OrderTable = ({ orders }: { orders: Order[] }) => {
+  return (
+    <table className="table-auto">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Tx hash</th>
+          <th>Action</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {orders.map((order) => (
+          <tr key={order.txHash}>
+            <td>{new Date(order.date).toLocaleString()}</td>
+            <td>{order.txHash}</td>
+            <td>{order.action}</td>
+            <td>{order.status}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+export const ActionsPage = ({ token }: { token: 'DJED' | 'SHEN' }) => {
+  const client = useApiClient()
+  const { isPending, error, data } = useQuery({
+    queryKey: ['orders'],
+    queryFn: () => client.api['orders'].$get().then((r) => r.json()),
+  })
+  if (error) return <div>Error: {error.message}</div>
+  return (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-1/2 flex-column border-2 border-black rounded-md p-4 m-4">
+        <div className="w-full flex flex-row justify-center items-center">
+          <div className="w-full flex flex-row justify-center items-center">
+            <Action action="mint" token={token} />
+            <Action action="burn" token={token} />
+          </div>
+        </div>
+        <div className="flex-column border-2 border-black rounded-md p-4 m-4">
+          <span className="font-black">Orders</span><br />
+          {isPending
+            ? 'Loading...'
+            : data.length === 1
+              ? 'No orders'
+              : <OrderTable orders={[{ date: 1745960389000, txHash: '31b695ff87b9189efa1449586037dabc0e9cdfc6e292d13649f2410f1e1335ff', action: 'mint', status: 'Pending' }]} />
+          }
+        </div>
+      </div>
+    </div >
+  )
+}
+
+
 const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'SHEN' }) => {
   const [amount, setAmount] = useState(0)
   const client = useApiClient()
@@ -67,17 +130,6 @@ const Action = ({ action, token }: { action: 'mint' | 'burn'; token: 'DJED' | 'S
       >
         {action}
       </Button>
-    </div>
-  )
-}
-
-export const Actions = ({ token }: { token: 'DJED' | 'SHEN' }) => {
-  return (
-    <div className="w-full flex flex-row justify-center items-center">
-      <div className="w-1/2 flex flex-row justify-center items-center">
-        <Action action="mint" token={token} />
-        <Action action="burn" token={token} />
-      </div>
     </div>
   )
 }

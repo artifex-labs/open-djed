@@ -38,3 +38,7 @@ TODO:
   - [x] Show cost.
   - [x] Show fees.
   - [x] Show min ADA.
+- [ ] Disable connecting with wrong network wallet.
+- [ ] Handle API tx error gracefully.
+- [ ] Allow floating point numbers for inputs.
+- [ ] Show something other than `NaN` when connecting PreProd wallet.

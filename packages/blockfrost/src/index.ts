@@ -23,6 +23,11 @@ export const getLatestBlockSlot = ({
     },
   }).then(async (res) => BlockSchema.parse(await res.json()).slot)
 
+// /api/v0/assets/:asset/history
+// filter for burned
+// /api/v0/txs/:tx_hash/utxos | /api/v0/txs/:tx_hash/redeemers
+// check in inputs which hold order token, check redeemer type (CancelOrderSpendRedeemer / FillOrderSpendRedeemer) to determine whether order was completed or cancelled
+
 export class Blockfrost extends Lucid.Blockfrost {
   constructor(url: string, projectId?: string) {
     super(url, projectId)
@@ -79,17 +84,17 @@ export class Blockfrost extends Lucid.Blockfrost {
 
 type BlockfrostRedeemer = {
   result:
-    | {
-        EvaluationResult: {
-          [key: string]: {
-            memory: number
-            steps: number
-          }
-        }
+  | {
+    EvaluationResult: {
+      [key: string]: {
+        memory: number
+        steps: number
       }
-    | {
-        CannotCreateEvaluationContext: any
-      }
+    }
+  }
+  | {
+    CannotCreateEvaluationContext: any
+  }
 }
 
 const lucid = packageJson.version // Lucid version

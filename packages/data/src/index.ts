@@ -1,5 +1,6 @@
 export const OrderMintRedeemer = 'd87980'
 export const OrderBurnRedeemer = 'd87a80'
+export const FillOrderSpendRedeemer = 'd87980'
 export const CancelOrderSpendRedeemer = 'd87a80'
 export * from './oracle-datum'
 export * from './order-datum'

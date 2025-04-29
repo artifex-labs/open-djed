@@ -1,3 +1,3 @@
-import { Actions } from '../content/actions'
+import { ActionsPage } from '../content/actions'
 
-export default () => Actions({ token: 'SHEN' })
+export default () => ActionsPage({ token: 'SHEN' })
