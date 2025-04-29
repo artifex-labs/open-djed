@@ -1,6 +1,7 @@
 import type { WalletApi } from '@lucid-evolution/lucid'
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
+import { Menu, X } from 'lucide-react'
 import Button from '~/components/Button'
 import Select from '~/components/Select'
 import Modal from '~/components/Modal'
@@ -22,6 +23,7 @@ export const Header = () => {
   const [isOpen, setOpen] = useState(false)
   const [walletApi, setWalletApi] = useState<WalletApi | null>(null)
   const [balance, setBalance] = useState<string>('')
+  const [menuOpen, setMenuOpen] = useState(false)
   const { network, config } = useEnv()
 
   useEffect(() => {
@@ -58,62 +60,90 @@ export const Header = () => {
   }
 
   return (
-    <header className="py-4 px-4">
-      <nav className="flex items-center">
-        <div className="flex-1">
-          <Link to="/">
-            <div className="align-left text-xl flex flex-column">
-              <img src="/reverse-djed.svg" alt="Reverse DJED" />
-              Reverse DJED
-            </div>
+    <header className="z-30 w-full sticky top-0 py-4 px-4">
+      <nav className="flex items-center justify-between">
+      
+        {/* Left - Logo */}
+        <div className="flex-1 flex items-center">
+          <Link to="/" className="flex items-center space-x-2 text-xl font-semibold">
+            <img src="/reverse-djed.svg" alt="Reverse DJED" className="w-8 h-8" />
+            <span>Reverse DJED</span>
           </Link>
-        
         </div>
-        <div className="flex-1 flex justify-center">
-          <ul className="flex items-center">
-            <li className="m-3">
-              <NavLink to="/">Home</NavLink>
-            </li>
-            <li className="m-3">
-              <NavLink to="/djed">DJED</NavLink>
-            </li>
-            <li className="m-3">
-              <NavLink to="/shen">SHEN</NavLink>
-            </li>
-          </ul>
+
+        {/* Center - Nav Links (desktop only) */}
+        <div className="hidden md:flex justify-center space-x-6">
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/djed">DJED</NavLink>
+          <NavLink to="/shen">SHEN</NavLink>
         </div>
-        <div className="flex flex-1 justify-end space-x-4">
+
+        {/* Right - Select and Wallet (desktop) */}
+        <div className="flex-1 hidden md:flex justify-end items-center space-x-4">
           <Select
             defaultValue={network}
-            size='md'
+            size="md"
             onChange={(e) => {
               window.location.href = config[e.target.value]
             }}
             options={Object.keys(config).map((key) => ({
               value: key,
               label: key,
-            }))}>
-          </Select>
+            }))}
+          />
           <Button onClick={() => setOpen(true)} className="w-48">
             {walletApi ? `${balance}$` : 'Connect your wallet'}
           </Button>
-          <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
-            <div className="grid gap-4">
-              {wallets.length === 0 && <p>No wallets detected.</p>}
-              {wallets.map(({ id, name, icon }) => (
-                <button
-                  key={id}
-                  onClick={() => connect(id)}
-                  className="flex items-center p-3 border rounded hover:bg-gray-100"
-                >
-                  <img src={icon} alt={`${name} icon`} className="w-8 h-8 mr-3" />
-                  <span>{name}</span>
-                </button>
-              ))}
-            </div>
-          </Modal>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <button onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Dropdown Menu */}
+      {menuOpen && (
+        <div className="flex flex-col items-center md:hidden mt-4 space-y-4">
+          <NavLink to="/" onClick={() => setMenuOpen(false)}>Home</NavLink>
+          <NavLink to="/djed" onClick={() => setMenuOpen(false)}>DJED</NavLink>
+          <NavLink to="/shen" onClick={() => setMenuOpen(false)}>SHEN</NavLink>
+          <Select
+            defaultValue={network}
+            size="md"
+            onChange={(e) => {
+              window.location.href = config[e.target.value]
+            }}
+            options={Object.keys(config).map((key) => ({
+              value: key,
+              label: key,
+            }))}
+          />
+          <Button onClick={() => { setOpen(true); setMenuOpen(false) }} className="w-full">
+            {walletApi ? `${balance}$` : 'Connect your wallet'}
+          </Button>
+        </div>
+      )}
+
+      {/* Wallet Modal */}
+      <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
+        <div className="grid gap-4">
+          {wallets.length === 0 && <p>No wallets detected.</p>}
+          {wallets.map(({ id, name, icon }) => (
+            <button
+              key={id}
+              onClick={() => connect(id)}
+              className="flex items-center p-3 border rounded hover:bg-gray-100"
+            >
+              <img src={icon} alt={`${name} icon`} className="w-8 h-8 mr-3" />
+              <span>{name}</span>
+            </button>
+          ))}
+        </div>
+      </Modal>
     </header>
+
   )
 }
