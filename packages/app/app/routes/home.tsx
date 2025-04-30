@@ -1,68 +1,25 @@
+import { useProtocolData } from '~/hooks/useProtocolData'
+import { TokenDetails } from '~/components/TokenDetails'
+import { ReserveDetails } from '~/components/ReserveDetails'
 import type { Route } from './+types/home'
-import { useQuery } from '@tanstack/react-query'
-import { useApiClient } from '~/root'
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: 'Reverse DJED' }, { name: 'description', content: 'Welcome to reverse DJED!' }]
 }
 
-const TokenDetails = ({ token }: { token: 'DJED' | 'SHEN' }) => {
-  const client = useApiClient()
-  const { isPending, error, data } = useQuery({
-    queryKey: ['protocol-data'],
-    queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
-  })
-  if (error) return <div>Error: {error.message}</div>
-  return (
-    <div className="flex-column border-2 border-black rounded-md p-4 m-4 w-full">
-      <span className="font-black">{token}</span>
-      <br />
-      <div className="flex justify-between">
-        <span>Buy price</span>
-        <span>{isPending ? 'Loading...' : data[token].buy_price.toFixed(4)} ADA</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Sell price</span>
-        <span>{isPending ? 'Loading...' : data[token].sell_price.toFixed(4)} ADA</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Circulating supply</span>
-        <span>{isPending ? 'Loading...' : data[token].circulating_supply.toFixed(4)} DJED</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Mintable amount</span>
-        <span>{isPending ? 'Loading...' : data[token].mintable_amount.toFixed(4)} DJED</span>
-      </div>
-    </div>
-  )
-}
-
 export default function Home() {
-  const client = useApiClient()
-  const { isPending, error, data } = useQuery({
-    queryKey: ['protocol-data'],
-    queryFn: () => client.api['protocol-data'].$get().then((r) => r.json()),
-  })
-  if (error) return <div>Error: {error.message}</div>
+
   return (
-    <div className="flex justify-center items-center w-full">
-      <div className="w-1/2 flex-column border-2 border-black rounded-md p-4 m-4">
-        <div className="flex flex-row items-center justify-center">
+    <div className="flex justify-center items-center w-full min-h-screen p-4">
+      <div className="w-full max-w-5xl flex flex-col border-2 border-black rounded-md p-4 m-4">
+
+        <div className="flex flex-wrap justify-center">
           <TokenDetails token="DJED" />
           <TokenDetails token="SHEN" />
         </div>
-        <div className="flex-column border-2 border-black rounded-md p-4 m-4">
-          <span className="font-black">Reserve</span>
-          <br />
-          <div className="flex justify-between">
-            <span>Ratio</span>
-            <span>{isPending ? 'Loading...' : Math.round(data.reserve.ratio * 100)}%</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Value</span>
-            <span>{isPending ? 'Loading...' : data.reserve.amount.toFixed(4)} ADA</span>
-          </div>
-        </div>
+
+        <ReserveDetails />
+
       </div>
     </div>
   )
