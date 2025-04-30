@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Action } from './Action'
-import Button from '~/components/Button'
 
-interface ActionsProps {
+type ActionsProps = {
   token: 'DJED' | 'SHEN'
 }
 

@@ -1,11 +1,12 @@
 import { Header } from './Header'
 import { WalletProvider } from '../context/WalletContext'
 import { EnvContext } from '../context/EnvContext'
+import type { Network } from '~/types/network'
 
 type Props = {
   children: React.ReactNode
   apiUrl: string
-  network: 'Preprod' | 'Mainnet'
+  network: Network
   config: any
 }
 

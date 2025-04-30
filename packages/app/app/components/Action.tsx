@@ -5,7 +5,7 @@ import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
 import Button from '~/components/Button'
 import { useApiClient } from '~/context/ApiClientContext'
 
-interface ActionProps {
+type ActionProps = {
   action: 'mint' | 'burn'
   token: 'DJED' | 'SHEN'
   onActionStart: () => void

@@ -1,6 +1,6 @@
 import React, { type ReactNode } from 'react'
 
-interface ModalProps {
+type ModalProps = {
   isOpen: boolean
   onClose: () => void
   title: string
