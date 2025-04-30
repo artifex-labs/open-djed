@@ -1,3 +1,5 @@
-import { Actions } from '../content/actions'
+import { Actions } from '../components/Actions'
 
-export default () => Actions({ token: 'DJED' })
+export default function ShenPage() {
+  return <Actions token="DJED" />
+}
