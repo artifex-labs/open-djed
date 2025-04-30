@@ -10,7 +10,7 @@ export function TokenDetails({
   token,
 }: TokenDetailsProps) {
     const { isPending, error, data } = useProtocolData()
-  if (!data) return <div>No data available</div>
+    if (error) return <div>ERROR: {error.message}</div>
 
   return (
     <div className="flex flex-col border-2 border-black rounded-md p-4 m-4 w-full max-w-xs">
