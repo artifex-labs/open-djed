@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Action } from './Action'
+import type { TokenType } from '~/types/token'
 
 type ActionsProps = {
-  token: 'DJED' | 'SHEN'
+  token: TokenType
 }
 
 export const Actions = ({ token }: ActionsProps) => {

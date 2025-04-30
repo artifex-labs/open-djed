@@ -5,7 +5,7 @@ import type { LoaderData } from '../types/loader'
 export const EnvContext = createContext<LoaderData | null>(null)
 
 export function EnvProvider({ children }: { children: React.ReactNode }) {
-  const data = useLoaderData() as LoaderData
+  const data = useLoaderData<LoaderData>()
   return <EnvContext.Provider value={data}>{children}</EnvContext.Provider>
 }
 

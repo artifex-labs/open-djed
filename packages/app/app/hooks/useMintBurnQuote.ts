@@ -1,14 +1,15 @@
-// hooks/useMintBurnQuote.ts
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '~/context/ApiClientContext'
+import type { ActionType } from '~/types/action'
+import type { TokenType } from '~/types/token'
 
 export function useMintBurnQuote({
   action,
   token,
   amount,
 }: {
-  action: 'mint' | 'burn'
-  token: 'DJED' | 'SHEN'
+  action: ActionType
+  token: TokenType
   amount: number
 }) {
   const client = useApiClient()

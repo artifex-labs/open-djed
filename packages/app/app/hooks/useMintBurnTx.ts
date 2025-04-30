@@ -1,7 +1,8 @@
-// hooks/useMintBurnTx.ts
 import { useApiClient } from '~/context/ApiClientContext'
 import { useWallet } from '~/context/WalletContext'
 import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
+import type { TokenType } from '~/types/token'
+import type { ActionType } from '~/types/action'
 
 export function useMintBurnTx() {
   const client = useApiClient()
@@ -12,8 +13,8 @@ export function useMintBurnTx() {
     token,
     amount,
   }: {
-    action: 'mint' | 'burn'
-    token: 'DJED' | 'SHEN'
+    action: ActionType
+    token: TokenType
     amount: number
   }) => {
     if (!wallet) throw new Error('Wallet not connected')

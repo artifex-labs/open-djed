@@ -14,7 +14,7 @@ export { rootLoader as loader }
 const queryClient = new QueryClient()
 
 export default function App() {
-  const { apiUrl, network, config } = useLoaderData() as LoaderData
+  const { apiUrl, network, config } = useLoaderData<LoaderData>()
 
   return (
     <html lang="en">
