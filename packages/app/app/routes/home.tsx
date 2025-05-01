@@ -1,4 +1,3 @@
-import { useProtocolData } from '~/hooks/useProtocolData'
 import { TokenDetails } from '~/components/TokenDetails'
 import { ReserveDetails } from '~/components/ReserveDetails'
 import type { Route } from './+types/home'
