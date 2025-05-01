@@ -8,6 +8,7 @@ export default async function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
+  // eslint-disable-next-line no-unused-vars
   _loadContext: AppLoadContext,
 ) {
   let shellRendered = false

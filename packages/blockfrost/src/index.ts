@@ -34,6 +34,7 @@ export class Blockfrost extends Lucid.Blockfrost {
 
   async evaluateTx(
     tx: Transaction,
+    // eslint-disable-next-line no-unused-vars
     additionalUTxOs?: UTxO[], // for tx chaining
   ): Promise<EvalRedeemer[]> {
     const payload = {

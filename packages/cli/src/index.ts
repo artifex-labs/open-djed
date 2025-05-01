@@ -182,7 +182,7 @@ program
       ...rawOrderUTxO,
       orderDatum: Data.from(Data.to(await lucid.datumOf(rawOrderUTxO)), OrderDatum),
     }
-    const tx = await cancelOrderByOwner({
+    const tx = cancelOrderByOwner({
       network: env.NETWORK,
       lucid,
       registry,
@@ -202,6 +202,7 @@ program
     }
   })
 
+// eslint-disable-next-line no-unused-vars
 program.command('protocol-data').action(async (amount, options) => {
   const oracleUtxo = await lucid.utxoByUnit(registry.oracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
