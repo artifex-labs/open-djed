@@ -1,8 +1,7 @@
 import { TokenDetails } from '~/components/TokenDetails'
 import { ReserveDetails } from '~/components/ReserveDetails'
-import type { Route } from './+types/home'
 
-export function meta(_: Route.MetaArgs) {
+export function meta() {
   return [{ title: 'Reverse DJED' }, { name: 'description', content: 'Welcome to reverse DJED!' }]
 }
 

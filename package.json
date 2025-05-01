@@ -4,10 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "ms": "^2.1.3",
     "prettier": "^3.5.3",
     "vitest": "^3.1.2"
   },

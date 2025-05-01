@@ -13,6 +13,7 @@ type WalletContextType = {
   wallet: WalletApi | null
   balance: number
   wallets: WalletMetadata[]
+  // eslint-disable-next-line no-unused-vars
   connect: (id: string) => Promise<void>
   detectWallets: () => void
 }
@@ -66,7 +67,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
       const balance = decode<number>(await api.getBalance()) / 10 ** 6
       setBalance(balance)
-
     } catch (err) {
       console.error(`Failed to enable ${id}`, err)
     }
