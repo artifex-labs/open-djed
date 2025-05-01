@@ -56,14 +56,17 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const connect = async (id: string) => {
     try {
       const api = await window.cardano[id].enable()
+
+      if ((await api.getNetworkId()) !== networkIds[network]) {
+        alert(`Please connect to a ${network} wallet`)
+        return
+      }
+
       setWallet(api)
 
       const balance = decode<number>(await api.getBalance()) / 10 ** 6
       setBalance(balance)
 
-      if ((await api.getNetworkId()) !== networkIds[network]) {
-        alert(`Please connect to ${network} network`)
-      }
     } catch (err) {
       console.error(`Failed to enable ${id}`, err)
     }
