@@ -57,7 +57,9 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
 
   return (
     <div className="flex-column border-2 border-black rounded-md p-4 m-4 w-full">
-      <div className="font-bold">{action} {token}</div>
+      <div className="font-bold">
+        {action} {token}
+      </div>
       <div className="flex justify-between">
         <span>Cost</span>
         <span>{isPending ? 'Loading...' : data?.base_cost.toFixed(4)} ADA</span>

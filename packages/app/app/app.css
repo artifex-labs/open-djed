@@ -6,11 +6,11 @@
   --font-sans:
     'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
-    --color-light-bg: #ffffff;
-    --color-dark-bg: #121212;
-    --color-light-text: #121212;
-    --color-dark-text: #ffffff;
-  }
+  --color-light-bg: #ffffff;
+  --color-dark-bg: #121212;
+  --color-light-text: #121212;
+  --color-dark-text: #ffffff;
+}
 
 html,
 body {

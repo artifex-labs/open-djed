@@ -1,20 +1,20 @@
-import "./app.css";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from 'react-router';
-import { links as fontLinks } from './lib/loader';
-import { loader as rootLoader } from './lib/loader';
-import { ClientProvider } from './context/ApiClientContext';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { Layout } from './components/Layout';
-import type { LoaderData } from './types/loader';
-import { ThemeProvider } from "./context/ThemeContext";
+import './app.css'
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from 'react-router'
+import { links as fontLinks } from './lib/loader'
+import { loader as rootLoader } from './lib/loader'
+import { ClientProvider } from './context/ApiClientContext'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { Layout } from './components/Layout'
+import type { LoaderData } from './types/loader'
+import { ThemeProvider } from './context/ThemeContext'
 
-export { fontLinks as links };
-export { rootLoader as loader };
+export { fontLinks as links }
+export { rootLoader as loader }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 export default function App() {
-  const { apiUrl, network, config } = useLoaderData<LoaderData>();
+  const { apiUrl, network, config } = useLoaderData<LoaderData>()
 
   return (
     <html lang="en">
@@ -53,5 +53,5 @@ export default function App() {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }

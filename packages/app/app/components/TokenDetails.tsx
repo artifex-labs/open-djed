@@ -1,16 +1,13 @@
-import { useProtocolData } from "~/hooks/useProtocolData";
-import type { TokenType } from "~/types/token";
-
+import { useProtocolData } from '~/hooks/useProtocolData'
+import type { TokenType } from '~/types/token'
 
 type TokenDetailsProps = {
-  token: TokenType;
+  token: TokenType
 }
 
-export function TokenDetails({
-  token,
-}: TokenDetailsProps) {
-    const { isPending, error, data } = useProtocolData()
-    if (error) return <div>ERROR: {error.message}</div>
+export function TokenDetails({ token }: TokenDetailsProps) {
+  const { isPending, error, data } = useProtocolData()
+  if (error) return <div>ERROR: {error.message}</div>
 
   return (
     <div className="flex flex-col border-2 border-black rounded-md p-4 m-4 w-full max-w-xs">
@@ -26,11 +23,15 @@ export function TokenDetails({
       </div>
       <div className="flex justify-between">
         <span>Circulating supply</span>
-        <span>{isPending ? 'Loading...' : data[token].circulating_supply.toFixed(4)} {token}</span>
+        <span>
+          {isPending ? 'Loading...' : data[token].circulating_supply.toFixed(4)} {token}
+        </span>
       </div>
       <div className="flex justify-between">
         <span>Mintable amount</span>
-        <span>{isPending ? 'Loading...' : data[token].mintable_amount.toFixed(4)} {token}</span>
+        <span>
+          {isPending ? 'Loading...' : data[token].mintable_amount.toFixed(4)} {token}
+        </span>
       </div>
     </div>
   )

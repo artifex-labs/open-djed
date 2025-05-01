@@ -53,12 +53,12 @@ export const Header = () => {
         </ul>
       </nav>
 
-          <div>
-          <ThemeToggle />
-      <Button onClick={() => setOpen(true)} className="w-48">
-        {wallet ? `${balance} ADA` : 'Connect your wallet'}
-      </Button>
-          </div>
+      <div>
+        <ThemeToggle />
+        <Button onClick={() => setOpen(true)} className="w-48">
+          {wallet ? `${balance} ADA` : 'Connect your wallet'}
+        </Button>
+      </div>
 
       <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
         <div className="grid gap-4">
