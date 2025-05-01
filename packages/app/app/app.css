@@ -6,10 +6,19 @@
   --font-sans:
     'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
+
   --color-light-bg: #ffffff;
-  --color-dark-bg: #121212;
   --color-light-text: #121212;
+  --color-light-foreground: #f0f0f0;
+  --color-light-disabled: #dbd1de;
+
+  --color-dark-bg: #121212;
   --color-dark-text: #ffffff;
+  --color-dark-foreground: #3f3f3f;
+  --color-dark-disabled: #4a424d;
+
+  --color-primary: #971ec7;
+  --color-primary-hover: #b25bd5;
 }
 
 html,
