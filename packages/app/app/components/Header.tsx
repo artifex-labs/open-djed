@@ -4,6 +4,7 @@ import Button from '~/components/Button'
 import Modal from '~/components/Modal'
 import { useEnv } from '~/context/EnvContext'
 import { useWallet } from '~/context/WalletContext'
+import { ThemeToggle } from './ThemeToggle'
 
 export const Header = () => {
   const [isOpen, setOpen] = useState(false)
@@ -52,9 +53,12 @@ export const Header = () => {
         </ul>
       </nav>
 
-      <Button onClick={() => setOpen(true)} className="w-48">
-        {wallet ? `${balance} ADA` : 'Connect your wallet'}
-      </Button>
+      <div>
+        <ThemeToggle />
+        <Button onClick={() => setOpen(true)} className="w-48">
+          {wallet ? `${balance} ADA` : 'Connect your wallet'}
+        </Button>
+      </div>
 
       <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
         <div className="grid gap-4">

@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '~/context/ApiClientContext'
 
-
 export function useProtocolData() {
   const client = useApiClient()
   return useQuery({

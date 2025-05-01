@@ -23,7 +23,7 @@ export const Actions = ({ token }: ActionsProps) => {
         <div className="text-center text-xl font-bold mb-4">
           <span>{token} Actions</span>
         </div>
-        
+
         <div className="flex space-x-4 justify-center">
           <Action
             action="mint"
@@ -40,9 +40,7 @@ export const Actions = ({ token }: ActionsProps) => {
         </div>
 
         {/* Loading state or other statuses */}
-        {isActionPending && (
-          <div className="mt-4 text-center text-lg">Processing action...</div>
-        )}
+        {isActionPending && <div className="mt-4 text-center text-lg">Processing action...</div>}
       </div>
     </div>
   )
