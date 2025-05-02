@@ -15,7 +15,7 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full max-w-5xl flex flex-col rounded-md p-4 items-center gap-6">
-        <div className="flex flex-row justify-center gap-10">
+        <div className="flex flex-col sm:flex-row justify-center gap-10">
           <TokenDetails token="DJED" route="/djed" />
           <TokenDetails token="SHEN" route="/shen" />
         </div>

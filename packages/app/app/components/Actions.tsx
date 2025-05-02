@@ -20,12 +20,12 @@ export const Actions = ({ token }: ActionsProps) => {
   return (
     <div className="w-full flex flex-col justify-center items-center py-8">
       <div className="flex flex-col gap-10">
-        <div className="text-center text-xl font-bold mb-4">
+        <div className="text-center text-xl font-bold mb-4 flex flex-col items-center">
           <span className="text-5xl">{token}</span>
           <span>Actions</span>
         </div>
 
-        <div className="w-full flex flex-row space-x-4 justify-center items-center gap-10">
+        <div className="w-full flex flex-col sm:flex-row sm:space-x-4 justify-center items-center gap-10">
           <Action
             action="mint"
             token={token}
