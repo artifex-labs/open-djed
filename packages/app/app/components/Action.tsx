@@ -5,6 +5,8 @@ import Button from '~/components/Button'
 import { useApiClient } from '~/context/ApiClientContext'
 import type { ActionType } from '~/types/action'
 import type { TokenType } from '~/types/token'
+import { useProtocolData } from '~/hooks/useProtocolData'
+import { registryByNetwork } from '@reverse-djed/registry'
 
 type ActionProps = {
   action: ActionType
@@ -18,7 +20,13 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
   const client = useApiClient()
   const { wallet } = useWallet()
 
-  const { isPending, error, data } = useQuery({
+  const { isPending: isProtocolDataPending, error: protocolError, data: protocolData } = useProtocolData()
+
+  const {
+    isPending: isActionDataPending,
+    error: actionError,
+    data: actionData,
+  } = useQuery({
     queryKey: [token, action, amount, 'data'],
     queryFn: () =>
       client.api[':token'][':action'][':amount']['data']
@@ -26,7 +34,8 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         .then((r) => r.json()),
   })
 
-  if (error) return <div className="text-red-500 font-bold">Error: {error.message}</div>
+  if (protocolError) return <div className="text-red-500 font-bold">Error: {protocolError.message}</div>
+  if (actionError) return <div className="text-red-500 font-bold">Error: {actionError.message}</div>
 
   const handleActionClick = async () => {
     if (!wallet || amount <= 0) return
@@ -55,6 +64,14 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
     }
   }
 
+  // FIXME: This is not perfect yet.
+  const balance = Math.max(
+    (action === 'burn'
+      ? wallet?.balance[token]
+      : ((wallet?.balance.ADA ?? 0) - Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
+        (protocolData ? protocolData[token].buy_price : 0)) ?? 0,
+    0,
+  )
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">
@@ -65,7 +82,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Cost</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
+            {isActionDataPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -83,7 +100,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              data?.base_cost.toFixed(4)
+              actionData?.base_cost.toFixed(4)
             )}{' '}
             ADA
           </p>
@@ -92,7 +109,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Fees</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
+            {isActionDataPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -110,7 +127,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              data?.operator_fee.toFixed(4)
+              actionData?.operator_fee.toFixed(4)
             )}{' '}
             ADA
           </p>
@@ -119,7 +136,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">You will pay</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
+            {isActionDataPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -137,7 +154,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              data?.cost.toFixed(4)
+              actionData?.cost.toFixed(4)
             )}{' '}
             ADA
           </p>
@@ -146,7 +163,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Minimum ADA requirement</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
+            {isActionDataPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -164,7 +181,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              data?.min_ada.toFixed(4)
+              actionData?.min_ada.toFixed(4)
             )}{' '}
             ADA
           </p>
@@ -172,19 +189,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       </div>
 
       <div className="flex flex-col gap-4">
-        <input
-          className="border-2 border-primary rounded-md px-4 py-2 text-lg w-full focus:outline-none"
-          type="number"
-          min="0"
-          value={amount.toString()}
-          onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
-          placeholder="Enter amount"
-        />
+        <div className="flex flex-col">
+          <input
+            className="border-2 border-primary rounded-md px-4 py-2 text-lg w-full focus:outline-none"
+            type="number"
+            min="0"
+            value={amount.toString()}
+            onChange={(e) => setAmount(Math.max(0, Math.min(Number(e.target.value), balance)))}
+            placeholder="Enter amount"
+          />
+          <p className="text-xs text-right pt-1 pr-1">Available: {isProtocolDataPending ? 0 : balance}</p>
+        </div>
 
         <Button
           className="w-full"
           onClick={handleActionClick}
-          disabled={wallet === null || amount <= 0 || isPending}
+          disabled={wallet === null || amount <= 0 || isActionDataPending || isProtocolDataPending}
         >
           {action.replace(/^\w/, (c) => c.toUpperCase())}
         </Button>

@@ -79,9 +79,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       }
 
       const balanceStr = await api.getBalance()
-      console.log(balanceStr)
       const decodedBalance = decode(balanceStr)
-      console.log(decodedBalance)
       const parsedBalance = z
         .union([
           z.number(),
@@ -106,7 +104,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
           }
         })
         .parse(decodedBalance)
-      console.log(parsedBalance)
       setWallet({
         balance: parsedBalance,
         address: await api.getChangeAddress(),

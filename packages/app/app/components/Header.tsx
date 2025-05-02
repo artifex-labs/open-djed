@@ -91,7 +91,7 @@ export const Header = () => {
             />
             <ThemeToggle />
             <Button onClick={() => setOpen(true)} className="w-48">
-              {wallet ? `${wallet.balance.ADA} ADA` : 'Connect wallet'}
+              {wallet ? `${wallet.address.slice(0, 10)}...` : 'Connect wallet'}
             </Button>
           </div>
 
@@ -145,7 +145,7 @@ export const Header = () => {
           {/* Bottom content */}
           <div className="px-6 py-4">
             <Button onClick={() => setOpen(true)} className="w-full">
-              {wallet ? `${wallet.balance.ADA} ADA` : 'Connect wallet'}
+              {wallet ? `${wallet.address.slice(0, 10)}...` : 'Connect wallet'}
             </Button>
           </div>
         </div>
