@@ -29,6 +29,7 @@ import {
   shenADABurnRate,
   shenADAMintRate,
   operatorFee as getOperatorFee,
+  maxBurnableSHEN,
 } from '@reverse-djed/math'
 import TTLCache from '@isaacs/ttlcache'
 
@@ -113,6 +114,44 @@ export const getLucid = async () => {
   const lucid = await Lucid(blockfrost, network)
   chainDataCache.set('lucid', lucid, { ttl: 600_000 })
   return lucid
+}
+
+export const getProtocolData = async () => {
+  const [oracleUTxO, poolUTxO] = await Promise.all([getOracleUTxO(), getPoolUTxO()])
+  return {
+    DJED: {
+      buy_price: djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
+      sell_price: djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage).toNumber(),
+      circulating_supply: Number(poolUTxO.poolDatum.djedInCirculation) / 1e6,
+      mintable_amount:
+        Number(maxMintableDJED(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage)) /
+        1e6,
+      burnable_amount: Number(poolUTxO.poolDatum.djedInCirculation) / 1e6,
+    },
+    SHEN: {
+      buy_price: shenADAMintRate(
+        poolUTxO.poolDatum,
+        oracleUTxO.oracleDatum,
+        registry.mintSHENFeePercentage,
+      ).toNumber(),
+      sell_price: shenADABurnRate(
+        poolUTxO.poolDatum,
+        oracleUTxO.oracleDatum,
+        registry.burnSHENFeePercentage,
+      ).toNumber(),
+      circulating_supply: Number(poolUTxO.poolDatum.shenInCirculation) / 1e6,
+      mintable_amount:
+        Number(maxMintableSHEN(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintSHENFeePercentage)) /
+        1e6,
+      burnable_amount:
+        Number(maxBurnableSHEN(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintSHENFeePercentage)) /
+        1e6,
+    },
+    reserve: {
+      amount: Number(poolUTxO.poolDatum.adaInReserve) / 1e6,
+      ratio: reserveRatio(poolUTxO.poolDatum, oracleUTxO.oracleDatum).toNumber(),
+    },
+  }
 }
 
 const tokenSchema = z.enum(['DJED', 'SHEN'])
@@ -215,41 +254,7 @@ const app = new Hono()
       return c.text((await createBurnShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
     },
   )
-  .get('/protocol-data', async (c) => {
-    const [oracleUTxO, poolUTxO] = await Promise.all([getOracleUTxO(), getPoolUTxO()])
-    return c.json({
-      DJED: {
-        buy_price: djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
-        sell_price: djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage).toNumber(),
-        circulating_supply: Number(poolUTxO.poolDatum.djedInCirculation) / 1e6,
-        mintable_amount:
-          Number(
-            maxMintableDJED(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage),
-          ) / 1e6,
-      },
-      SHEN: {
-        buy_price: shenADAMintRate(
-          poolUTxO.poolDatum,
-          oracleUTxO.oracleDatum,
-          registry.mintSHENFeePercentage,
-        ).toNumber(),
-        sell_price: shenADABurnRate(
-          poolUTxO.poolDatum,
-          oracleUTxO.oracleDatum,
-          registry.burnSHENFeePercentage,
-        ).toNumber(),
-        circulating_supply: Number(poolUTxO.poolDatum.shenInCirculation) / 1e6,
-        mintable_amount:
-          Number(
-            maxMintableSHEN(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.mintSHENFeePercentage),
-          ) / 1e6,
-      },
-      reserve: {
-        amount: Number(poolUTxO.poolDatum.adaInReserve) / 1e6,
-        ratio: reserveRatio(poolUTxO.poolDatum, oracleUTxO.oracleDatum).toNumber(),
-      },
-    })
-  })
+  .get('/protocol-data', async (c) => c.json(await getProtocolData()))
   .get('/orders', async (c) => {
     const orderUTxOs = await getOrderUTxOs()
     return c.json(
