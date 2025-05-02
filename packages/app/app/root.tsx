@@ -17,19 +17,13 @@ export default function App() {
   const { apiUrl, network, config, initialIsDark } = useLoaderData<LoaderData>()
 
   return (
-    <html lang="en" className={
-      initialIsDark === 'dark'
-        ? 'dark'
-        : initialIsDark === 'light'
-        ? 'light'
-        : ''
-    }>
+    <html lang="en" className={initialIsDark === 'dark' ? 'dark' : initialIsDark === 'light' ? 'light' : ''}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
-         dangerouslySetInnerHTML={{
-           __html: `
+          dangerouslySetInnerHTML={{
+            __html: `
              (function() {
                try {
                   var m = document.cookie.match(/(?:^|; )theme=(dark|light)(?:;|$)/);
