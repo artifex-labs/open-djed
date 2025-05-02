@@ -205,12 +205,78 @@ const protocolDataSchema = z.object({
     }),
 })
 
+const actionDataSchema = z.object({
+  base_cost: z.number(),
+  operator_fee: z.number(),
+  cost: z.number(),
+  min_ada: z.number(),
+}).openapi(
+  {
+    example: {
+      base_cost: 1.4650587106039938,
+      operator_fee: 5.15,
+      cost: 6.615058710603995,
+      min_ada: 1.82313,
+    }
+  }
+)
+
+const orderListSchema = z.array(
+  z.object({
+    date: z.number(),
+    txHash: z.string(),
+    action: z.string(),
+    status: z.string(),
+  })
+).openapi(
+  {
+    example: [
+      {
+        date: Date.now(),
+        txHash: 'txHash',
+        action: 'Mint',
+        status: 'Pending',
+      },
+    ]
+  }
+)
+
 const app = new Hono()
   .basePath('/api')
   .use(cors())
   .use(logger())
   .get(
     '/:token/:action/:amount/data',
+    describeRoute({
+      description: 'Get action data',
+      tags: ['Action'],
+      responses: {
+        200: {
+          description: 'Action data',
+          content: {
+            'application/json': {
+              schema: resolver(actionDataSchema),
+            },
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          content: {
+            'text/plain': {
+              example: 'Bad Request',
+            },
+          },
+        },
+        500: {
+          description: 'Internal server error',
+          content: {
+            'text/plain': {
+              example: 'Internal server error',
+            },
+          },
+        },
+      },
+    }),
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     async (c) => {
       const [oracleUTxO, poolUTxO] = await Promise.all([getOracleUTxO(), getPoolUTxO()])
@@ -261,6 +327,36 @@ const app = new Hono()
   )
   .post(
     '/:token/:action/:amount/tx',
+    describeRoute({
+      description: 'Create a transaction to perform an action on a token.',
+      tags: ['Action'],
+      responses: {
+        200: {
+          description: 'Transaction CBOR ready to be signed',
+          content: {
+            'text/plain': {
+              example: 'CBOR',
+            },
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          content: {
+            'text/plain': {
+              example: 'Bad Request',
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            'text/plain': {
+              example: 'Internal Server Error',
+            },
+          },
+        },
+      },
+    }),
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
@@ -304,6 +400,7 @@ const app = new Hono()
   )
   .get('/protocol-data', describeRoute({
     description: 'Get protocol data',
+    tags: ['Protocol'],
     responses: {
       200: {
         description: 'Protocol data',
@@ -323,7 +420,30 @@ const app = new Hono()
       }
     },
   }), async (c) => c.json(await getProtocolData()))
-  .get('/orders', async (c) => {
+  .get('/orders',
+    describeRoute({
+      description: 'Get orders',
+      tags: ['Orders'],
+      responses: {
+        200: {
+          description: 'Orders',
+          content: {
+            'application/json': {
+              schema: resolver(orderListSchema),
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            "text/plain": {
+              example: "Internal Server Error",
+            },
+          },
+        },
+      }
+    }),
+    async (c) => {
     const orderUTxOs = await getOrderUTxOs()
     return c.json(
       orderUTxOs.map((o) => ({
@@ -339,6 +459,37 @@ const app = new Hono()
   })
   .post(
     '/cancel-order-tx/:order_out_ref',
+    describeRoute({
+      description: 'Cancel an order transaction',
+      tags: ['Orders'],
+      responses: {
+        200: {
+          description: 'Transactio CBOR ready to be signed',
+          content: {
+            'text/plain': {
+              example: 'CBOR'
+            },
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          content: {
+            'text/plain': {
+              example: 'Bad Request',
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            "text/plain": {
+              example: "Internal Server Error",
+            },
+          },
+        },
+      }
+    })
+    ,
     zValidator('param', z.object({ order_out_ref: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
