@@ -5,13 +5,13 @@ import {
   createBurnShenOrder,
   createMintDjedOrder,
   createMintShenOrder,
-  registryByNetwork,
   parseOutRef,
   cancelOrderByOwner,
   type OracleUTxO,
   type OrderUTxO,
   type PoolUTxO,
 } from '@reverse-djed/txs'
+import { registryByNetwork } from '@reverse-djed/registry'
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { cors } from 'hono/cors'

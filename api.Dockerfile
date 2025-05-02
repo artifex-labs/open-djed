@@ -10,6 +10,7 @@ COPY packages/data ./packages/data
 COPY packages/txs ./packages/txs
 COPY packages/math ./packages/math
 COPY packages/blockfrost/ ./packages/blockfrost/
+COPY packages/registry/ ./packages/registry/
 
 COPY packages/app/package.json ./packages/app/
 COPY packages/cli/package.json ./packages/cli/
