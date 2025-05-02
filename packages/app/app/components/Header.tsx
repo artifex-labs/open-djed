@@ -77,7 +77,7 @@ export const Header = () => {
 
       <Modal isOpen={isOpen} onClose={() => setOpen(false)} title="Select Wallet">
         <div className="space-y-4">
-          <p className="font-semibold">{wallets.length === 0 && <h1>No wallets detected.</h1>}</p>
+          <div>{wallets.length === 0 && <p className="font-semibold">No wallets detected.</p>}</div>
           {wallets.map(({ id, name, icon }) => (
             <div
               className="flex flex-row gap-2 items-center justify-start p-4 rounded-lg hover:bg-primary"
