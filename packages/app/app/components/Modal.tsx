@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         className="bg-light-foreground dark:bg-dark-foreground min-w-xs rounded-lg p-4 max-w-full max-h-full sm:max-w-[800px] sm:max-h-[85vh] overflow-auto flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-light-text dark:border-dark-text pb-2 mb-4 sticky top-0 z-10 flex items-center justify-between">
+        <div className="border-b border-light-text dark:border-dark-text pb-2 sticky top-0 z-10 flex items-center justify-between">
           <h2 className="text-xl font-semibold">{title}</h2>
           <button onClick={onClose} className="text-2xl font-semibold transition cursor-pointer">
             &times;

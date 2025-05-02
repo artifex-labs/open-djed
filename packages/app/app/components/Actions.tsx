@@ -18,10 +18,11 @@ export const Actions = ({ token }: ActionsProps) => {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center">
-      <div className="w-3/4 flex flex-col space-y-4">
+    <div className="w-full flex flex-col justify-center items-center py-8">
+      <div className="w-3/4 flex flex-col space-y-4 gap-6">
         <div className="text-center text-xl font-bold mb-4">
-          <span>{token} Actions</span>
+          <span className="text-5xl">{token}</span>
+          <span>Actions</span>
         </div>
 
         <div className="flex space-x-4 justify-center">

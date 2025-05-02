@@ -21,7 +21,7 @@ export const Header = () => {
         <Link to="/">
           <div className="flex flex-row text-xl items-center">
             <img src="/reverse-djed.svg" alt="Reverse DJED" />
-            Reverse DJED
+            Яeverse DJED
           </div>
         </Link>
         <select
