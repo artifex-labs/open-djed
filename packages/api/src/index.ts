@@ -13,11 +13,14 @@ import {
 } from '@reverse-djed/txs'
 import { registryByNetwork } from '@reverse-djed/registry'
 import { Hono } from 'hono'
-import { zValidator } from '@hono/zod-validator'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { env } from './env'
 import { z } from 'zod'
+import 'zod-openapi/extend'
+import { Scalar } from '@scalar/hono-api-reference'
+import { describeRoute, openAPISpecs } from 'hono-openapi'
+import { resolver, validator as zValidator } from 'hono-openapi/zod'
 import { Blockfrost } from '@reverse-djed/blockfrost'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import {
@@ -154,8 +157,89 @@ export const getProtocolData = async () => {
   }
 }
 
-const tokenSchema = z.enum(['DJED', 'SHEN'])
-const actionSchema = z.enum(['mint', 'burn'])
+const tokenSchema = z.enum(['DJED', 'SHEN']).openapi({ example: 'DJED' })
+const actionSchema = z.enum(['mint', 'burn']).openapi({ example: 'mint' })
+const tokenDataSchema = z
+  .object({
+    buy_price: z.number(),
+    sell_price: z.number(),
+    circulating_supply: z.number(),
+    mintable_amount: z.number(),
+  })
+  .openapi({
+    example: {
+      buy_price: 1.441658973084298,
+      sell_price: 1.3990483630423975,
+      circulating_supply: 3246142.503472,
+      mintable_amount: 3085152.568265,
+    },
+  })
+const tokenToDataSchema = z.record(tokenSchema, tokenDataSchema).openapi({
+  example: {
+    DJED: {
+      buy_price: 1.441658973084298,
+      sell_price: 1.3990483630423975,
+      circulating_supply: 3246142.503472,
+      mintable_amount: 3085152.568265,
+    },
+    SHEN: {
+      buy_price: 1.1410455947278184,
+      sell_price: 1.1073201091693605,
+      circulating_supply: 23939436.874569,
+      mintable_amount: 4699539.166637,
+    },
+  },
+})
+const protocolDataSchema = z.object({
+  tokenToDataSchema,
+  reserve: z
+    .object({
+      amount: z.number(),
+      ratio: z.number(),
+    })
+    .openapi({
+      example: {
+        amount: 31522974.831559,
+        ratio: 6.836961225953939,
+      },
+    }),
+})
+
+const actionDataSchema = z
+  .object({
+    base_cost: z.number(),
+    operator_fee: z.number(),
+    cost: z.number(),
+    min_ada: z.number(),
+  })
+  .openapi({
+    example: {
+      base_cost: 1.4650587106039938,
+      operator_fee: 5.15,
+      cost: 6.615058710603995,
+      min_ada: 1.82313,
+    },
+  })
+
+const orderListSchema = z
+  .array(
+    z.object({
+      date: z.number(),
+      txHash: z.string(),
+      action: z.string(),
+      status: z.string(),
+    }),
+  )
+  .openapi({
+    example: [
+      {
+        date: Date.now(),
+        txHash: 'txHash',
+        action: 'Mint',
+        status: 'Pending',
+      },
+    ],
+  })
 
 const app = new Hono()
   .basePath('/api')
@@ -163,6 +247,36 @@ const app = new Hono()
   .use(logger())
   .get(
     '/:token/:action/:amount/data',
+    describeRoute({
+      description: 'Get action data',
+      tags: ['Action'],
+      responses: {
+        200: {
+          description: 'Action data',
+          content: {
+            'application/json': {
+              schema: resolver(actionDataSchema),
+            },
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          content: {
+            'text/plain': {
+              example: 'Bad Request',
+            },
+          },
+        },
+        500: {
+          description: 'Internal server error',
+          content: {
+            'text/plain': {
+              example: 'Internal server error',
+            },
+          },
+        },
+      },
+    }),
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     async (c) => {
       const [oracleUTxO, poolUTxO] = await Promise.all([getOracleUTxO(), getPoolUTxO()])
@@ -213,6 +327,36 @@ const app = new Hono()
   )
   .post(
     '/:token/:action/:amount/tx',
+    describeRoute({
+      description: 'Create a transaction to perform an action on a token.',
+      tags: ['Action'],
+      responses: {
+        200: {
+          description: 'Transaction CBOR ready to be signed',
+          content: {
+            'text/plain': {
+              example: 'CBOR',
+            },
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          content: {
+            'text/plain': {
+              example: 'Bad Request',
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            'text/plain': {
+              example: 'Internal Server Error',
+            },
+          },
+        },
+      },
+    }),
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
@@ -254,23 +398,103 @@ const app = new Hono()
       return c.text((await createBurnShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
     },
   )
-  .get('/protocol-data', async (c) => c.json(await getProtocolData()))
-  .get('/orders', async (c) => {
-    const orderUTxOs = await getOrderUTxOs()
-    return c.json(
-      orderUTxOs.map((o) => ({
-        date: Number(o.orderDatum.creationDate),
-        txHash: o.txHash,
-        action:
-          'MintDJED' in o.orderDatum.actionFields || 'MintSHEN' in o.orderDatum.actionFields
-            ? 'Mint'
-            : 'Burn',
-        status: 'Pending',
-      })),
-    )
-  })
+  .get(
+    '/protocol-data',
+    describeRoute({
+      description: 'Get protocol data',
+      tags: ['Protocol'],
+      responses: {
+        200: {
+          description: 'Protocol data',
+          content: {
+            'application/json': {
+              schema: resolver(protocolDataSchema),
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            'text/plain': {
+              example: 'Internal Server Error',
+            },
+          },
+        },
+      },
+    }),
+    async (c) => c.json(await getProtocolData()),
+  )
+  .get(
+    '/orders',
+    describeRoute({
+      description: 'Get orders',
+      tags: ['Orders'],
+      responses: {
+        200: {
+          description: 'Orders',
+          content: {
+            'application/json': {
+              schema: resolver(orderListSchema),
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            'text/plain': {
+              example: 'Internal Server Error',
+            },
+          },
+        },
+      },
+    }),
+    async (c) => {
+      const orderUTxOs = await getOrderUTxOs()
+      return c.json(
+        orderUTxOs.map((o) => ({
+          date: Number(o.orderDatum.creationDate),
+          txHash: o.txHash,
+          action:
+            'MintDJED' in o.orderDatum.actionFields || 'MintSHEN' in o.orderDatum.actionFields
+              ? 'Mint'
+              : 'Burn',
+          status: 'Pending',
+        })),
+      )
+    },
+  )
   .post(
     '/cancel-order-tx/:order_out_ref',
+    describeRoute({
+      description: 'Cancel an order transaction',
+      tags: ['Orders'],
+      responses: {
+        200: {
+          description: 'Transactio CBOR ready to be signed',
+          content: {
+            'text/plain': {
+              example: 'CBOR',
+            },
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          content: {
+            'text/plain': {
+              example: 'Bad Request',
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            'text/plain': {
+              example: 'Internal Server Error',
+            },
+          },
+        },
+      },
+    }),
     zValidator('param', z.object({ order_out_ref: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
@@ -302,6 +526,32 @@ const app = new Hono()
       )
     },
   )
+
+app.get(
+  '/openapi',
+  openAPISpecs(app, {
+    documentation: {
+      info: {
+        title: 'Reverse DJED API',
+        version: '0.0.1-rc',
+        description: 'API for interacting with the DJED protocol',
+      },
+      servers: [
+        {
+          url: `http://localhost:${env.PORT ?? 3000}`,
+          description: 'Local server',
+        },
+      ],
+    },
+  }),
+)
+app.get(
+  '/docs',
+  Scalar({
+    theme: 'saturn',
+    url: '/api/openapi',
+  }),
+)
 
 serve(
   {
