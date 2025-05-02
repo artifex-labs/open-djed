@@ -94,13 +94,13 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
           ]),
         ])
         .transform((b) => {
-          if (typeof b === 'number') return { ADA: b, DJED: 0, SHEN: 0 }
+          if (typeof b === 'number') return { ADA: b / 1e6, DJED: 0, SHEN: 0 }
           const policyId = registryByNetwork[network].djedAssetId.slice(0, 56)
           const djedTokenName = registryByNetwork[network].djedAssetId.slice(56)
           const shenTokenName = registryByNetwork[network].shenAssetId.slice(56)
 
           return {
-            ADA: b[0],
+            ADA: b[0] / 1e6,
             DJED: (b[1].get(policyId)?.get(djedTokenName) ?? 0) / 1e6,
             SHEN: (b[1].get(policyId)?.get(shenTokenName) ?? 0) / 1e6,
           }
