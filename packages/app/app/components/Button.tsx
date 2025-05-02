@@ -7,12 +7,23 @@ type ButtonProps = {
   ref?: React.Ref<HTMLButtonElement> | undefined
   disabled?: boolean
   dark?: boolean
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'full'
 }
 
-const Button: React.FC<ButtonProps> = ({ children, onClick, className, ref, disabled }) => {
+const Button: React.FC<ButtonProps> = ({ children, onClick, className, ref, disabled, size = 'md' }) => {
+  const sizeClass = {
+    xs: 'w-13',
+    sm: 'w-24',
+    md: 'w-32',
+    lg: 'w-40',
+    full: 'w-full',
+  }[size]
+
   return (
     <button
-      className={`text-white font-bold bg-primary ${disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-primary-hover cursor-pointer'} transition-opacity px-4 py-2 rounded-lg ${className} `}
+      className={`${sizeClass} text-white font-bold bg-primary flex items-center justify-center h-full min-h-full ${
+        disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-primary-hover cursor-pointer'
+      } transition-opacity px-4 py-2 rounded-lg ${className}`}
       onClick={onClick}
       disabled={disabled}
       ref={ref}
