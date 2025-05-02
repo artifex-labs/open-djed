@@ -1,6 +1,7 @@
 import type { LoaderFunctionArgs } from 'react-router'
 import type { Route } from '../+types/root'
 import type { LoaderData } from '~/types/loader'
+import { parse } from 'cookie'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -11,8 +12,22 @@ export const links: Route.LinksFunction = () => [
   },
 ]
 
-export function loader({ context }: LoaderFunctionArgs): LoaderData {
+export function loader({
+  context,
+  request,
+}: LoaderFunctionArgs): LoaderData & { initialIsDark: 'dark' | 'light' | null } {
   const { API_URL, NETWORK, CONFIG } = context.cloudflare.env
   if (!API_URL || !NETWORK) throw new Error('Missing env vars')
-  return { apiUrl: API_URL, network: NETWORK, config: JSON.parse(CONFIG) }
+
+  const cookieHeader = request.headers.get('cookie') ?? ''
+  const cookies = parse(cookieHeader)
+
+  const initialIsDark = cookies.theme === 'dark' ? 'dark' : cookies.theme === 'light' ? 'light' : null
+
+  return {
+    apiUrl: API_URL,
+    network: NETWORK,
+    config: JSON.parse(CONFIG),
+    initialIsDark,
+  }
 }

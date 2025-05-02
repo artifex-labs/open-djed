@@ -14,26 +14,33 @@ export { rootLoader as loader }
 const queryClient = new QueryClient()
 
 export default function App() {
-  const { apiUrl, network, config } = useLoaderData<LoaderData>()
+  const { apiUrl, network, config, initialIsDark } = useLoaderData<LoaderData>()
 
   return (
-    <html lang="en">
+    <html lang="en" className={initialIsDark === 'dark' ? 'dark' : initialIsDark === 'light' ? 'light' : ''}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
+             (function() {
+               try {
+                  var m = document.cookie.match(/(?:^|; )theme=(dark|light)(?:;|$)/);
+                  var theme = m ? m[1] : null;
+
+                  if (!theme) {
+                    theme = localStorage.getItem('theme');
+                  }
+
                   var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  var isDark = theme === 'dark' || (!theme && systemDark);
+                  var isDark = (theme === 'dark') || (!theme && systemDark);
+
                   document.documentElement.classList.toggle('dark', isDark);
                   document.documentElement.classList.toggle('light', !isDark);
                 } catch (e) {}
-              })();
-            `,
+             })();
+           `,
           }}
         />
         <Meta />
