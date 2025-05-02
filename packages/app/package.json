@@ -15,6 +15,7 @@
     "@lucid-evolution/lucid": "^0.4.27",
     "@tanstack/react-query": "^5.74.4",
     "cbor2": "^1.12.0",
+    "cookie": "^1.0.2",
     "isbot": "^5.1.26",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
