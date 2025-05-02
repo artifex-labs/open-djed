@@ -66,98 +66,110 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       <div className="flex flex-col gap-6 mb-6">
         <div className="flex justify-between">
           <p className="font-medium">Cost</p>
-          <p className="text-lg flex justify-center items-center">{isPending ? <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
-                </svg> : data?.base_cost.toFixed(4)} ADA</p>
+          <p className="text-lg flex justify-center items-center">
+            {isPending ? (
+              <svg
+                className="mr-3 size-7 animate-spin text-primary"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            ) : (
+              data?.base_cost.toFixed(4)
+            )}{' '}
+            ADA
+          </p>
         </div>
 
         <div className="flex justify-between">
           <p className="font-medium">Fees</p>
-          <p className="text-lg flex justify-center items-center">{isPending ? <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
-                </svg> : data?.operator_fee.toFixed(4)} ADA</p>
+          <p className="text-lg flex justify-center items-center">
+            {isPending ? (
+              <svg
+                className="mr-3 size-7 animate-spin text-primary"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            ) : (
+              data?.operator_fee.toFixed(4)
+            )}{' '}
+            ADA
+          </p>
         </div>
 
         <div className="flex justify-between">
           <p className="font-medium">You will pay</p>
-          <p className="text-lg flex justify-center items-center">{isPending ? <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
-                </svg> : data?.cost.toFixed(4)} ADA</p>
+          <p className="text-lg flex justify-center items-center">
+            {isPending ? (
+              <svg
+                className="mr-3 size-7 animate-spin text-primary"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            ) : (
+              data?.cost.toFixed(4)
+            )}{' '}
+            ADA
+          </p>
         </div>
 
         <div className="flex justify-between">
           <p className="font-medium">Minimum ADA requirement</p>
-          <p className="text-lg flex justify-center items-center">{isPending ? <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
-                </svg> : data?.min_ada.toFixed(4)} ADA</p>
+          <p className="text-lg flex justify-center items-center">
+            {isPending ? (
+              <svg
+                className="mr-3 size-7 animate-spin text-primary"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            ) : (
+              data?.min_ada.toFixed(4)
+            )}{' '}
+            ADA
+          </p>
         </div>
       </div>
 

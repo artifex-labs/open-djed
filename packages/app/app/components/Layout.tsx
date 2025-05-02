@@ -15,9 +15,9 @@ export function Layout({ children, apiUrl, network, config }: Props) {
   return (
     <EnvContext.Provider value={{ apiUrl, network, config }}>
       <WalletProvider>
-        <div className='flex flex-col min-h-screen'>
+        <div className="flex flex-col min-h-screen">
           <Header />
-          <main className='flex-1'>{children}</main>
+          <main className="flex-1">{children}</main>
           <Footer />
         </div>
       </WalletProvider>

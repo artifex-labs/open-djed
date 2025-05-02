@@ -24,7 +24,7 @@
 html,
 body {
   height: 100%;
-  
+
   @apply bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text;
 
   @media (prefers-color-scheme: dark) {

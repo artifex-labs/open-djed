@@ -36,11 +36,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                     stroke="currentColor"
                     strokeWidth="4"
                   ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
+                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
                 data[token].buy_price.toFixed(4)
@@ -67,11 +63,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                     stroke="currentColor"
                     strokeWidth="4"
                   ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
+                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
                 data[token].sell_price.toFixed(4)
@@ -98,11 +90,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                     stroke="currentColor"
                     strokeWidth="4"
                   ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
+                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
                 data[token].circulating_supply.toFixed(4)
@@ -129,11 +117,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                     stroke="currentColor"
                     strokeWidth="4"
                   ></circle>
-                  <path
-                    
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
+                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
                 data[token].mintable_amount.toFixed(4)
