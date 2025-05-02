@@ -205,31 +205,32 @@ const protocolDataSchema = z.object({
     }),
 })
 
-const actionDataSchema = z.object({
-  base_cost: z.number(),
-  operator_fee: z.number(),
-  cost: z.number(),
-  min_ada: z.number(),
-}).openapi(
-  {
+const actionDataSchema = z
+  .object({
+    base_cost: z.number(),
+    operator_fee: z.number(),
+    cost: z.number(),
+    min_ada: z.number(),
+  })
+  .openapi({
     example: {
       base_cost: 1.4650587106039938,
       operator_fee: 5.15,
       cost: 6.615058710603995,
       min_ada: 1.82313,
-    }
-  }
-)
-
-const orderListSchema = z.array(
-  z.object({
-    date: z.number(),
-    txHash: z.string(),
-    action: z.string(),
-    status: z.string(),
+    },
   })
-).openapi(
-  {
+
+const orderListSchema = z
+  .array(
+    z.object({
+      date: z.number(),
+      txHash: z.string(),
+      action: z.string(),
+      status: z.string(),
+    }),
+  )
+  .openapi({
     example: [
       {
         date: Date.now(),
@@ -237,9 +238,8 @@ const orderListSchema = z.array(
         action: 'Mint',
         status: 'Pending',
       },
-    ]
-  }
-)
+    ],
+  })
 
 const app = new Hono()
   .basePath('/api')
@@ -398,29 +398,34 @@ const app = new Hono()
       return c.text((await createBurnShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
     },
   )
-  .get('/protocol-data', describeRoute({
-    description: 'Get protocol data',
-    tags: ['Protocol'],
-    responses: {
-      200: {
-        description: 'Protocol data',
-        content: {
-          'application/json': {
-            schema: resolver(protocolDataSchema),
+  .get(
+    '/protocol-data',
+    describeRoute({
+      description: 'Get protocol data',
+      tags: ['Protocol'],
+      responses: {
+        200: {
+          description: 'Protocol data',
+          content: {
+            'application/json': {
+              schema: resolver(protocolDataSchema),
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            'text/plain': {
+              example: 'Internal Server Error',
+            },
           },
         },
       },
-      500: {
-        description: 'Internal Server Error',
-        content: {
-          "text/plain": {
-            example: "Internal Server Error",
-          },
-        },
-      }
-    },
-  }), async (c) => c.json(await getProtocolData()))
-  .get('/orders',
+    }),
+    async (c) => c.json(await getProtocolData()),
+  )
+  .get(
+    '/orders',
     describeRoute({
       description: 'Get orders',
       tags: ['Orders'],
@@ -436,27 +441,28 @@ const app = new Hono()
         500: {
           description: 'Internal Server Error',
           content: {
-            "text/plain": {
-              example: "Internal Server Error",
+            'text/plain': {
+              example: 'Internal Server Error',
             },
           },
         },
-      }
+      },
     }),
     async (c) => {
-    const orderUTxOs = await getOrderUTxOs()
-    return c.json(
-      orderUTxOs.map((o) => ({
-        date: Number(o.orderDatum.creationDate),
-        txHash: o.txHash,
-        action:
-          'MintDJED' in o.orderDatum.actionFields || 'MintSHEN' in o.orderDatum.actionFields
-            ? 'Mint'
-            : 'Burn',
-        status: 'Pending',
-      })),
-    )
-  })
+      const orderUTxOs = await getOrderUTxOs()
+      return c.json(
+        orderUTxOs.map((o) => ({
+          date: Number(o.orderDatum.creationDate),
+          txHash: o.txHash,
+          action:
+            'MintDJED' in o.orderDatum.actionFields || 'MintSHEN' in o.orderDatum.actionFields
+              ? 'Mint'
+              : 'Burn',
+          status: 'Pending',
+        })),
+      )
+    },
+  )
   .post(
     '/cancel-order-tx/:order_out_ref',
     describeRoute({
@@ -467,7 +473,7 @@ const app = new Hono()
           description: 'Transactio CBOR ready to be signed',
           content: {
             'text/plain': {
-              example: 'CBOR'
+              example: 'CBOR',
             },
           },
         },
@@ -482,14 +488,13 @@ const app = new Hono()
         500: {
           description: 'Internal Server Error',
           content: {
-            "text/plain": {
-              example: "Internal Server Error",
+            'text/plain': {
+              example: 'Internal Server Error',
             },
           },
         },
-      }
-    })
-    ,
+      },
+    }),
     zValidator('param', z.object({ order_out_ref: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
