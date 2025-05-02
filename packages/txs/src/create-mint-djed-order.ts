@@ -1,5 +1,5 @@
 import { Data, fromUnit, type LucidEvolution, type UTxO } from '@lucid-evolution/lucid'
-import { type Registry } from './registry'
+import { type Registry } from '@reverse-djed/registry'
 import { OrderDatum, OrderMintRedeemer, PoolDatum, fromBech32 } from '@reverse-djed/data'
 import { djedADAMintRate, operatorFee } from '@reverse-djed/math'
 import type { OracleUTxO, PoolUTxO } from './types'

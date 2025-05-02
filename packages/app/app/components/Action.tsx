@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useWallet } from '~/context/WalletContext'
-import * as CML from '@dcspark/cardano-multiplatform-lib-browser'
 import Button from '~/components/Button'
 import { useApiClient } from '~/context/ApiClientContext'
 import type { ActionType } from '~/types/action'
@@ -34,19 +33,18 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
     onActionStart()
 
     try {
-      const hexAddress = await wallet.getChangeAddress()
-      const address = CML.Address.from_hex(hexAddress).to_bech32()
-      const utxosCborHex = await wallet.getUtxos()
-
-      if (!utxosCborHex) {
+      if (!wallet.utxos) {
         throw new Error('No UTXOs found')
       }
 
       const txCbor = await client.api[':token'][':action'][':amount']['tx']
-        .$post({ param: { token, action, amount: amount.toString() }, json: { address, utxosCborHex } })
+        .$post({
+          param: { token, action, amount: amount.toString() },
+          json: { hexAddress: wallet.address, utxosCborHex: wallet.utxos },
+        })
         .then((r) => r.text())
 
-      const signedTx = await wallet.signTx(txCbor, false)
+      const signedTx = await wallet.signTx(txCbor)
       const txHash = await wallet.submitTx(signedTx)
       console.log('Transaction hash:', txHash)
 

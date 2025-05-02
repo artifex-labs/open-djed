@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { adaInReserve, maxBurnableSHEN, maxMintableDJED, maxMintableSHEN, reserveRatio } from './reserve'
-import { registryByNetwork } from '@reverse-djed/txs'
+import { registryByNetwork } from '@reverse-djed/registry'
 
 test('adaInReserve', () => {
   expect(

@@ -1,5 +1,5 @@
 import { maxBigInt, minBigInt } from './bigint'
-import { Rational, type RationalFields } from './rational'
+import type { Rational, RationalFields } from './rational'
 
 export type OperatorFeeConfig = {
   min: bigint

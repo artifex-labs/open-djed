@@ -1,5 +1,5 @@
 import * as Lucid from '@lucid-evolution/lucid'
-import { type EvalRedeemer, type Transaction, type UTxO } from '@lucid-evolution/core-types'
+import { type EvalRedeemer, type Transaction } from '@lucid-evolution/core-types'
 import packageJson from '../../cli/package.json' with { type: 'json' }
 import { z } from 'zod'
 
@@ -24,19 +24,11 @@ export const getLatestBlockSlot = ({
   }).then(async (res) => BlockSchema.parse(await res.json()).slot)
 
 export class Blockfrost extends Lucid.Blockfrost {
-  constructor(url: string, projectId?: string) {
-    super(url, projectId)
-  }
-
   getLatestBlockSlot() {
     return getLatestBlockSlot({ url: this.url, projectId: this.projectId, lucid })
   }
 
-  async evaluateTx(
-    tx: Transaction,
-    // eslint-disable-next-line no-unused-vars
-    additionalUTxOs?: UTxO[], // for tx chaining
-  ): Promise<EvalRedeemer[]> {
+  async evaluateTx(tx: Transaction): Promise<EvalRedeemer[]> {
     const payload = {
       cbor: tx,
       additionalUtxoSet: [],
@@ -89,7 +81,7 @@ type BlockfrostRedeemer = {
         }
       }
     | {
-        CannotCreateEvaluationContext: any
+        CannotCreateEvaluationContext: unknown
       }
 }
 

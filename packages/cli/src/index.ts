@@ -5,10 +5,10 @@ import {
   createBurnShenOrder,
   createBurnDjedOrder,
   createMintShenOrder,
-  registryByNetwork,
   cancelOrderByOwner,
 } from '@reverse-djed/txs'
-import { Blockfrost } from '../../blockfrost/src'
+import { registryByNetwork } from '@reverse-djed/registry'
+import { Blockfrost } from '@reverse-djed/blockfrost'
 import { env } from './env'
 import { parseOutRef } from '@reverse-djed/txs'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
@@ -202,8 +202,7 @@ program
     }
   })
 
-// eslint-disable-next-line no-unused-vars
-program.command('protocol-data').action(async (amount, options) => {
+program.command('protocol-data').action(async () => {
   const oracleUtxo = await lucid.utxoByUnit(registry.oracleAssetId)
   const oracleInlineDatum = oracleUtxo.datum
   if (!oracleInlineDatum) throw new Error("Couldn't get oracle inline datum.")

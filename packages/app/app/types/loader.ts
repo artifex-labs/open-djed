@@ -1,4 +1,4 @@
-import type { Network } from '@reverse-djed/txs'
+import type { Network } from '@reverse-djed/registry'
 
 export type LoaderData = {
   apiUrl: string

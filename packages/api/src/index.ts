@@ -34,7 +34,7 @@ import {
 import TTLCache from '@isaacs/ttlcache'
 
 const txRequestBodySchema = z.object({
-  address: z.string(),
+  hexAddress: z.string(),
   utxosCborHex: z.array(z.string()),
 })
 
@@ -227,7 +227,7 @@ const app = new Hono()
       if (amount < 0n) {
         throw new Error('Quantity must be positive number.')
       }
-      const { address, utxosCborHex } = c.req.valid('json')
+      const { hexAddress: address, utxosCborHex } = c.req.valid('json')
       lucid.selectWallet.fromAddress(
         address,
         utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
@@ -283,9 +283,9 @@ const app = new Hono()
       if (!orderUTxO)
         throw new Error(`Couldn't find order utxo for ref ${orderUTxORef.txHash}#${orderUTxORef.outputIndex}`)
 
-      const { address, utxosCborHex } = c.req.valid('json')
+      const { hexAddress, utxosCborHex } = c.req.valid('json')
       lucid.selectWallet.fromAddress(
-        address,
+        CML.Address.from_hex(hexAddress).to_bech32(),
         utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
       )
       return c.text(

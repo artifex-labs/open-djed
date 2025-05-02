@@ -9,7 +9,7 @@ import { ThemeToggle } from './ThemeToggle'
 export const Header = () => {
   const [isOpen, setOpen] = useState(false)
   const { network, config } = useEnv()
-  const { wallet, balance, wallets, connect, detectWallets } = useWallet()
+  const { wallet, wallets, connect, detectWallets } = useWallet()
 
   useEffect(() => {
     if (isOpen) detectWallets()
@@ -71,7 +71,7 @@ export const Header = () => {
       <div className="flex flex-row items-center justify-center gap-4">
         <ThemeToggle />
         <Button onClick={() => setOpen(true)} className="w-48">
-          {wallet ? `${balance} ADA` : 'Connect your wallet'}
+          {wallet ? `${wallet.balance.ADA} ADA` : 'Connect your wallet'}
         </Button>
       </div>
 

@@ -12,7 +12,7 @@ export default defineConfig({
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
-    wasm(),
     topLevelAwait(),
+    wasm(),
   ],
 })

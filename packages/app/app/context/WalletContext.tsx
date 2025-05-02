@@ -1,7 +1,8 @@
 import { createContext, useContext, useState } from 'react'
-import type { WalletApi } from '@lucid-evolution/lucid'
 import { decode } from 'cbor2'
 import { useEnv } from './EnvContext'
+import { z } from 'zod'
+import { registryByNetwork } from '@reverse-djed/registry'
 
 type WalletMetadata = {
   id: string
@@ -9,11 +10,21 @@ type WalletMetadata = {
   icon: string
 }
 
+type Wallet = {
+  signTx: (txCbor: string) => Promise<string>
+  submitTx: (txCbor: string) => Promise<string>
+  address: string
+  utxos?: string[]
+  balance: {
+    ADA: number
+    DJED: number
+    SHEN: number
+  }
+}
+
 type WalletContextType = {
-  wallet: WalletApi | null
-  balance: number
+  wallet: Wallet | null
   wallets: WalletMetadata[]
-  // eslint-disable-next-line no-unused-vars
   connect: (id: string) => Promise<void>
   detectWallets: () => void
 }
@@ -31,9 +42,13 @@ const networkIds = {
   Mainnet: 1,
 } as const
 
+const uint8ArrayToHexString = (uint8Array: Uint8Array) =>
+  Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('')
+
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [wallet, setWallet] = useState<WalletApi | null>(null)
-  const [balance, setBalance] = useState<number>(0)
+  const [wallet, setWallet] = useState<Wallet | null>(null)
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
   const { network } = useEnv()
 
@@ -43,7 +58,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     const detected = Object.keys(window.cardano || {})
       .filter((id) => window.cardano[id].icon)
       .map((id) => {
-        const prov = window.cardano[id]!
+        const prov = window.cardano[id]
         return {
           id,
           name: prov.name,
@@ -63,17 +78,49 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      setWallet(api)
+      const balanceStr = await api.getBalance()
+      console.log(balanceStr)
+      const decodedBalance = decode(balanceStr)
+      console.log(decodedBalance)
+      const parsedBalance = z
+        .union([
+          z.number(),
+          z.tuple([
+            z.number(),
+            z.map(
+              z.instanceof(Uint8Array).transform(uint8ArrayToHexString),
+              z.map(z.instanceof(Uint8Array).transform(uint8ArrayToHexString), z.number()),
+            ),
+          ]),
+        ])
+        .transform((b) => {
+          if (typeof b === 'number') return { ADA: b, DJED: 0, SHEN: 0 }
+          const policyId = registryByNetwork[network].djedAssetId.slice(0, 56)
+          const djedTokenName = registryByNetwork[network].djedAssetId.slice(56)
+          const shenTokenName = registryByNetwork[network].shenAssetId.slice(56)
 
-      const balance = decode<number>(await api.getBalance()) / 10 ** 6
-      setBalance(balance)
+          return {
+            ADA: b[0],
+            DJED: (b[1].get(policyId)?.get(djedTokenName) ?? 0) / 1e6,
+            SHEN: (b[1].get(policyId)?.get(shenTokenName) ?? 0) / 1e6,
+          }
+        })
+        .parse(decodedBalance)
+      console.log(parsedBalance)
+      setWallet({
+        balance: parsedBalance,
+        address: await api.getChangeAddress(),
+        utxos: await api.getUtxos(),
+        signTx: (txCbor: string) => api.signTx(txCbor, false),
+        submitTx: api.submitTx,
+      })
     } catch (err) {
       console.error(`Failed to enable ${id}`, err)
     }
   }
 
   return (
-    <WalletContext.Provider value={{ wallet, balance, wallets, connect, detectWallets }}>
+    <WalletContext.Provider value={{ wallet, wallets, connect, detectWallets }}>
       {children}
     </WalletContext.Provider>
   )
