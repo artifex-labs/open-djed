@@ -65,13 +65,21 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
   }
 
   // FIXME: This is not perfect yet.
-  const balance = Math.max(
-    (action === 'burn'
-      ? wallet?.balance[token]
-      : ((wallet?.balance.ADA ?? 0) - Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
-        (protocolData ? protocolData[token].buy_price : 0)) ?? 0,
-    0,
-  )
+  const balance =
+    Math.round(
+      Math.min(
+        Math.max(
+          (action === 'burn'
+            ? wallet?.balance[token]
+            : ((wallet?.balance.ADA ?? 0) -
+                Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
+              (protocolData ? protocolData[token].buy_price : 0)) ?? 0,
+          0,
+        ),
+        (action === 'mint' ? protocolData?.[token].mintable_amount : protocolData?.[token].burnable_amount) ??
+          0,
+      ) * 1e6,
+    ) / 1e6
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">
