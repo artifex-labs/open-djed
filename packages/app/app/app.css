@@ -6,14 +6,25 @@
   --font-sans:
     'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
-  --color-light-bg: #ffffff;
-  --color-dark-bg: #121212;
+
+  --color-light-bg: #f0f0f0;
   --color-light-text: #121212;
+  --color-light-foreground: #dbd1de;
+  --color-light-disabled: #c5c5c5;
+
+  --color-dark-bg: #121212;
   --color-dark-text: #ffffff;
+  --color-dark-foreground: #4a424d;
+  --color-dark-disabled: #717171;
+
+  --color-primary: #971ec7;
+  --color-primary-hover: #b25bd5;
 }
 
 html,
 body {
+  height: 100%;
+
   @apply bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text;
 
   @media (prefers-color-scheme: dark) {
