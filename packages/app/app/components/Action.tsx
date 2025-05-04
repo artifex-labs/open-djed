@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { useWallet } from '~/context/WalletContext'
 import Button from '~/components/Button'
 import { useApiClient } from '~/context/ApiClientContext'
@@ -21,22 +20,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
   const client = useApiClient()
   const { wallet } = useWallet()
 
-  const { isPending: isProtocolDataPending, error: protocolError, data: protocolData } = useProtocolData()
+  const { isPending, error, data } = useProtocolData()
+  const protocolData = data?.protocolData
+  const actionData = data?.tokenActionData(token, action, amount)
 
-  const {
-    isPending: isActionDataPending,
-    error: actionError,
-    data: actionData,
-  } = useQuery({
-    queryKey: [token, action, amount, 'data'],
-    queryFn: () =>
-      client.api[':token'][':action'][':amount']['data']
-        .$get({ param: { token, action, amount: amount.toString() } })
-        .then((r) => r.json()),
-  })
-
-  if (protocolError) return <div className="text-red-500 font-bold">Error: {protocolError.message}</div>
-  if (actionError) return <div className="text-red-500 font-bold">Error: {actionError.message}</div>
+  if (error) return <div className="text-red-500 font-bold">Error: {error.message}</div>
 
   const handleActionClick = async () => {
     if (!wallet || amount <= 0) return
@@ -74,10 +62,10 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             ? wallet?.balance[token]
             : ((wallet?.balance.ADA ?? 0) -
                 Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
-              (protocolData ? protocolData[token].buy_price : 0)) ?? 0,
+              (protocolData ? protocolData[token].buyPrice : 0)) ?? 0,
           0,
         ),
-        (action === 'mint' ? protocolData?.[token].mintable_amount : protocolData?.[token].burnable_amount) ??
+        (action === 'mint' ? protocolData?.[token].mintableAmount : protocolData?.[token].burnableAmount) ??
           0,
       ) * 1e6,
     ) / 1e6
@@ -91,7 +79,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Cost</p>
           <p className="text-lg flex justify-center items-center">
-            {isActionDataPending ? (
+            {isPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -109,7 +97,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              actionData?.base_cost.toFixed(4)
+              actionData?.baseCost.toFixed(4)
             )}{' '}
             ADA
           </p>
@@ -118,7 +106,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Fees</p>
           <p className="text-lg flex justify-center items-center">
-            {isActionDataPending ? (
+            {isPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -136,7 +124,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              actionData?.operator_fee.toFixed(4)
+              actionData?.operatorFee.toFixed(4)
             )}{' '}
             ADA
           </p>
@@ -145,7 +133,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">You will pay</p>
           <p className="text-lg flex justify-center items-center">
-            {isActionDataPending ? (
+            {isPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -172,7 +160,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Minimum ADA requirement</p>
           <p className="text-lg flex justify-center items-center">
-            {isActionDataPending ? (
+            {isPending ? (
               <svg
                 className="mr-3 size-7 animate-spin text-primary"
                 viewBox="0 0 24 24"
@@ -190,7 +178,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              actionData?.min_ada.toFixed(4)
+              protocolData?.minADA.toFixed(4)
             )}{' '}
             ADA
           </p>
@@ -205,15 +193,13 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           min={0}
           step={1}
           unit={token}
-          disabled={wallet === null || isProtocolDataPending}
+          disabled={wallet === null || isPending}
         />
 
         <Button
           className="w-full"
           onClick={handleActionClick}
-          disabled={
-            wallet === null || amount <= 0 || isActionDataPending || isProtocolDataPending || amount > balance
-          }
+          disabled={wallet === null || amount <= 0 || isPending || amount > balance}
         >
           {action.replace(/^\w/, (c) => c.toUpperCase())}
         </Button>

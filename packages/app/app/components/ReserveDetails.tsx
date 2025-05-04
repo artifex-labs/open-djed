@@ -30,7 +30,7 @@ export function ReserveDetails() {
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              Math.round(data.reserve.ratio * 100)
+              Math.round(data.protocolData.reserve.ratio * 100)
             )}
             %
           </p>
@@ -57,7 +57,7 @@ export function ReserveDetails() {
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              data.reserve.amount.toFixed(4)
+              data.protocolData.reserve.amount.toFixed(4)
             )}{' '}
             ADA
           </p>

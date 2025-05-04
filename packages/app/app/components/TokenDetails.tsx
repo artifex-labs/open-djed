@@ -10,7 +10,6 @@ type TokenDetailsProps = {
 export function TokenDetails({ token, route }: TokenDetailsProps) {
   const { isPending, error, data } = useProtocolData()
   if (error) return <div className="text-red-500 font-bold">ERROR: {error.message}</div>
-
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 ">{token} Token Details</h2>
@@ -38,7 +37,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data[token].buy_price.toFixed(4)
+                data.protocolData[token].buyPrice.toFixed(4)
               )}{' '}
               ADA
             </p>
@@ -65,7 +64,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data[token].sell_price.toFixed(4)
+                data.protocolData[token].sellPrice.toFixed(4)
               )}{' '}
               ADA
             </p>
@@ -92,7 +91,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data[token].circulating_supply.toFixed(4)
+                data.protocolData[token].circulatingSupply.toFixed(4)
               )}{' '}
               {token}
             </p>
@@ -119,7 +118,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data[token].mintable_amount.toFixed(4)
+                data.protocolData[token].mintableAmount.toFixed(4)
               )}{' '}
               {token}
             </p>
@@ -145,7 +144,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data[token].burnable_amount.toFixed(4)
+                data.protocolData[token].burnableAmount.toFixed(4)
               )}{' '}
               {token}
             </p>
