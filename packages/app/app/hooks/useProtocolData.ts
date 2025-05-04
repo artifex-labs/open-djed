@@ -1,3 +1,4 @@
+import type { TokenType, ActionType } from '@reverse-djed/api'
 import {
   djedADABurnRate,
   djedADAMintRate,
@@ -14,8 +15,6 @@ import { registryByNetwork } from '@reverse-djed/registry'
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '~/context/ApiClientContext'
 import { useEnv } from '~/context/EnvContext'
-import type { ActionType } from '~/types/action'
-import type { TokenType } from '~/types/token'
 
 export function useProtocolData() {
   const client = useApiClient()

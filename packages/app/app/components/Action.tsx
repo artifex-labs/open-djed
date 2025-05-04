@@ -2,11 +2,10 @@ import { useState } from 'react'
 import { useWallet } from '~/context/WalletContext'
 import Button from '~/components/Button'
 import { useApiClient } from '~/context/ApiClientContext'
-import type { ActionType } from '~/types/action'
-import type { TokenType } from '~/types/token'
 import { useProtocolData } from '~/hooks/useProtocolData'
 import { registryByNetwork } from '@reverse-djed/registry'
 import { AmountInput } from '~/components/AmountInput'
+import type { ActionType, TokenType } from '@reverse-djed/api'
 
 type ActionProps = {
   action: ActionType

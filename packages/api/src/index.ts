@@ -107,7 +107,10 @@ export const getLucid = async () => {
 }
 
 const tokenSchema = z.enum(['DJED', 'SHEN']).openapi({ example: 'DJED' })
+export type TokenType = z.infer<typeof tokenSchema>
+
 const actionSchema = z.enum(['Mint', 'Burn']).openapi({ example: 'Mint' })
+export type ActionType = z.infer<typeof actionSchema>
 
 const app = new Hono()
   .basePath('/api')
