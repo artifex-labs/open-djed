@@ -204,7 +204,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           max={balance}
           min={0}
           step={1}
-          unit={action === 'mint' ? 'ADA' : token}
+          unit={token}
           disabled={wallet === null || isProtocolDataPending}
         />
 
