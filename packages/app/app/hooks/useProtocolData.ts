@@ -8,6 +8,7 @@ import {
   shenADABurnRate,
   shenADAMintRate,
   operatorFee as getOperatorFee,
+  Rational,
 } from '@reverse-djed/math'
 import { registryByNetwork } from '@reverse-djed/registry'
 import { useQuery } from '@tanstack/react-query'
@@ -65,17 +66,22 @@ export function useProtocolData() {
             minADA: Number(poolDatum.minADA) / 1e6,
           },
           tokenActionData: (token: TokenType, action: ActionType, amountNumber: number) => {
+            let actionFeePercentage
             let baseCostRational
             const amount = BigInt(Math.floor(amountNumber * 1e6))
-            if (token === 'DJED' && action === 'mint') {
+            if (token === 'DJED' && action === 'Mint') {
+              actionFeePercentage = new Rational(registry.mintDJEDFeePercentage).toNumber()
               baseCostRational = djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage).mul(amount)
-            } else if (token === 'DJED' && action === 'burn') {
+            } else if (token === 'DJED' && action === 'Burn') {
+              actionFeePercentage = new Rational(registry.burnDJEDFeePercentage).toNumber()
               baseCostRational = djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage).mul(amount)
-            } else if (token === 'SHEN' && action === 'mint') {
+            } else if (token === 'SHEN' && action === 'Mint') {
+              actionFeePercentage = new Rational(registry.mintSHENFeePercentage).toNumber()
               baseCostRational = shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFeePercentage).mul(
                 amount,
               )
             } else {
+              actionFeePercentage = new Rational(registry.burnSHENFeePercentage).toNumber()
               baseCostRational = shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage).mul(
                 amount,
               )
@@ -84,6 +90,7 @@ export function useProtocolData() {
             const operatorFee = Number(getOperatorFee(baseCostRational, registry.operatorFeeConfig)) / 1e6
             return {
               baseCost,
+              actionFeePercentage,
               // NOTE: Need to figure out how to share code between this and txs.
               operatorFee,
               cost: baseCost + operatorFee,

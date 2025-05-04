@@ -107,7 +107,7 @@ export const getLucid = async () => {
 }
 
 const tokenSchema = z.enum(['DJED', 'SHEN']).openapi({ example: 'DJED' })
-const actionSchema = z.enum(['mint', 'burn']).openapi({ example: 'mint' })
+const actionSchema = z.enum(['Mint', 'Burn']).openapi({ example: 'Mint' })
 
 const app = new Hono()
   .basePath('/api')
@@ -198,12 +198,12 @@ const app = new Hono()
         now,
       }
       if (token === 'DJED') {
-        if (action === 'mint') {
+        if (action === 'Mint') {
           return c.text((await createMintDjedOrder(config).complete({ localUPLCEval: false })).toCBOR())
         }
         return c.text((await createBurnDjedOrder(config).complete({ localUPLCEval: false })).toCBOR())
       }
-      if (action === 'mint') {
+      if (action === 'Mint') {
         return c.text((await createMintShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
       }
       return c.text((await createBurnShenOrder(config).complete({ localUPLCEval: false })).toCBOR())

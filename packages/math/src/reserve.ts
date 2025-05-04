@@ -9,12 +9,14 @@ export const adaInReserve = ({ adaInReserve }: Pick<PoolDatum, 'adaInReserve'>):
 export const reserveRatio = (poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum): Rational =>
   adaInReserve(poolDatum).div(djedADARate(oracleDatum).mul(poolDatum.djedInCirculation))
 
+// FIXME: Put this in registryByNetwork.
 // Ratio of ADA in reserve to DJED in circulation over which SHEN is no longer mintable.
 export const maxReserveRatio = new Rational({
   numerator: 8n,
   denominator: 1n,
 })
 
+// FIXME: Put this in registryByNetwork.
 // Ratio of ADA in reserve to DJED in circulation under which DJED is no longer mintable.
 export const minReserveRatio = new Rational({
   numerator: 4n,

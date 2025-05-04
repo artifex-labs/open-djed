@@ -7,11 +7,13 @@ import { useEnv } from '~/context/EnvContext'
 import { useWallet } from '~/context/WalletContext'
 import { ThemeToggle } from './ThemeToggle'
 import { FiMenu, FiX } from 'react-icons/fi'
+import { useQuery } from '@tanstack/react-query'
 
 export const Header = () => {
   const [isOpen, setOpen] = useState(false)
   const { network, config } = useEnv()
   const { wallet, wallets, connect, detectWallets } = useWallet()
+  const { data: address } = useQuery({ queryKey: ['address'], queryFn: () => wallet?.address() })
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Navigation links data
@@ -91,7 +93,7 @@ export const Header = () => {
             />
             <ThemeToggle />
             <Button onClick={() => setOpen(true)} className="w-48">
-              {wallet ? `${wallet.address.slice(0, 10)}...` : 'Connect wallet'}
+              {wallet ? (address ? `${address.slice(0, 10)}...` : 'Loading address...') : 'Connect wallet'}
             </Button>
           </div>
 
@@ -145,7 +147,7 @@ export const Header = () => {
           {/* Bottom content */}
           <div className="px-6 py-4">
             <Button onClick={() => setOpen(true)} className="w-full">
-              {wallet ? `${wallet.address.slice(0, 10)}...` : 'Connect wallet'}
+              {wallet ? (address ? `${address.slice(0, 10)}...` : 'Loading address...') : 'Connect wallet'}
             </Button>
           </div>
         </div>

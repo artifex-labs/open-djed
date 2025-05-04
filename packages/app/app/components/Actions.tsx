@@ -27,13 +27,13 @@ export const Actions = ({ token }: ActionsProps) => {
 
         <div className="w-full flex flex-col sm:flex-row sm:space-x-4 justify-center items-center gap-10">
           <Action
-            action="mint"
+            action="Mint"
             token={token}
             onActionStart={handleActionStart}
             onActionComplete={handleActionComplete}
           />
           <Action
-            action="burn"
+            action="Burn"
             token={token}
             onActionStart={handleActionStart}
             onActionComplete={handleActionComplete}

@@ -31,14 +31,14 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
     onActionStart()
 
     try {
-      if (!wallet.utxos) {
-        throw new Error('No UTXOs found')
-      }
+      const utxos = await wallet.utxos()
+      if (!utxos) throw new Error('No UTXOs found')
+      const address = await wallet.address()
 
       const txCbor = await client.api[':token'][':action'][':amount']['tx']
         .$post({
           param: { token, action, amount: amount.toString() },
-          json: { hexAddress: wallet.address, utxosCborHex: wallet.utxos },
+          json: { hexAddress: address, utxosCborHex: utxos },
         })
         .then((r) => r.text())
 
@@ -58,21 +58,21 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
     Math.round(
       Math.min(
         Math.max(
-          (action === 'burn'
+          (action === 'Burn'
             ? wallet?.balance[token]
             : ((wallet?.balance.ADA ?? 0) -
                 Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
               (protocolData ? protocolData[token].buyPrice : 0)) ?? 0,
           0,
         ),
-        (action === 'mint' ? protocolData?.[token].mintableAmount : protocolData?.[token].burnableAmount) ??
+        (action === 'Mint' ? protocolData?.[token].mintableAmount : protocolData?.[token].burnableAmount) ??
           0,
       ) * 1e6,
     ) / 1e6
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">
-        {action.replace(/^\w/, (c) => c.toUpperCase())} {token}
+        {action} {token}
       </h2>
 
       <div className="flex flex-col gap-6 mb-6">
@@ -104,7 +104,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
 
         <div className="flex justify-between">
-          <p className="font-medium">Fees</p>
+          <p className="font-medium">Operator fees</p>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
               <svg
@@ -127,6 +127,33 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               actionData?.operatorFee.toFixed(4)
             )}{' '}
             ADA
+          </p>
+        </div>
+
+        <div className="flex justify-between">
+          <p className="font-medium">{action} fees</p>
+          <p className="text-lg flex justify-center items-center">
+            {isPending ? (
+              <svg
+                className="mr-3 size-7 animate-spin text-primary"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            ) : (
+              ((actionData?.actionFeePercentage ?? 0) * 100).toFixed(1)
+            )}{' '}
+            %
           </p>
         </div>
 
@@ -158,7 +185,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
 
         <div className="flex justify-between">
-          <p className="font-medium">Minimum ADA requirement</p>
+          <p className="font-medium">Minimum ADA</p>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
               <svg

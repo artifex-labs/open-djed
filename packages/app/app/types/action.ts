@@ -1,1 +1,1 @@
-export type ActionType = 'mint' | 'burn'
+export type ActionType = 'Mint' | 'Burn'

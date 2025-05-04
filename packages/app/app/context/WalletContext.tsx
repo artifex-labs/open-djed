@@ -13,8 +13,8 @@ type WalletMetadata = {
 type Wallet = {
   signTx: (txCbor: string) => Promise<string>
   submitTx: (txCbor: string) => Promise<string>
-  address: string
-  utxos?: string[]
+  address: () => Promise<string>
+  utxos: () => Promise<string[] | undefined>
   balance: {
     ADA: number
     DJED: number
@@ -106,8 +106,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         .parse(decodedBalance)
       setWallet({
         balance: parsedBalance,
-        address: await api.getChangeAddress(),
-        utxos: await api.getUtxos(),
+        address: () => api.getChangeAddress(),
+        utxos: () => api.getUtxos(),
         signTx: (txCbor: string) => api.signTx(txCbor, false),
         submitTx: api.submitTx,
       })
