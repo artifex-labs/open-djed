@@ -7,6 +7,7 @@ import type { ActionType } from '~/types/action'
 import type { TokenType } from '~/types/token'
 import { useProtocolData } from '~/hooks/useProtocolData'
 import { registryByNetwork } from '@reverse-djed/registry'
+import { AmountInput } from '~/components/AmountInput'
 
 type ActionProps = {
   action: ActionType
@@ -197,22 +198,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       </div>
 
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col">
-          <input
-            className="border-2 border-primary rounded-md px-4 py-2 text-lg w-full focus:outline-none"
-            type="number"
-            min="0"
-            value={amount.toString()}
-            onChange={(e) => setAmount(Math.max(0, Math.min(Number(e.target.value), balance)))}
-            placeholder="Enter amount"
-          />
-          <p className="text-xs text-right pt-1 pr-1">Available: {isProtocolDataPending ? 0 : balance}</p>
-        </div>
+        <AmountInput
+          value={amount}
+          onChange={setAmount}
+          max={balance}
+          min={0}
+          step={1}
+          unit={token}
+          disabled={wallet === null || isProtocolDataPending}
+        />
 
         <Button
           className="w-full"
           onClick={handleActionClick}
-          disabled={wallet === null || amount <= 0 || isActionDataPending || isProtocolDataPending}
+          disabled={
+            wallet === null || amount <= 0 || isActionDataPending || isProtocolDataPending || amount > balance
+          }
         >
           {action.replace(/^\w/, (c) => c.toUpperCase())}
         </Button>
