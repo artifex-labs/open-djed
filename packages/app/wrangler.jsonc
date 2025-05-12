@@ -8,7 +8,7 @@
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
   "vars": {
-    "API_URL": "https://reverse-djed-api-183477257945.europe-west1.run.app",
+    "API_URL": "https://api.djed.artifex.finance",
     "NETWORK": "Mainnet",
     "CONFIG": "{ \"Mainnet\": \"https://djed.artifex.finance\", \"Preprod\": \"https://preprod.djed.artifex.finance\"}",
   },
@@ -32,7 +32,7 @@
         },
       ],
       "vars": {
-        "API_URL": "https://reverse-djed-api-preprod-183477257945.europe-west1.run.app",
+        "API_URL": "https://preprod.api.djed.artifex.financep",
         "NETWORK": "Preprod",
         "CONFIG": "{ \"Mainnet\": \"https://djed.artifex.finance\", \"Preprod\": \"https://preprod.djed.artifex.finance\"}",
       },
