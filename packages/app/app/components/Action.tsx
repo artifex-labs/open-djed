@@ -216,7 +216,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           value={amount}
           onChange={setAmount}
           max={balance}
-          min={0}
+          min={50}
           step={1}
           unit={token}
           disabled={wallet === null || isPending}
