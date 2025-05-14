@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="flex flex-row gap-8 p-8 justify-between bg-white dark:bg-dark-bg border-t border-light-foreground dark:border-primary/30 w-full text-center max-h-fit">
       <div className="flex flex-row gap-6 items-center">
-        <img src="/reverse-djed.svg" alt="Reverse DJED" />
+        <img src="/artifex-logo.png" alt="Artifex Labs Logo" className="w-[50px]" />
         <p className="pt-1">All rights reserved © 2025</p>
       </div>
 
