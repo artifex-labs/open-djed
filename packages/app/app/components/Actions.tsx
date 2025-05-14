@@ -25,7 +25,7 @@ export const Actions = ({ token }: ActionsProps) => {
           <span>Actions</span>
         </div>
 
-        <div className="w-full flex flex-col sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6 gap-4">
+        <div className="w-full flex flex-col md:flex-row justify-center gap-6">
           <Action
             action="Mint"
             token={token}
