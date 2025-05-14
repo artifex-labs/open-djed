@@ -47,6 +47,16 @@ const Footer = () => {
           <img src="/djed.svg" alt="GitHub Logo" className="w-[20px] inline-block mr-2" />
           djed.xyz
         </a>
+        <a
+          href="https://status.artifex.finance/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-primary focus:outline-none transition-colors flex items-center gap-1"
+          title="Service status page"
+        >
+          <i className="fas fa-heartbeat text-red-500"></i>
+          <span>Status</span>
+        </a>
       </div>
     </footer>
   )
