@@ -32,7 +32,7 @@
         },
       ],
       "vars": {
-        "API_URL": "https://preprod.api.djed.artifex.financep",
+        "API_URL": "https://preprod.api.djed.artifex.finance",
         "NETWORK": "Preprod",
         "CONFIG": "{ \"Mainnet\": \"https://djed.artifex.finance\", \"Preprod\": \"https://preprod.djed.artifex.finance\"}",
       },
