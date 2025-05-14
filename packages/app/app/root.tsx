@@ -1,4 +1,5 @@
 import './app.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from 'react-router'
 import { links as fontLinks } from './lib/loader'
 import { loader as rootLoader } from './lib/loader'
