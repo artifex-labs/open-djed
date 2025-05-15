@@ -1,5 +1,6 @@
 import { maxReserveRatio, minReserveRatio } from '@reverse-djed/math'
 import { useProtocolData } from '~/hooks/useProtocolData'
+import { formatNumber } from '~/utils'
 
 export function ReserveDetails() {
   const { isPending, error, data } = useProtocolData()
@@ -38,7 +39,7 @@ export function ReserveDetails() {
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              Math.round(data.protocolData.reserve.ratio * 100)
+              formatNumber(Math.round(data.protocolData.reserve.ratio * 100))
             )}
             %
           </p>
@@ -65,7 +66,7 @@ export function ReserveDetails() {
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              data.protocolData.reserve.amount.toFixed(4)
+              formatNumber(data.protocolData.reserve.amount.toFixed(4))
             )}{' '}
             ADA
           </p>

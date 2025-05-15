@@ -1,6 +1,7 @@
 import { useProtocolData } from '~/hooks/useProtocolData'
 import { NavLink } from 'react-router'
 import type { TokenType } from '@reverse-djed/api'
+import { formatNumber } from '~/utils'
 
 type TokenDetailsProps = {
   token: TokenType
@@ -37,7 +38,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data.protocolData[token].buyPrice.toFixed(4)
+                formatNumber(data.protocolData[token].buyPrice.toFixed(4))
               )}{' '}
               ADA
             </p>
@@ -64,7 +65,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data.protocolData[token].sellPrice.toFixed(4)
+                formatNumber(data.protocolData[token].sellPrice.toFixed(4))
               )}{' '}
               ADA
             </p>
@@ -91,7 +92,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data.protocolData[token].circulatingSupply.toFixed(4)
+                formatNumber(data.protocolData[token].circulatingSupply.toFixed(4))
               )}{' '}
               {token}
             </p>
@@ -118,7 +119,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data.protocolData[token].mintableAmount.toFixed(4)
+                formatNumber(data.protocolData[token].mintableAmount.toFixed(4))
               )}{' '}
               {token}
             </p>
@@ -144,7 +145,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
                   <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                 </svg>
               ) : (
-                data.protocolData[token].burnableAmount.toFixed(4)
+                formatNumber(data.protocolData[token].burnableAmount.toFixed(4))
               )}{' '}
               {token}
             </p>

@@ -6,6 +6,7 @@ import { useProtocolData } from '~/hooks/useProtocolData'
 import { registryByNetwork } from '@reverse-djed/registry'
 import { AmountInput } from '~/components/AmountInput'
 import type { ActionType, TokenType } from '@reverse-djed/api'
+import { formatNumber } from '~/utils'
 
 type ActionProps = {
   action: ActionType
@@ -96,7 +97,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              actionData?.baseCost.toFixed(4)
+              formatNumber(actionData?.baseCost.toFixed(4) ?? 0)
             )}{' '}
             ADA
           </p>
@@ -123,7 +124,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              actionData?.operatorFee.toFixed(4)
+              formatNumber(actionData?.operatorFee.toFixed(4) ?? 0)
             )}{' '}
             ADA
           </p>
@@ -150,7 +151,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              ((actionData?.actionFeePercentage ?? 0) * 100).toFixed(1)
+              formatNumber(((actionData?.actionFeePercentage ?? 0) * 100).toFixed(1))
             )}{' '}
             %
           </p>
@@ -177,7 +178,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              actionData?.cost.toFixed(4)
+              formatNumber(actionData?.cost.toFixed(4) ?? 0)
             )}{' '}
             ADA
           </p>
@@ -204,7 +205,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              protocolData?.minADA.toFixed(4)
+              formatNumber(protocolData?.minADA.toFixed(4) ?? 0)
             )}{' '}
             ADA
           </p>

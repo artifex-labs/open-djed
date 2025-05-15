@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { formatNumber } from '~/utils'
 
 type AmountInputProps = {
   value: number
@@ -93,7 +94,7 @@ export const AmountInput = ({
           </button>
         </div>
         <div>
-          Available: {roundToDecimals(max)} {unit}
+          Available: {formatNumber(roundToDecimals(max))} {unit}
         </div>
       </div>
     </div>
