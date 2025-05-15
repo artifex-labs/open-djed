@@ -34,7 +34,8 @@ export const AmountInput = ({
 
   const handleSet = useCallback(
     (type: 'min' | 'half' | 'max') => {
-      const val = type === 'min' ? min : type === 'half' ? (max + min) / 2 : max
+      const val =
+        max <= 0 ? (type === 'min' ? min : 0) : type === 'min' ? min : type === 'half' ? (max + min) / 2 : max
       onChange(roundToDecimals(val))
     },
     [min, max, onChange],
@@ -45,18 +46,21 @@ export const AmountInput = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="relative">
-        <input
-          type="number"
-          className={`no-spinner border-2 border-primary rounded-md px-4 py-2 text-lg w-full focus:outline-none disabled:bg-gray-100 dark:disabled:bg-gray-700 ${
-            isOverMax ? 'text-red-500' : ''
-          }`}
-          value={value === 0 ? '' : value.toString()}
-          step={step}
-          min={min}
-          max={max}
-          onChange={handleInputChange}
-          placeholder="Enter amount"
-        />
+        <div>
+          <input
+            type="number"
+            className={`no-spinner border-2 border-primary rounded-md px-4 py-2 text-lg w-full focus:outline-none disabled:bg-gray-100 dark:disabled:bg-gray-700 ${
+              isOverMax ? 'text-red-500' : ''
+            }`}
+            value={value === 0 ? '' : value.toString()}
+            step={step}
+            min={min}
+            max={max}
+            onChange={handleInputChange}
+            placeholder="Enter amount"
+          />{' '}
+          {isOverMax && <div className="text-red-500 text-sm mt-1">Amount exceeds available balance</div>}
+        </div>
         <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
           {unit}
         </span>
