@@ -57,6 +57,23 @@ const Footer = () => {
           <i className="fas fa-heartbeat text-red-500"></i>
           <span>Status</span>
         </a>
+        <a
+          href="/terms"
+          className="hover:text-primary focus:outline-none transition-colors flex items-center gap-1"
+          title="Terms of Service"
+        >
+          <i className="fas fa-file-contract text-primary-500"></i>
+          <span>Terms</span>
+        </a>
+
+        <a
+          href="/privacy"
+          className="hover:text-primary focus:outline-none transition-colors flex items-center gap-1"
+          title="Privacy Policy"
+        >
+          <i className="fas fa-user-secret text-primary-500"></i>
+          <span>Privacy</span>
+        </a>
       </div>
     </footer>
   )

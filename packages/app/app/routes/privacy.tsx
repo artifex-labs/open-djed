@@ -1,0 +1,119 @@
+export function meta() {
+  return [
+    { title: 'Privacy Policy - Reverse DJED' },
+    { name: 'description', content: 'Learn how Reverse DJED handles your data and privacy.' },
+  ]
+}
+
+export default function PrivacyPage() {
+  return (
+    <div className="flex flex-col gap-10 justify-center items-center w-full pt-8 px-4 md:px-8">
+      <div className="flex flex-col text-center">
+        <h1 className="text-4xl font-bold">Privacy Policy</h1>
+        <p className="text-sm text-muted-foreground mt-1">Effective Date: May 14, 2025</p>
+      </div>
+
+      <div className="w-full max-w-4xl flex flex-col gap-6 text-base leading-relaxed">
+        <p>
+          Artifex Labs is committed to privacy and transparency. This Privacy Policy outlines what data we
+          collect and how it is used.
+        </p>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-2">1. Data Collection</h2>
+          <p>
+            We do <strong>not</strong> collect any personal data.
+          </p>
+        </section>
+
+        <section>
+          <h3 className="text-lg font-medium mb-1">Wallets</h3>
+          <p>
+            When users interact with the app using their Cardano wallet, we interact only with the wallet
+            interface via the CIP-30 standard. We do not receive or store your wallet address or any private
+            keys.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-2">2. Cookies</h2>
+          <p>
+            We use cookies <strong>only</strong> to store user preferences, such as:
+          </p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Light/dark theme selection</li>
+            <li>Network choice (e.g., mainnet or preprod)</li>
+          </ul>
+          <p>
+            These cookies are <strong>not used for tracking</strong> and do <strong>not</strong> store any
+            personally identifiable information.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-2">3. Analytics and Telemetry (Planned)</h2>
+          <p>
+            We may later introduce limited analytics (e.g., PostHog or Sentry) to improve app performance and
+            track application errors. This will be used solely to understand app usage and fix bugs.
+          </p>
+          <p>We will update this policy before enabling any such analytics.</p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-2">4. Open Source</h2>
+          <p>
+            This application is open source and licensed under the{' '}
+            <a
+              href="https://www.gnu.org/licenses/gpl-3.0.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-primary"
+            >
+              GNU General Public License v3.0
+            </a>
+            .
+          </p>
+          <p>
+            Source code:{' '}
+            <a
+              href="https://github.com/artifex-labs/reverse-djed"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-primary"
+            >
+              github.com/artifex-labs/reverse-djed
+            </a>
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-2">5. No Authentication</h2>
+          <p>
+            The application does not use or require any user accounts, logins, or email registration. Access
+            is anonymous.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-2">6. Updates to This Policy</h2>
+          <p>We may revise this policy over time. Updates will be posted here with a new effective date.</p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-2">7. Contact</h2>
+          <p>
+            If you have questions about this Privacy Policy, contact us at:{' '}
+            <a
+              href="https://discord.gg/MhYP7w8n8p"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-primary"
+            >
+              Discord
+            </a>
+          </p>
+        </section>
+      </div>
+    </div>
+  )
+}
