@@ -7,6 +7,7 @@ import { registryByNetwork } from '@reverse-djed/registry'
 import { AmountInput } from '~/components/AmountInput'
 import type { ActionType, TokenType } from '@reverse-djed/api'
 import { formatNumber } from '~/utils'
+import { Transaction, TransactionWitnessSet } from '@dcspark/cardano-multiplatform-lib-browser'
 
 type ActionProps = {
   action: ActionType
@@ -42,8 +43,16 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         })
         .then((r) => r.text())
 
-      const signedTx = await wallet.signTx(txCbor)
-      const txHash = await wallet.submitTx(signedTx)
+      console.log('Unsigned transaction CBOR: ', txCbor)
+      const signature = await wallet.signTx(txCbor)
+      console.log('Signature: ', txCbor)
+      const tx = Transaction.from_cbor_hex(txCbor)
+      const body = tx.body()
+      const witnessSet = tx.witness_set()
+      witnessSet.add_all_witnesses(TransactionWitnessSet.from_cbor_hex(signature))
+      const signedTxCbor = Transaction.new(body, witnessSet, true).to_cbor_hex()
+      console.log('Signed transaction CBOR: ', signedTxCbor)
+      const txHash = await wallet.submitTx(signedTxCbor)
       console.log('Transaction hash:', txHash)
 
       onActionComplete()
