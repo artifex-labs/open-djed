@@ -8,6 +8,7 @@ import { AmountInput } from '~/components/AmountInput'
 import type { ActionType, TokenType } from '@reverse-djed/api'
 import { formatNumber } from '~/utils'
 import { Transaction, TransactionWitnessSet } from '@dcspark/cardano-multiplatform-lib-browser'
+import { useEnv } from '~/context/EnvContext'
 
 type ActionProps = {
   action: ActionType
@@ -22,6 +23,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
   const { wallet } = useWallet()
 
   const { isPending, error, data } = useProtocolData()
+  const { network } = useEnv()
   const protocolData = data?.protocolData
   const actionData = data?.tokenActionData(token, action, amount)
 
@@ -235,7 +237,13 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <Button
           className="w-full"
           onClick={handleActionClick}
-          disabled={wallet === null || amount <= 0 || isPending || amount > balance}
+          disabled={
+            wallet === null ||
+            amount <= 0 ||
+            amount < Number(registryByNetwork[network].minAmount) * 1e-6 ||
+            isPending ||
+            amount > balance
+          }
         >
           {action.replace(/^\w/, (c) => c.toUpperCase())}
         </Button>
