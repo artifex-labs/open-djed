@@ -93,7 +93,13 @@ export const Header = () => {
             />
             <ThemeToggle />
             <Button onClick={() => setOpen(true)} className="w-48">
-              {wallet ? (address ? `${address.slice(0, 10)}...` : 'Loading address...') : 'Connect wallet'}
+              {wallet
+                ? wallet.balance.handle
+                  ? `$${wallet.balance.handle}`
+                  : address
+                    ? `${address.slice(0, 10)}...`
+                    : 'Loading address...'
+                : 'Connect wallet'}
             </Button>
           </div>
 
@@ -147,7 +153,13 @@ export const Header = () => {
           {/* Bottom content */}
           <div className="px-6 py-4">
             <Button onClick={() => setOpen(true)} className="w-full">
-              {wallet ? (address ? `${address.slice(0, 10)}...` : 'Loading address...') : 'Connect wallet'}
+              {wallet
+                ? wallet.balance.handle
+                  ? `$${wallet.balance.handle}`
+                  : address
+                    ? `${address.slice(0, 10)}...`
+                    : 'Loading address...'
+                : 'Connect wallet'}
             </Button>
           </div>
         </div>
