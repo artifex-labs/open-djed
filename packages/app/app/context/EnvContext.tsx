@@ -6,6 +6,7 @@ export const EnvContext = createContext<LoaderData | null>(null)
 
 export function EnvProvider({ children }: { children: React.ReactNode }) {
   const data = useLoaderData<LoaderData>()
+  console.log(data)
   return <EnvContext.Provider value={data}>{children}</EnvContext.Provider>
 }
 

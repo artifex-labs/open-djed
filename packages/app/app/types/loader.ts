@@ -5,4 +5,5 @@ export type LoaderData = {
   network: Network
   config: Record<string, string>
   initialIsDark: 'dark' | 'light' | null
+  posthogApiKey: string
 }

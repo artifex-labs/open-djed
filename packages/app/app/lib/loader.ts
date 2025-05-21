@@ -16,8 +16,8 @@ export function loader({
   context,
   request,
 }: LoaderFunctionArgs): LoaderData & { initialIsDark: 'dark' | 'light' | null } {
-  const { API_URL, NETWORK, CONFIG } = context.cloudflare.env
-  if (!API_URL || !NETWORK) throw new Error('Missing env vars')
+  const { API_URL, NETWORK, CONFIG, POSTHOG_API_KEY } = context.cloudflare.env
+  if (!API_URL || !NETWORK || !POSTHOG_API_KEY) throw new Error('Missing env vars')
 
   const cookieHeader = request.headers.get('cookie') ?? ''
   const cookies = parse(cookieHeader)
@@ -29,5 +29,6 @@ export function loader({
     network: NETWORK,
     config: JSON.parse(CONFIG),
     initialIsDark,
+    posthogApiKey: POSTHOG_API_KEY,
   }
 }

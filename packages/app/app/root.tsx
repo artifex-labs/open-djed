@@ -15,7 +15,7 @@ export { rootLoader as loader }
 const queryClient = new QueryClient()
 
 export default function App() {
-  const { apiUrl, network, config, initialIsDark } = useLoaderData<LoaderData>()
+  const { apiUrl, network, config, initialIsDark, posthogApiKey } = useLoaderData<LoaderData>()
 
   return (
     <html lang="en" className={initialIsDark === 'dark' ? 'dark' : initialIsDark === 'light' ? 'light' : ''}>
@@ -51,7 +51,7 @@ export default function App() {
         <ThemeProvider>
           <ClientProvider apiUrl={apiUrl}>
             <QueryClientProvider client={queryClient}>
-              <Layout apiUrl={apiUrl} network={network} config={config}>
+              <Layout apiUrl={apiUrl} network={network} config={config} posthogApiKey={posthogApiKey}>
                 <Outlet />
               </Layout>
             </QueryClientProvider>
