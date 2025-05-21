@@ -72,12 +72,12 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           (action === 'Burn'
             ? wallet?.balance[token]
             : ((wallet?.balance.ADA ?? 0) -
-                Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
-              (protocolData ? protocolData[token].buyPrice : 0)) ?? 0,
+              Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
+            (protocolData ? protocolData[token].buyPrice : 0)) ?? 0,
           0,
         ),
         (action === 'Mint' ? protocolData?.[token].mintableAmount : protocolData?.[token].burnableAmount) ??
-          0,
+        0,
       ) * 1e6,
     ) / 1e6
   return (
@@ -169,7 +169,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
 
         <div className="flex justify-between">
-          <p className="font-medium">You will pay</p>
+          <p className="font-medium">{action === 'Mint' ? 'You will pay' : 'You will receive'}</p>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
               <svg
