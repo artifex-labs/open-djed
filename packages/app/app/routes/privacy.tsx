@@ -10,7 +10,7 @@ export default function PrivacyPage() {
     <div className="flex flex-col gap-10 justify-center items-center w-full pt-8 px-4 md:px-8">
       <div className="flex flex-col text-center">
         <h1 className="text-4xl font-bold">Privacy Policy</h1>
-        <p className="text-sm text-muted-foreground mt-1">Effective Date: May 14, 2025</p>
+        <p className="text-sm text-muted-foreground mt-1">Effective Date: May 21, 2025</p>
       </div>
 
       <div className="w-full max-w-4xl flex flex-col gap-6 text-base leading-relaxed">
@@ -51,12 +51,16 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-2">3. Analytics and Telemetry (Planned)</h2>
+          <h2 className="text-xl font-semibold mb-2">3. Analytics and Telemetry</h2>
           <p>
-            We may later introduce limited analytics (e.g., PostHog or Sentry) to improve app performance and
-            track application errors. This will be used solely to understand app usage and fix bugs.
+            We use PostHog to collect limited analytics and application telemetry. This helps us understand
+            how the app is used and identify bugs or performance issues.
           </p>
-          <p>We will update this policy before enabling any such analytics.</p>
+          <p>
+            Data collected by PostHog does <strong>not</strong> include personally identifiable information.
+            We do <strong>not</strong> store wallet addresses, names, emails, or any user credentials.
+          </p>
+          <p>All analytics are used strictly for the purpose of improving the application experience.</p>
         </section>
 
         <section>
