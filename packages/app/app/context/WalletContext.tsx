@@ -19,6 +19,7 @@ type Wallet = {
     ADA: number
     DJED: number
     SHEN: number
+    handle?: string
   }
 }
 
@@ -28,7 +29,17 @@ type WalletContextType = {
   connect: (id: string) => Promise<void>
   detectWallets: () => void
 }
+const hexToAscii = (hex: string) => {
+  const clean = hex.replace(/[^0-9A-Fa-f]/g, '')
+  if (clean.length % 2) throw new Error('Hex string requires even length')
 
+  return (
+    clean
+      .match(/../g)
+      ?.map((pair) => String.fromCharCode(parseInt(pair, 16)))
+      .join('') || ''
+  )
+}
 const WalletContext = createContext<WalletContextType | null>(null)
 
 export const useWallet = () => {
@@ -96,11 +107,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
           const policyId = registryByNetwork[network].djedAssetId.slice(0, 56)
           const djedTokenName = registryByNetwork[network].djedAssetId.slice(56)
           const shenTokenName = registryByNetwork[network].shenAssetId.slice(56)
+          const adaHandlePolicyId = 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a'
+          const hexHandle = [...(b[1].get(adaHandlePolicyId)?.keys() ?? [])][0]
 
           return {
             ADA: b[0] / 1e6,
             DJED: (b[1].get(policyId)?.get(djedTokenName) ?? 0) / 1e6,
             SHEN: (b[1].get(policyId)?.get(shenTokenName) ?? 0) / 1e6,
+            handle: hexHandle ? hexToAscii(hexHandle) : undefined,
           }
         })
         .parse(decodedBalance)
