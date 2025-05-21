@@ -11,13 +11,16 @@ type Props = {
   apiUrl: string
   network: Network
   config: Record<string, string>
-  posthogApiKey: string
+  posthog: {
+    key: string
+    url: string
+  }
 }
 
-export function Layout({ children, apiUrl, network, config, posthogApiKey }: Props) {
-  posthog.init(posthogApiKey, { api_host: 'https://eu.i.posthog.com' })
+export function Layout({ children, apiUrl, network, config, posthog: posthogConfig }: Props) {
+  posthog.init(posthogConfig.key, { api_host: posthogConfig.url })
   return (
-    <EnvContext.Provider value={{ apiUrl, network, config, initialIsDark: null, posthogApiKey }}>
+    <EnvContext.Provider value={{ apiUrl, network, config, initialIsDark: null, posthog: posthogConfig }}>
       <PostHogProvider client={posthog}>
         <WalletProvider>
           <div className="flex flex-col min-h-screen">

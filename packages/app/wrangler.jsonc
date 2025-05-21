@@ -11,6 +11,7 @@
     "API_URL": "https://api.djed.artifex.finance",
     "NETWORK": "Mainnet",
     "CONFIG": "{ \"Mainnet\": \"https://djed.artifex.finance\", \"Preprod\": \"https://preprod.djed.artifex.finance\"}",
+    "POSTHOG_API_URL": "https://ph.artifex.finance/",
   },
   "observability": {
     "logs": {
@@ -35,6 +36,7 @@
         "API_URL": "https://preprod.api.djed.artifex.finance",
         "NETWORK": "Preprod",
         "CONFIG": "{ \"Mainnet\": \"https://djed.artifex.finance\", \"Preprod\": \"https://preprod.djed.artifex.finance\"}",
+        "POSTHOG_API_URL": "https://ph.artifex.finance/",
       },
     },
   },
