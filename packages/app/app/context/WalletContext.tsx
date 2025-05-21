@@ -120,7 +120,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         .parse(decodedBalance)
       setWallet({
         balance: parsedBalance,
-        address: () => api.getChangeAddress(),
+        address: async () => {
+          const address = await api.getChangeAddress()
+          console.log('Address:', address)
+          return address
+        },
         utxos: () => api.getUtxos(),
         signTx: (txCbor: string) => api.signTx(txCbor, false),
         submitTx: api.submitTx,

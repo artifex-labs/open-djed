@@ -13,7 +13,7 @@ export const Header = () => {
   const [isOpen, setOpen] = useState(false)
   const { network, config } = useEnv()
   const { wallet, wallets, connect, detectWallets } = useWallet()
-  const { data: address } = useQuery({ queryKey: ['address'], queryFn: () => wallet?.address() })
+  const { data: address } = useQuery({ queryKey: ['address'], queryFn: () => wallet?.address() ?? '' })
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Navigation links data
