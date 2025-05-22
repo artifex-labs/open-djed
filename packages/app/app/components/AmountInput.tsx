@@ -36,7 +36,15 @@ export const AmountInput = ({
   const handleSet = useCallback(
     (type: 'min' | 'half' | 'max') => {
       const val =
-        max <= 0 ? (type === 'min' ? min : 0) : type === 'min' ? min : type === 'half' ? (max + min) / 2 : max
+        max <= 0
+          ? type === 'min'
+            ? min
+            : 0
+          : type === 'min'
+            ? min
+            : type === 'half'
+              ? Math.max(min, max / 2)
+              : max
       onChange(roundToDecimals(val))
     },
     [min, max, onChange],

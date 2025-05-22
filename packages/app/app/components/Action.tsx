@@ -108,7 +108,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              formatNumber(actionData?.baseCost.toFixed(4) ?? 0)
+              formatNumber(
+                action === 'Mint'
+                  ? (actionData?.baseCost.toFixed(4) ?? 0)
+                  : (actionData?.cost.toFixed(4) ?? 0),
+              )
             )}{' '}
             ADA
           </p>
@@ -189,14 +193,18 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             ) : (
-              formatNumber(actionData?.cost.toFixed(4) ?? 0)
+              formatNumber(
+                action === 'Mint'
+                  ? (actionData?.cost.toFixed(4) ?? 0)
+                  : (actionData?.baseCost.toFixed(4) ?? 0),
+              )
             )}{' '}
             ADA
           </p>
         </div>
 
         <div className="flex justify-between">
-          <p className="font-medium">Minimum ADA</p>
+          <p className="font-medium">Refundable deposit</p>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
               <svg
