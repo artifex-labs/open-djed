@@ -9,6 +9,7 @@ import type { ActionType, TokenType } from '@reverse-djed/api'
 import { formatNumber } from '~/utils'
 import { Transaction, TransactionWitnessSet } from '@dcspark/cardano-multiplatform-lib-browser'
 import { useEnv } from '~/context/EnvContext'
+import Toast from './Toast'
 
 type ActionProps = {
   action: ActionType
@@ -19,6 +20,13 @@ type ActionProps = {
 
 export const Action = ({ action, token, onActionStart, onActionComplete }: ActionProps) => {
   const [amount, setAmount] = useState<number>(0)
+  const [toastProps, setToastProps] = useState<{ message: string; type: 'success' | 'error'; show: boolean }>(
+    {
+      message: '',
+      type: 'success',
+      show: false,
+    },
+  )
   const client = useApiClient()
   const { wallet } = useWallet()
 
@@ -47,7 +55,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
 
       console.log('Unsigned transaction CBOR: ', txCbor)
       const signature = await wallet.signTx(txCbor)
-      console.log('Signature: ', txCbor)
+      console.log('Signature: ', signature)
       const tx = Transaction.from_cbor_hex(txCbor)
       const body = tx.body()
       const witnessSet = tx.witness_set()
@@ -56,10 +64,13 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       console.log('Signed transaction CBOR: ', signedTxCbor)
       const txHash = await wallet.submitTx(signedTxCbor)
       console.log('Transaction hash:', txHash)
+      setToastProps({ message: `Transaction submitted: ${txHash}`, type: 'success', show: true })
 
       onActionComplete()
     } catch (err) {
       console.error('Action failed:', err)
+
+      setToastProps({ message: `Transaction failed. Please try again.`, type: 'error', show: true })
       onActionComplete()
     }
   }
@@ -256,6 +267,12 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           {action.replace(/^\w/, (c) => c.toUpperCase())}
         </Button>
       </div>
+      <Toast
+        message={toastProps.message}
+        show={toastProps.show}
+        onClose={() => setToastProps({ ...toastProps, show: false })}
+        type={toastProps.type}
+      />
     </div>
   )
 }
