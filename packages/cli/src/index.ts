@@ -22,6 +22,7 @@ import {
   shenADABurnRate,
   shenADAMintRate,
 } from '@reverse-djed/math'
+import { processMintDjedOrder } from '@reverse-djed/txs/src/process-mint-djed-order'
 
 console.log(
   `Initializing Lucid with Blockfrost for network "${env.NETWORK}" using project id "${env.BLOCKFROST_PROJECT_ID.slice(8)}...".`,
@@ -41,9 +42,10 @@ if (env.SEED) {
 
 const rawPoolUTxO = (await lucid.utxosAtWithUnit(registry.poolAddress, registry.poolAssetId))[0]
 if (!rawPoolUTxO) throw new Error(`Couldn't find pool utxo.`)
+const poolDatumHex = Data.to(await lucid.datumOf(rawPoolUTxO))
 const poolUTxO = {
   ...rawPoolUTxO,
-  poolDatum: Data.from(Data.to(await lucid.datumOf(rawPoolUTxO)), PoolDatum),
+  poolDatum: Data.from(poolDatumHex, PoolDatum),
 }
 const rawOracleUTxO = (await lucid.utxosAtWithUnit(registry.oracleAddress, registry.oracleAssetId))[0]
 if (!rawOracleUTxO) throw new Error(`Couldn't find oracle utxo.`)
@@ -189,6 +191,45 @@ program
       orderUTxO,
       orderMintingPolicyRefUTxO,
       orderSpendingValidatorRefUTxO,
+    })
+    const balancedTx = await tx.complete({ localUPLCEval: false })
+    const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
+    console.log('Transaction CBOR')
+    console.log(signedTx.toCBOR())
+    console.log('Transaction hash')
+    console.log(signedTx.toHash())
+    if (options.submit) {
+      await signedTx.submit()
+      console.log('Transaction submitted')
+    }
+  })
+
+program
+  .command('process-mint-djed-order')
+  .argument('<out-ref>', 'The output reference of the order')
+  .option('--sign', 'Sign the transaction')
+  .option('--submit', 'Submit the transaction')
+  .action(async (outRef, options) => {
+    const rawOrderUTxO = (await lucid.utxosByOutRef([parseOutRef(outRef)]))[0]
+    if (!rawOrderUTxO) throw new Error(`Couldn't find order utxo for outRef: ${outRef}`)
+    if (!Object.keys(rawOrderUTxO.assets).includes(registry.orderAssetId))
+      throw new Error(`Utxo for outRef ${outRef} isn't order utxo.`)
+    const orderUTxO = {
+      ...rawOrderUTxO,
+      orderDatum: Data.from(Data.to(await lucid.datumOf(rawOrderUTxO)), OrderDatum),
+    }
+    const tx = processMintDjedOrder({
+      network: env.NETWORK,
+      lucid,
+      registry,
+      orderUTxO,
+      poolUTxO,
+      orderMintingPolicyRefUTxO,
+      orderSpendingValidatorRefUTxO,
+      now,
+      poolSpendingValidatorRefUTxO: registry.poolSpendingValidatorRefUTxO,
+      stakeValidatorRefUTxO: registry.stakeValidatorRefUTxO,
+      rewardAddress: registry.rewardAddress,
     })
     const balancedTx = await tx.complete({ localUPLCEval: false })
     const signedTx = await (options.sign ? balancedTx.sign.withWallet() : balancedTx).complete()
