@@ -2,6 +2,7 @@ import { useProtocolData } from '~/hooks/useProtocolData'
 import { NavLink } from 'react-router'
 import type { TokenType } from '@reverse-djed/api'
 import { formatNumber } from '~/utils'
+import { LoadingCircle } from './LoadingCircle'
 
 type TokenDetailsProps = {
   token: TokenType
@@ -20,53 +21,14 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
           <div className="flex flex-row justify-between">
             <p className="font-medium">Buy Price</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? (
-                <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-              ) : (
-                formatNumber(data.protocolData[token].buyPrice.toFixed(4))
-              )}{' '}
-              ADA
+              {isPending ? <LoadingCircle /> : formatNumber(data.protocolData[token].buyPrice.toFixed(4))} ADA
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Sell Price</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? (
-                <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-              ) : (
-                formatNumber(data.protocolData[token].sellPrice.toFixed(4))
-              )}{' '}
+              {isPending ? <LoadingCircle /> : formatNumber(data.protocolData[token].sellPrice.toFixed(4))}{' '}
               ADA
             </p>
           </div>
@@ -75,22 +37,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
             <p className="font-medium">Circulating Supply</p>
             <p className="text-lg flex justify-center items-center">
               {isPending ? (
-                <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
+                <LoadingCircle />
               ) : (
                 formatNumber(data.protocolData[token].circulatingSupply.toFixed(4))
               )}{' '}
@@ -102,22 +49,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
             <p className="font-medium">Mintable Amount</p>
             <p className="text-lg flex justify-center items-center">
               {isPending ? (
-                <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
+                <LoadingCircle />
               ) : (
                 formatNumber(data.protocolData[token].mintableAmount.toFixed(4))
               )}{' '}
@@ -128,22 +60,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
             <p className="font-medium">Burnable Amount</p>
             <p className="text-lg flex justify-center items-center">
               {isPending ? (
-                <svg
-                  className="mr-3 size-7 animate-spin text-primary"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
+                <LoadingCircle />
               ) : (
                 formatNumber(data.protocolData[token].burnableAmount.toFixed(4))
               )}{' '}

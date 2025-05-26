@@ -9,6 +9,7 @@ import type { ActionType, TokenType } from '@reverse-djed/api'
 import { formatNumber } from '~/utils'
 import { useEnv } from '~/context/EnvContext'
 import Toast from './Toast'
+import { LoadingCircle } from './LoadingCircle'
 
 type ActionProps = {
   action: ActionType
@@ -103,22 +104,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           <p className="font-medium">Cost</p>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
-              <svg
-                className="mr-3 size-7 animate-spin text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
+              <LoadingCircle />
             ) : (
               formatNumber(
                 action === 'Mint'
@@ -133,27 +119,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Operator fees</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <svg
-                className="mr-3 size-7 animate-spin text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
-            ) : (
-              formatNumber(actionData?.operatorFee.toFixed(4) ?? 0)
-            )}{' '}
-            ADA
+            {isPending ? <LoadingCircle /> : formatNumber(actionData?.operatorFee.toFixed(4) ?? 0)} ADA
           </p>
         </div>
 
@@ -161,22 +127,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           <p className="font-medium">{action} fees</p>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
-              <svg
-                className="mr-3 size-7 animate-spin text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
+              <LoadingCircle />
             ) : (
               formatNumber(((actionData?.actionFeePercentage ?? 0) * 100).toFixed(1))
             )}{' '}
@@ -188,22 +139,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           <p className="font-medium">{action === 'Mint' ? 'You will pay' : 'You will receive'}</p>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
-              <svg
-                className="mr-3 size-7 animate-spin text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
+              <LoadingCircle />
             ) : (
               formatNumber(
                 action === 'Mint'
@@ -218,27 +154,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <p className="font-medium">Refundable deposit</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <svg
-                className="mr-3 size-7 animate-spin text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
-            ) : (
-              formatNumber(protocolData?.minADA.toFixed(4) ?? 0)
-            )}{' '}
-            ADA
+            {isPending ? <LoadingCircle /> : formatNumber(protocolData?.minADA.toFixed(4) ?? 0)} ADA
           </p>
         </div>
       </div>
