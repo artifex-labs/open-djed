@@ -6,6 +6,8 @@ type ActionsProps = {
   token: TokenType
 }
 
+const ACTIONS = ['Mint', 'Burn'] as const
+
 export const Actions = ({ token }: ActionsProps) => {
   const [isActionPending, setIsActionPending] = useState(false)
 
@@ -26,18 +28,15 @@ export const Actions = ({ token }: ActionsProps) => {
         </div>
 
         <div className="w-full flex flex-col md:flex-row justify-center gap-6">
-          <Action
-            action="Mint"
-            token={token}
-            onActionStart={handleActionStart}
-            onActionComplete={handleActionComplete}
-          />
-          <Action
-            action="Burn"
-            token={token}
-            onActionStart={handleActionStart}
-            onActionComplete={handleActionComplete}
-          />
+          {ACTIONS.map((action) => (
+            <Action
+              key={action}
+              action={action}
+              token={token}
+              onActionStart={handleActionStart}
+              onActionComplete={handleActionComplete}
+            />
+          ))}
         </div>
 
         {/* Loading state or other statuses */}
