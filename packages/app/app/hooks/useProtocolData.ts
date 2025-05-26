@@ -10,11 +10,44 @@ import {
   shenADAMintRate,
   operatorFee as getOperatorFee,
   Rational,
+  djedADARate,
+  shenADARate,
+  adaDJEDRate,
+  type PartialPoolDatum,
+  type PartialOracleDatum,
 } from '@reverse-djed/math'
 import { registryByNetwork } from '@reverse-djed/registry'
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '~/context/ApiClientContext'
 import { useEnv } from '~/context/EnvContext'
+
+export type Value = Partial<Record<'ADA' | 'DJED' | 'SHEN', number>>
+
+const sumValues = (...values: Value[]): Value =>
+  values.reduce(
+    (acc, value) => ({
+      ...acc,
+      ...Object.fromEntries(Object.entries(value).map(([k, v]) => [k, v + (acc[k as keyof Value] ?? 0)])),
+    }),
+    {},
+  )
+
+export const toDJED = (value: Value, poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum): number =>
+  adaDJEDRate(oracleDatum)
+    .mul(
+      shenADARate(poolDatum, oracleDatum)
+        .mul(BigInt(Math.floor((value.SHEN ?? 0) * 1e6)))
+        .add(BigInt(Math.floor((value.ADA ?? 0) * 1e6))),
+    )
+    .div(1_000_000n)
+    .toNumber() + (value.DJED ?? 0)
+
+export const toADA = (value: Value, poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum): number =>
+  shenADARate(poolDatum, oracleDatum)
+    .mul(BigInt(Math.floor((value.SHEN ?? 0) * 1e6)))
+    .add(djedADARate(oracleDatum).mul(BigInt(Math.floor((value.DJED ?? 0) * 1e6))))
+    .div(1_000_000n)
+    .toNumber() + (value.ADA ?? 0)
 
 export function useProtocolData() {
   const client = useApiClient()
@@ -39,60 +72,110 @@ export function useProtocolData() {
           minADA: BigInt(serializedPoolDatum.minADA),
         }
         const registry = registryByNetwork[network]
+        const refundableDeposit = Number(poolDatum.minADA) / 1e6
         return {
           protocolData: {
             DJED: {
-              buyPrice: djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
-              sellPrice: djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage).toNumber(),
+              buyPrice: djedADAMintRate(oracleDatum, registry.MintDJEDFeePercentage).toNumber(),
+              sellPrice: djedADABurnRate(oracleDatum, registry.BurnDJEDFeePercentage).toNumber(),
               circulatingSupply: Number(poolDatum.djedInCirculation) / 1e6,
               mintableAmount:
-                Number(maxMintableDJED(poolDatum, oracleDatum, registry.mintDJEDFeePercentage)) / 1e6,
+                Number(maxMintableDJED(poolDatum, oracleDatum, registry.MintDJEDFeePercentage)) / 1e6,
               burnableAmount: Number(poolDatum.djedInCirculation) / 1e6,
             },
             SHEN: {
-              buyPrice: shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFeePercentage).toNumber(),
-              sellPrice: shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage).toNumber(),
+              buyPrice: shenADAMintRate(poolDatum, oracleDatum, registry.MintSHENFeePercentage).toNumber(),
+              sellPrice: shenADABurnRate(poolDatum, oracleDatum, registry.BurnSHENFeePercentage).toNumber(),
               circulatingSupply: Number(poolDatum.shenInCirculation) / 1e6,
               mintableAmount:
-                Number(maxMintableSHEN(poolDatum, oracleDatum, registry.mintSHENFeePercentage)) / 1e6,
+                Number(maxMintableSHEN(poolDatum, oracleDatum, registry.MintSHENFeePercentage)) / 1e6,
               burnableAmount:
-                Number(maxBurnableSHEN(poolDatum, oracleDatum, registry.mintSHENFeePercentage)) / 1e6,
+                Number(maxBurnableSHEN(poolDatum, oracleDatum, registry.MintSHENFeePercentage)) / 1e6,
             },
             reserve: {
               amount: Number(poolDatum.adaInReserve) / 1e6,
               ratio: reserveRatio(poolDatum, oracleDatum).toNumber(),
             },
-            minADA: Number(poolDatum.minADA) / 1e6,
+            refundableDeposit,
           },
-          tokenActionData: (token: TokenType, action: ActionType, amountNumber: number) => {
-            let actionFeePercentage
-            let baseCostRational
-            const amount = BigInt(Math.floor(amountNumber * 1e6))
-            if (token === 'DJED' && action === 'Mint') {
-              actionFeePercentage = new Rational(registry.mintDJEDFeePercentage).toNumber()
-              baseCostRational = djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage).mul(amount)
-            } else if (token === 'DJED' && action === 'Burn') {
-              actionFeePercentage = new Rational(registry.burnDJEDFeePercentage).toNumber()
-              baseCostRational = djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage).mul(amount)
-            } else if (token === 'SHEN' && action === 'Mint') {
-              actionFeePercentage = new Rational(registry.mintSHENFeePercentage).toNumber()
-              baseCostRational = shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFeePercentage).mul(
-                amount,
+          tokenActionData: (
+            token: TokenType,
+            action: ActionType,
+            amount: number,
+          ): {
+            baseCost: Value
+            actionFee: Value
+            actionFeePercentage: number
+            operatorFee: number
+            totalCost: Value
+            toSend: Value
+            toReceive: Value
+          } => {
+            const actionFeeRatio = new Rational(registry[`${action}${token}FeePercentage`])
+            const actionFeePercentage = actionFeeRatio.toNumber() * 100
+            const amountBigInt = BigInt(Math.floor(amount * 1e6))
+            const exchangeRate =
+              token === 'DJED' ? djedADARate(oracleDatum) : shenADARate(poolDatum, oracleDatum)
+            if (action === 'Mint') {
+              const baseCostRational = exchangeRate.mul(amountBigInt)
+              const baseCost = {
+                ADA: baseCostRational.div(1_000_000n).toNumber(),
+              }
+              const actionFeeRational = actionFeeRatio.mul(baseCostRational)
+              const actionFee = {
+                ADA: actionFeeRational.div(1_000_000n).toNumber(),
+              }
+              const operatorFee = new Rational(
+                getOperatorFee(baseCostRational.add(actionFeeRational), registry.operatorFeeConfig),
               )
-            } else {
-              actionFeePercentage = new Rational(registry.burnSHENFeePercentage).toNumber()
-              baseCostRational = shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage).mul(
-                amount,
-              )
+                .div(1_000_000n)
+                .toNumber()
+              const totalCost = sumValues(baseCost, actionFee, { ADA: operatorFee })
+              const refundableDepositValue = {
+                ADA: refundableDeposit,
+              }
+              return {
+                baseCost,
+                actionFee,
+                actionFeePercentage: actionFeeRatio.toNumber() * 100,
+                operatorFee,
+                totalCost,
+                toSend: sumValues(totalCost, refundableDepositValue),
+                toReceive: sumValues({ [token]: amount }, refundableDepositValue),
+              }
             }
-            const baseCost = baseCostRational.div(BigInt(1e6)).toNumber()
-            const operatorFee = Number(getOperatorFee(baseCostRational, registry.operatorFeeConfig)) / 1e6
+            const baseCostRational = actionFeeRatio.add(1n).invert().mul(amountBigInt)
+            const baseCost = {
+              [token]: baseCostRational.div(1_000_000n).toNumber(),
+            }
+            const actionFeeRational = baseCostRational.negate().add(amountBigInt)
+            const actionFee = {
+              [token]: actionFeeRational.div(1_000_000n).toNumber(),
+            }
+            const operatorFeeBigInt = getOperatorFee(
+              baseCostRational.add(actionFeeRational).mul(exchangeRate).toBigInt(),
+              registry.operatorFeeConfig,
+            )
+            const operatorFee = new Rational({
+              numerator: operatorFeeBigInt,
+              denominator: 1_000_000n,
+            }).toNumber()
+            const totalCost = {
+              [token]: baseCostRational.add(actionFeeRational).div(1_000_000n).toNumber(),
+              ADA: operatorFee,
+            }
             return {
               baseCost,
+              actionFee,
               actionFeePercentage,
-              // NOTE: Need to figure out how to share code between this and txs.
               operatorFee,
-              cost: baseCost + operatorFee,
+              totalCost,
+              toSend: sumValues(totalCost, {
+                ADA: refundableDeposit,
+              }),
+              toReceive: {
+                ADA: baseCostRational.mul(exchangeRate).div(1_000_000n).toNumber() + refundableDeposit,
+              },
             }
           },
         }

@@ -112,7 +112,7 @@ test('maxMintableDJED', () => {
           },
         },
       },
-      registryByNetwork['Preprod'].mintDJEDFeePercentage,
+      registryByNetwork['Preprod'].MintDJEDFeePercentage,
     ),
   ).toEqual(378480860484n)
 })
@@ -133,7 +133,7 @@ test('maxMintableSHEN', () => {
           },
         },
       },
-      registryByNetwork['Preprod'].mintSHENFeePercentage,
+      registryByNetwork['Preprod'].MintSHENFeePercentage,
     ),
     // NOTE: Here we work around a rounding error.
   ).toEqual(1526106388743n - 1n)
@@ -155,7 +155,7 @@ test('maxBurnableSHEN', () => {
           },
         },
       },
-      registryByNetwork['Preprod'].burnSHENFeePercentage,
+      registryByNetwork['Preprod'].BurnSHENFeePercentage,
     ),
   ).toEqual(651005696037n)
 })

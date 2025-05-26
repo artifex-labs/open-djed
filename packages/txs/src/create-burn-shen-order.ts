@@ -54,7 +54,7 @@ export const createBurnShenOrder = ({
         lovelace:
           poolUTxO.poolDatum.minADA +
           operatorFee(
-            shenADABurnRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.burnSHENFeePercentage).mul(
+            shenADABurnRate(poolUTxO.poolDatum, oracleUTxO.oracleDatum, registry.BurnSHENFeePercentage).mul(
               amount,
             ),
             registry.operatorFeeConfig,

@@ -27,7 +27,7 @@ export const createMintShenOrder = ({
   const adaAmountToSend = shenADAMintRate(
     poolUTxO.poolDatum,
     oracleUTxO.oracleDatum,
-    registry.mintSHENFeePercentage,
+    registry.MintSHENFeePercentage,
   )
     .mul(amount)
     .ceil()

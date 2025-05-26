@@ -20,8 +20,12 @@ export const add = (a: RationalFields, b: RationalFields): RationalFields => ({
   denominator: a.denominator * b.denominator,
 })
 
-export const sub = (a: RationalFields, b: RationalFields): RationalFields =>
-  add(a, { numerator: -b.numerator, denominator: b.denominator })
+export const negate = ({ numerator, denominator }: RationalFields): RationalFields => ({
+  numerator: -numerator,
+  denominator,
+})
+
+export const sub = (a: RationalFields, b: RationalFields): RationalFields => add(a, negate(b))
 
 export const fromBigInt = (n: bigint): RationalFields => ({
   numerator: n,
@@ -112,5 +116,8 @@ export class Rational implements RationalFields {
   }
   invert(): Rational {
     return new Rational(invert(this))
+  }
+  negate(): Rational {
+    return new Rational(negate(this))
   }
 }
