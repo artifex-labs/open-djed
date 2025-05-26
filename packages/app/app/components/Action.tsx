@@ -7,7 +7,6 @@ import { registryByNetwork } from '@reverse-djed/registry'
 import { AmountInput } from '~/components/AmountInput'
 import type { ActionType, TokenType } from '@reverse-djed/api'
 import { formatNumber } from '~/utils'
-import { Transaction, TransactionWitnessSet } from '@dcspark/cardano-multiplatform-lib-browser'
 import { useEnv } from '~/context/EnvContext'
 import Toast from './Toast'
 
@@ -38,6 +37,8 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
   if (error) return <div className="text-red-500 font-bold">Error: {error.message}</div>
 
   const handleActionClick = async () => {
+    //NOTE: This is a workaround to dynamically import the Cardano libraries without causing issues with SSR.
+    const { Transaction, TransactionWitnessSet } = await import('@dcspark/cardano-multiplatform-lib-browser')
     if (!wallet || amount <= 0) return
     onActionStart()
 
