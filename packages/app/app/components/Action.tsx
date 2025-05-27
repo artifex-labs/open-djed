@@ -124,7 +124,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             <p className="font-medium">{action} fee</p>
             <i
               className="fa-solid fa-circle-info pt-1"
-              title={`The ${action.toLocaleLowerCase()} fee is ${actionData?.actionFeePercentage} % of the base cost.`}
+              title={`The ${action.toLocaleLowerCase()} fee is ${actionData?.actionFeePercentage ?? '-'} % of the base cost.`}
             ></i>
           </div>
           <p className="text-lg flex justify-center items-center">
@@ -174,7 +174,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             <p className="font-medium">You will send</p>
             <i
               className="fa-solid fa-circle-info pt-1"
-              title={`Sum of total cost (<totalCost>) and refundable deposit (<refundableDeposit>)`}
+              title={`Sum of total cost ${actionData ? `(${formatValue(actionData?.totalCost)})` : ''} and refundable deposit${protocolData ? ` (${protocolData.refundableDeposit} ADA)` : ''}.`}
             ></i>
           </div>
           <p className="text-lg flex justify-center items-center">
@@ -190,7 +190,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             ></i>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.toReceive)}
+            {isPending ? (
+              <LoadingCircle />
+            ) : (
+              `${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive)}`
+            )}
           </p>
         </div>
       </div>
