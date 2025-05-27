@@ -57,10 +57,21 @@ export const Header = () => {
     }
   }, [])
 
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
       {/* Navbar */}
-      <header className="top-0 left-0 right-0 py-4 px-8 bg-white dark:bg-dark-bg shadow-sm dark:shadow-primary/30 z-50 ">
+      <header className={`sticky top-0 left-0 right-0 py-4 px-8 bg-white/10 dark:bg-dark-bg/10 shadow-sm dark:shadow-primary/30 z-50 transition-all duration-200 ease-in-out ${isScrolled && 'bg-white/95 dark:bg-dark-bg/95 inset-shadow-lg'}`}>
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-1">
@@ -73,7 +84,7 @@ export const Header = () => {
           </div>
 
           {/* Center links - Desktop only */}
-          <div className="hidden lg:flex justify-center space-x-6">
+          <div className="hidden lg:flex justify-center space-x-6 mx-10">
             {navLinks.map((link) => (
               <NavLink key={link.to} to={link.to} className={getNavLinkClasses}>
                 {link.label}
