@@ -153,7 +153,7 @@ export function useProtocolData() {
               [token]: actionFeeRational.div(1_000_000n).toNumber(),
             }
             const operatorFeeBigInt = getOperatorFee(
-              baseCostRational.add(actionFeeRational).mul(exchangeRate).toBigInt(),
+              baseCostRational.mul(exchangeRate).toBigInt(),
               registry.operatorFeeConfig,
             )
             const operatorFee = new Rational({
@@ -173,8 +173,9 @@ export function useProtocolData() {
               toSend: sumValues(totalCost, {
                 ADA: refundableDeposit,
               }),
+              // FIXME: We slightly underestimate this. I don't know why but for now it's ok. Better to underestimate than overestimate.
               toReceive: {
-                ADA: baseCostRational.mul(exchangeRate).div(1_000_000n).toNumber() + refundableDeposit,
+                ADA: baseCostRational.mul(exchangeRate).div(1_000_000n).toNumber(),
               },
             }
           },
