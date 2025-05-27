@@ -9,6 +9,7 @@ import type { ActionType, TokenType } from '@reverse-djed/api'
 import { useEnv } from '~/context/EnvContext'
 import Toast from './Toast'
 import { LoadingCircle } from './LoadingCircle'
+import { formatNumber } from '~/utils'
 
 type ActionProps = {
   action: ActionType
@@ -24,8 +25,8 @@ const formatValue = (value: Value) => {
   if (filteredValue.length === 0) return `0 ADA`
   return filteredValue
     .sort((a, b) => VALUE_KEYS.indexOf(a[0]) - VALUE_KEYS.indexOf(b[0]))
-    .map(([k, v]) => `${v.toFixed(4)} ${k}`)
-    .join(', ')
+    .map(([k, v]) => `${formatNumber(v.toFixed(4))} ${k}`)
+    .join(' ')
 }
 
 export const Action = ({ action, token, onActionStart, onActionComplete }: ActionProps) => {
@@ -113,31 +114,48 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Base cost</p>
-            <i className="fa-solid fa-circle-info pt-1" title={`The base value to pay without fees.`}></i>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  The base value to pay without fees.
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.baseCost)}
+            {isPending ? <LoadingCircle /> : formatValue(actionData?.baseCost ?? {})}
           </p>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{action} fee</p>
-            <i
-              className="fa-solid fa-circle-info pt-1"
-              title={`The ${action.toLocaleLowerCase()} fee is ${actionData?.actionFeePercentage ?? '-'} % of the base cost.`}
-            ></i>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  The {action.toLocaleLowerCase()} fee is {actionData?.actionFeePercentage ?? '-'} % of the
+                  base cost.
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.actionFee)}
+            {isPending ? <LoadingCircle /> : formatValue(actionData?.actionFee ?? {})}
           </p>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Operator fee</p>
-            <i
-              className="fa-solid fa-circle-info pt-1"
-              title={`The operator fee is calculated using the formula min(max(0.25% * (baseCost + actionFee), 5 ADA), 25 ADA).`}
-            ></i>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  The operator fee is calculated using the formula min(max(0.25% * (baseCost + actionFee), 5
+                  ADA), 25 ADA).
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
           </div>
           <p className="text-lg flex justify-center items-center">
             {isPending ? <LoadingCircle /> : actionData?.operatorFee} ADA
@@ -147,22 +165,33 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Total cost</p>
-            <i
-              className="fa-solid fa-circle-info pt-1"
-              title={`The sum of the base cost ${actionData ? `(${formatValue(actionData?.baseCost)})` : ''}, action fee ${actionData ? `(${formatValue(actionData?.actionFee)})` : ''} and operator fee ${actionData ? `(${actionData?.operatorFee} ADA)` : ''}.`}
-            ></i>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  The sum of the base cost {actionData ? `(${formatValue(actionData?.baseCost)})` : ''},
+                  action fee {actionData ? `(${formatValue(actionData?.actionFee)})` : ''} and operator fee{' '}
+                  {actionData ? `(${actionData?.operatorFee} ADA)` : ''}.
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.totalCost)}
+            {isPending ? <LoadingCircle /> : formatValue(actionData?.totalCost ?? {})}
           </p>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Refundable deposit</p>
-            <i
-              className="fa-solid fa-circle-info pt-1"
-              title="Amount of ADA a user must send in order to create a order. This value is refunded when the order is processed or cancelled."
-            ></i>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  Amount of ADA a user must send in order to create a order. This value is refunded when the
+                  order is processed or cancelled.
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
           </div>
           <p className="text-lg flex justify-center items-center">
             {isPending ? <LoadingCircle /> : protocolData?.refundableDeposit} ADA
@@ -172,28 +201,37 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">You will send</p>
-            <i
-              className="fa-solid fa-circle-info pt-1"
-              title={`Sum of total cost ${actionData ? `(${formatValue(actionData?.totalCost)})` : ''} and refundable deposit${protocolData ? ` (${protocolData.refundableDeposit} ADA)` : ''}.`}
-            ></i>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  Sum of total cost {actionData ? `(${formatValue(actionData?.totalCost)})` : ''} and
+                  refundable deposit{protocolData ? ` (${protocolData.refundableDeposit} ADA)` : ''}.
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.toSend)}
+            {isPending ? <LoadingCircle /> : formatValue(actionData?.toSend ?? {})}
           </p>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">You will receive</p>
-            <i
-              className="fa-solid fa-circle-info pt-1"
-              title="Sum of the desired amount and the refundable deposit."
-            ></i>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  Sum of the desired amount and the refundable deposit.
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
           </div>
           <p className="text-lg flex justify-center items-center">
             {isPending ? (
               <LoadingCircle />
             ) : (
-              `${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive)}`
+              `${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive ?? {})}`
             )}
           </p>
         </div>
