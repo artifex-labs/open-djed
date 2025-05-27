@@ -1,4 +1,9 @@
 @import 'tailwindcss' source('.');
+@plugin "daisyui" {
+  themes: false;
+  include: tooltip;
+  logs: false;
+}
 
 @custom-variant dark (&:where(.dark, .dark *));
 
