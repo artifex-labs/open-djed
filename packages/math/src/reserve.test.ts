@@ -49,7 +49,7 @@ test('maxMintableDJED', () => {
           },
         },
       },
-      registryByNetwork['Mainnet'].mintDJEDFeePercentage,
+      registryByNetwork['Mainnet'].MintDJEDFeePercentage,
     ),
   ).toEqual(2472333917206n)
 })
@@ -70,7 +70,7 @@ test('maxMintableSHEN', () => {
           },
         },
       },
-      registryByNetwork['Mainnet'].mintSHENFeePercentage,
+      registryByNetwork['Mainnet'].MintSHENFeePercentage,
     ),
   ).toEqual(7271378273795n)
 })
@@ -91,7 +91,7 @@ test('maxBurnableSHEN', () => {
           },
         },
       },
-      registryByNetwork['Mainnet'].burnSHENFeePercentage,
+      registryByNetwork['Mainnet'].BurnSHENFeePercentage,
     ),
   ).toEqual(10665625097068n)
 })
