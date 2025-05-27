@@ -28,6 +28,13 @@ export function Layout({ children, apiUrl, network, config, posthog: posthogConf
             <div className="infinite-background"></div>
             <Header />
             <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
             <Footer />
           </div>
         </WalletProvider>
