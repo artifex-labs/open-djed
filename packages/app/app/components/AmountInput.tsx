@@ -102,7 +102,7 @@ export const AmountInput = ({
           </button>
         </div>
         <div>
-          Available: {formatNumber(roundToDecimals(max))} {unit}
+          Maximum: {formatNumber(roundToDecimals(max))} {unit}
         </div>
       </div>
     </div>

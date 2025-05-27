@@ -25,7 +25,7 @@ export const createMintDjedOrder = ({
 }) => {
   const ttl = now + 3 * 60 * 1000 // 3 minutes
 
-  const adaAmountToSend = djedADAMintRate(oracleUTxO.oracleDatum, registry.mintDJEDFeePercentage)
+  const adaAmountToSend = djedADAMintRate(oracleUTxO.oracleDatum, registry.MintDJEDFeePercentage)
     .mul(amount)
     .ceil()
     .toBigInt()

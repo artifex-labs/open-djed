@@ -55,7 +55,7 @@ export const createBurnDjedOrder = ({
         lovelace:
           poolUTxO.poolDatum.minADA +
           operatorFee(
-            djedADABurnRate(oracleUTxO.oracleDatum, registry.burnDJEDFeePercentage).mul(amount),
+            djedADABurnRate(oracleUTxO.oracleDatum, registry.BurnDJEDFeePercentage).mul(amount),
             registry.operatorFeeConfig,
           ),
         [registry.djedAssetId]: amount,

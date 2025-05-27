@@ -255,21 +255,21 @@ program.command('protocol-data').action(async () => {
     JSON.stringify(
       {
         djed: {
-          buyPrice: djedADAMintRate(oracleDatum, registry.mintDJEDFeePercentage).toNumber(),
-          sellPrice: djedADABurnRate(oracleDatum, registry.burnDJEDFeePercentage).toNumber(),
+          buyPrice: djedADAMintRate(oracleDatum, registry.MintDJEDFeePercentage).toNumber(),
+          sellPrice: djedADABurnRate(oracleDatum, registry.BurnDJEDFeePercentage).toNumber(),
           circulatingSupply: Number(poolDatum.djedInCirculation) / 1e6,
           mintableAmount:
-            Number(maxMintableDJED(poolDatum, oracleDatum, registry.mintDJEDFeePercentage)) / 1e6,
+            Number(maxMintableDJED(poolDatum, oracleDatum, registry.MintDJEDFeePercentage)) / 1e6,
           burnableAmount: Number.POSITIVE_INFINITY,
         },
         shen: {
-          buyPrice: shenADAMintRate(poolDatum, oracleDatum, registry.mintSHENFeePercentage).toNumber(),
-          sellPrice: shenADABurnRate(poolDatum, oracleDatum, registry.burnSHENFeePercentage).toNumber(),
+          buyPrice: shenADAMintRate(poolDatum, oracleDatum, registry.MintSHENFeePercentage).toNumber(),
+          sellPrice: shenADABurnRate(poolDatum, oracleDatum, registry.BurnSHENFeePercentage).toNumber(),
           circulatingSupply: Number(poolDatum.shenInCirculation) / 1e6,
           mintableAmount:
-            Number(maxMintableSHEN(poolDatum, oracleDatum, registry.mintSHENFeePercentage)) / 1e6,
+            Number(maxMintableSHEN(poolDatum, oracleDatum, registry.MintSHENFeePercentage)) / 1e6,
           burnableAmount:
-            Number(maxBurnableSHEN(poolDatum, oracleDatum, registry.burnSHENFeePercentage)) / 1e6,
+            Number(maxBurnableSHEN(poolDatum, oracleDatum, registry.BurnSHENFeePercentage)) / 1e6,
         },
         reserve: {
           amount: Number(poolDatum.adaInReserve) / 1e6,

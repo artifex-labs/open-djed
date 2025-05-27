@@ -18,10 +18,10 @@ export type Registry = {
   treasuryAddress: string
   oracleAssetId: string
   // NOTE: need to figure out where I can obtain these fees dynamically.
-  mintDJEDFeePercentage: RationalFields
-  burnDJEDFeePercentage: RationalFields
-  mintSHENFeePercentage: RationalFields
-  burnSHENFeePercentage: RationalFields
+  MintDJEDFeePercentage: RationalFields
+  BurnDJEDFeePercentage: RationalFields
+  MintSHENFeePercentage: RationalFields
+  BurnSHENFeePercentage: RationalFields
   operatorFeeConfig: OperatorFeeConfig
   // Minimum amount of DJED/SHEN to mint/burn.
   minAmount: bigint
@@ -88,10 +88,10 @@ export const registryByNetwork = {
     },
     rewardAddress: 'stake_test17qs9cudfvax7xnrcmpuaq302wy8yya70jy6s4f8r28zwt4qmuvh0j',
     oracleAssetId: '19eb22bf803ab40b064da4ac8e8fb5853ae0454ba0593609598410ba446a65644f7261636c654e4654',
-    mintDJEDFeePercentage: { numerator: 3n, denominator: 100n },
-    burnDJEDFeePercentage: { numerator: 1n, denominator: 50n },
-    mintSHENFeePercentage: { numerator: 1n, denominator: 20n },
-    burnSHENFeePercentage: { numerator: 1n, denominator: 25n },
+    MintDJEDFeePercentage: { numerator: 3n, denominator: 100n },
+    BurnDJEDFeePercentage: { numerator: 1n, denominator: 50n },
+    MintSHENFeePercentage: { numerator: 1n, denominator: 20n },
+    BurnSHENFeePercentage: { numerator: 1n, denominator: 25n },
     operatorFeeConfig: {
       min: 1_000_000n,
       max: 100_000_000n,
@@ -187,10 +187,10 @@ export const registryByNetwork = {
     treasuryAddress: 'addr1w9ut73sw2k94pla354k97zjjxygcxx795hgkdv3hwyp4h8q694wcj',
     rewardAddress: 'stake178g00n87tzhvmsunyx9hs6uv3dunmlxd32xh82cv9dl3r7q2p46ew',
     oracleAssetId: '815aca02042ba9188a2ca4f8ce7b276046e2376b4bce56391342299e446a65644f7261636c654e4654',
-    mintDJEDFeePercentage: { numerator: 3n, denominator: 200n },
-    burnDJEDFeePercentage: { numerator: 3n, denominator: 200n },
-    mintSHENFeePercentage: { numerator: 3n, denominator: 200n },
-    burnSHENFeePercentage: { numerator: 3n, denominator: 200n },
+    MintDJEDFeePercentage: { numerator: 3n, denominator: 200n },
+    BurnDJEDFeePercentage: { numerator: 3n, denominator: 200n },
+    MintSHENFeePercentage: { numerator: 3n, denominator: 200n },
+    BurnSHENFeePercentage: { numerator: 3n, denominator: 200n },
     operatorFeeConfig: {
       min: 5_150_000n,
       max: 25_000_000n,
