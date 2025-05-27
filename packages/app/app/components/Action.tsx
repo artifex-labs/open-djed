@@ -235,6 +235,26 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             )}
           </p>
         </div>
+        <div className="flex justify-between">
+          <div className="flex flex-row space-x-4">
+            <p className="font-medium">Price</p>
+            <div className="tooltip">
+              <div className="tooltip-content">
+                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
+                  Final price (in ADA per {token}) after fees.
+                </div>
+              </div>
+              <i className="fa-solid fa-circle-info pt-1"></i>
+            </div>
+          </div>
+          <p className="text-lg flex justify-center items-center">
+            {isPending ? (
+              <LoadingCircle />
+            ) : (
+              `${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price) ? formatNumber(actionData.price) : '0'} ADA/${token}`
+            )}
+          </p>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">

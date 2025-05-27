@@ -15,6 +15,7 @@ import {
   adaDJEDRate,
   type PartialPoolDatum,
   type PartialOracleDatum,
+  adaSHENRate,
 } from '@reverse-djed/math'
 import { registryByNetwork } from '@reverse-djed/registry'
 import { useQuery } from '@tanstack/react-query'
@@ -48,6 +49,28 @@ export const toADA = (value: Value, poolDatum: PartialPoolDatum, oracleDatum: Pa
     .add(djedADARate(oracleDatum).mul(BigInt(Math.floor((value.DJED ?? 0) * 1e6))))
     .div(1_000_000n)
     .toNumber() + (value.ADA ?? 0)
+
+export const toSHEN = (value: Value, poolDatum: PartialPoolDatum, oracleDatum: PartialOracleDatum): number =>
+  adaSHENRate(poolDatum, oracleDatum)
+    .mul(
+      djedADARate(oracleDatum)
+        .mul(BigInt(Math.floor((value.DJED ?? 0) * 1e6)))
+        .add(BigInt(Math.floor(value.ADA ?? 0) * 1e6)),
+    )
+    .div(1_000_000n)
+    .toNumber() + (value.SHEN ?? 0)
+
+export const to = (
+  value: Value,
+  poolDatum: PartialPoolDatum,
+  oracleDatum: PartialOracleDatum,
+  token: 'DJED' | 'SHEN' | 'ADA',
+): number =>
+  token === 'DJED'
+    ? toDJED(value, poolDatum, oracleDatum)
+    : token === 'SHEN'
+      ? toSHEN(value, poolDatum, oracleDatum)
+      : toADA(value, poolDatum, oracleDatum)
 
 export function useProtocolData() {
   const client = useApiClient()
@@ -110,6 +133,7 @@ export function useProtocolData() {
             totalCost: Value
             toSend: Value
             toReceive: Value
+            price: number
           } => {
             const actionFeeRatio = new Rational(registry[`${action}${token}FeePercentage`])
             const actionFeePercentage = actionFeeRatio.toNumber() * 100
@@ -142,6 +166,7 @@ export function useProtocolData() {
                 totalCost,
                 toSend: sumValues(totalCost, refundableDepositValue),
                 toReceive: sumValues({ [token]: amount }, refundableDepositValue),
+                price: toADA(totalCost, poolDatum, oracleDatum) / amount,
               }
             }
             const baseCostRational = actionFeeRatio.add(1n).invert().mul(amountBigInt)
@@ -164,6 +189,10 @@ export function useProtocolData() {
               [token]: baseCostRational.add(actionFeeRational).div(1_000_000n).toNumber(),
               ADA: operatorFee,
             }
+            // FIXME: We slightly underestimate this. I don't know why but for now it's ok. Better to underestimate than overestimate.
+            const toReceive = {
+              ADA: baseCostRational.mul(exchangeRate).div(1_000_000n).toNumber(),
+            }
             return {
               baseCost,
               actionFee,
@@ -173,10 +202,8 @@ export function useProtocolData() {
               toSend: sumValues(totalCost, {
                 ADA: refundableDeposit,
               }),
-              // FIXME: We slightly underestimate this. I don't know why but for now it's ok. Better to underestimate than overestimate.
-              toReceive: {
-                ADA: baseCostRational.mul(exchangeRate).div(1_000_000n).toNumber(),
-              },
+              toReceive,
+              price: toADA(toReceive, poolDatum, oracleDatum) / to(totalCost, poolDatum, oracleDatum, token),
             }
           },
         }
