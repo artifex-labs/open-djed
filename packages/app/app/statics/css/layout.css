@@ -15,5 +15,5 @@
 }
 
 .dark .infinite-background {
-  background-image: url('background/background-dark.svg');
+  background-image: url('/background/background-dark.svg');
 }
