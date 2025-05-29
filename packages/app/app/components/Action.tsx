@@ -10,6 +10,7 @@ import { useEnv } from '~/context/EnvContext'
 import Toast from './Toast'
 import { LoadingCircle } from './LoadingCircle'
 import { formatNumber } from '~/utils'
+import { Rational } from '@reverse-djed/math'
 
 type ActionProps = {
   action: ActionType
@@ -104,6 +105,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           0,
       ) * 1e6,
     ) / 1e6
+  const registry = registryByNetwork[network]
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">
@@ -133,8 +135,8 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             <div className="tooltip">
               <div className="tooltip-content">
                 <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  The {action.toLocaleLowerCase()} fee is {actionData?.actionFeePercentage ?? '-'} % of the
-                  base cost.
+                  Fee paid to the pool and distributed to SHEN holders when they burn tokens. Calculated as{' '}
+                  {actionData?.actionFeePercentage ?? '-'}% of the base cost.
                 </div>
               </div>
               <i className="fa-solid fa-circle-info pt-1"></i>
@@ -150,15 +152,29 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             <div className="tooltip">
               <div className="tooltip-content">
                 <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  The operator fee is calculated using the formula min(max(0.25% * (baseCost + actionFee), 5
-                  ADA), 25 ADA).
+                  Fee paid to the COTI treasury for order processing. Calculated as{' '}
+                  {registry.operatorFeeConfig.percentage.toNumber() * 100}% of the sum of base cost
+                  {actionData ? ` (${formatValue(actionData?.baseCost)})` : ''} and action fee
+                  {actionData ? ` (${formatValue(actionData?.actionFee)})` : ''}, with a minimum of{' '}
+                  {new Rational({
+                    numerator: registry.operatorFeeConfig.min,
+                    denominator: 1_000_000n,
+                  }).toNumber()}{' '}
+                  ADA and maximum of {Number(registry.operatorFeeConfig.max) * 1e-6} ADA.
                 </div>
               </div>
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : actionData?.operatorFee} ADA
+            {isPending ? (
+              <LoadingCircle />
+            ) : actionData ? (
+              formatNumber(actionData?.operatorFee.toFixed(4))
+            ) : (
+              '-'
+            )}{' '}
+            ADA
           </p>
         </div>
         <hr className="my-2 w-100 self-center border-gray-600" />
@@ -168,9 +184,9 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             <div className="tooltip">
               <div className="tooltip-content">
                 <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  The sum of the base cost {actionData ? `(${formatValue(actionData?.baseCost)})` : ''},
-                  action fee {actionData ? `(${formatValue(actionData?.actionFee)})` : ''} and operator fee{' '}
-                  {actionData ? `(${actionData?.operatorFee} ADA)` : ''}.
+                  The sum of the base cost{actionData ? ` (${formatValue(actionData?.baseCost)})` : ''},
+                  action fee{actionData ? ` (${formatValue(actionData?.actionFee)})` : ''} and operator fee
+                  {actionData ? ` (${formatNumber(actionData.operatorFee.toFixed(4))} ADA)` : ''}.
                 </div>
               </div>
               <i className="fa-solid fa-circle-info pt-1"></i>
