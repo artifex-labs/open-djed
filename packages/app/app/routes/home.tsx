@@ -2,7 +2,14 @@ import { TokenDetails } from '~/components/TokenDetails'
 import { ReserveDetails } from '~/components/ReserveDetails'
 
 export function meta() {
-  return [{ title: 'Reverse DJED' }, { name: 'description', content: 'Welcome to reverse DJED!' }]
+  return [
+    { title: 'The open-source alternative to DJED.xyz - Reverse DJED' },
+    {
+      name: 'description',
+      content:
+        "Mint and burn DJED, Cardano's overcollateralized stablecoin, with our open-source platform. Transparent alternative to DJED.xyz - accessible 24/7 anywhere.",
+    },
+  ]
 }
 
 export default function Home() {
