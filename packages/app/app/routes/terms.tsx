@@ -1,6 +1,6 @@
 export function meta() {
   return [
-    { title: 'Terms of Service - Reverse DJED' },
+    { title: 'Reverse DJED | Terms of Service' },
     { name: 'description', content: 'Review the terms of using Reverse DJED.' },
   ]
 }

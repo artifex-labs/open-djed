@@ -2,7 +2,7 @@ import { Actions } from '../components/Actions'
 
 export function meta() {
   return [
-    { title: 'DJED Stablecoin | Mint & burn - Reverse DJED' },
+    { title: 'Reverse DJED | DJED Stablecoin - Mint & burn' },
     {
       name: 'description',
       content:

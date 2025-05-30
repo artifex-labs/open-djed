@@ -1,6 +1,6 @@
 export function meta() {
   return [
-    { title: 'Privacy Policy - Reverse DJED' },
+    { title: 'Reverse DJED | Privacy Policy' },
     { name: 'description', content: 'Learn how Reverse DJED handles your data and privacy.' },
   ]
 }

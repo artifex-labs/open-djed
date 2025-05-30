@@ -2,7 +2,7 @@ import { Actions } from '../components/Actions'
 
 export function meta() {
   return [
-    { title: 'SHEN Reservecoin | Mint & burn - Reverse DJED' },
+    { title: 'Reverse DJED | SHEN Reservecoin - Mint & burn' },
     {
       name: 'description',
       content:

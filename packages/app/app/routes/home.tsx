@@ -3,7 +3,7 @@ import { ReserveDetails } from '~/components/ReserveDetails'
 
 export function meta() {
   return [
-    { title: 'The open-source alternative to DJED.xyz - Reverse DJED' },
+    { title: 'Reverse DJED | The open-source alternative to DJED.xyz' },
     {
       name: 'description',
       content:
