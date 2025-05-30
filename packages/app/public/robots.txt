@@ -1,0 +1,28 @@
+# The open-source alternative to DJED.xyz - Reverse DJED
+# https://djed.artifex.finance/
+
+User-agent: *
+Allow: /
+
+# Main application pages
+Allow: /djed
+Allow: /shen  
+Allow: /terms
+Allow: /privacy
+
+# Static assets
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.svg$
+Allow: /*.ico$
+
+# Disallow user-specific content
+Disallow: /wallet/*
+Disallow: /user/*
+Disallow: /*?wallet=*
+Disallow: /*?address=*
+
+# Sitemaps
+Sitemap: https://yoursite.com/sitemap.xml
