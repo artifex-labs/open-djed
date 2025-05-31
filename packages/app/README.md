@@ -4,37 +4,30 @@ Package holding reverse-djed web app.
 
 TODO:
 
-- [x] Implement layout.
-- [x] Integrate wallet support.
-- [x] Support Testnet (Preprod) with a select next to home logo.
+- [ ] Deploy Mainnet test app per PR.
+- [ ] Add translations to the app.
 - [ ] Show user's pending orders.
 - [ ] Allow cancelling orders.
-- [ ] Fix auto-deploy from `main`.
-- [ ] Auto-deploy for both environments from PRs.
-- [x] Refactor hono client usage, use shared context.
-- [x] Environment variables for API address
-- [ ] Environment variable for API port.
-- [ ] Fix weird re-render on djed and shen page when introducing numbers.
-- [ ] Clean up logo.
-- [ ] Clean up wallet connect colors.
-- [ ] Dark mode.
-- [ ] Support minting both, burning both.
-- [x] Show DJED price (in ADA).
-- [x] Show DJED circulating supply.
-- [x] Show DJED mintable amount.
-- [x] Show SHEN price (in ADA).
-- [x] Show SHEN circulating supply.
-- [x] Show SHEN mintable amount.
-- [x] Show reserve amount (ADA) and reserve ratio (reserve divided by liabilities).
-- [ ] Actions:
-  - [ ] Allow minting DJED.
-  - [ ] Allow burning DJED.
-  - [ ] Allow minting SHEN.
-  - [ ] Allow burning SHEN.
-  - [x] Show order details.
-  - [ ] Show balance.
-  - [ ] Show min.
-  - [x] Show max.
-  - [x] Show cost.
-  - [x] Show fees.
-  - [x] Show min ADA.
+- [ ] Support ADA amount inputs, alongside the DJED/SHEN amount inputs (requested by Dan).
+- [ ] Add ADA and USD amounts for all fields on the app (primary display in big letters, secondary display in small letters f.e.).
+- [ ] Improve wallet connector positioning (ideally slides from right to left or opens up from where "Connect wallet" button is) for optimal UX.
+- [ ] Improve aesthetic of app.
+  - [ ] Purple is a bad color.
+  - [ ] Missing eye candy.
+  - [ ] Use better font.
+- [ ] Add canonical links to routes (for better SEO).
+- [ ] Add reserve ratio graphic.
+- [ ] Improve mobile responsiveness.
+- [ ] Fix small underestimation in "You will receive" field.
+- [ ] Fix underestimation in "Available" field.
+- [ ] Support minting both, burning both actions.
+- [ ] Cover all error/edge-cases and give user good information.
+- [ ] Apply correct `ErrorBoundary` usage in React Router.
+- [ ] Build custom 404 page.
+- [ ] Add first load modal informing user of what Reverse DJED is and how it relates to COTI's DJED app.
+- [ ] Add "What's new?" modal informing users of what we've added since they last visited the app.
+- [ ] Add API and app version to footer of app.
+- [ ] Add tooltips to home page.
+- [ ] Fix wallet address loading until wallet pop-up.
+- [ ] Improve wallet handling in general.
+- [ ] Deploy minimal website to https://artifex.finance/ that links to https://djed.artifex.finance/

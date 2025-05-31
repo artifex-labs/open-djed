@@ -4,7 +4,7 @@ A project that intends to reverse engineer DJED, the algorithmic stablecoin COTI
 
 TODO:
 
-- [ ] Web app.
-- [ ] Order processor.
-- [ ] DJED arbitrage bot.
-- [ ] SHEN arbitrage bot.
+- [x] Web app.
+- [ ] ~~Order processor~~: our research found that this service is centralized. Order processing transactions must be signed by a white-listed address which COTI controls.
+- [ ] ~~Oracle~~: our research found that this service is centralized. DJED/ADA oracle update transactions must be signed by a white-listed address which COTI controls.
+- [ ] DJED & SHEN arbitrage bot.

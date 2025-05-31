@@ -4,4 +4,4 @@ Package holding `reverse-djed` custom lucid blockfrost client.
 
 TODO:
 
-- [x] `getLatestBlockSlot`: `/blocks/latest`
+- [ ] Validate responses using Zod. Handle errors better.
