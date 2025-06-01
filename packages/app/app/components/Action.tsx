@@ -189,7 +189,9 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             ADA
           </p>
         </div>
-        <hr className="my-2 w-100 self-center border-gray-600" />
+        <div className="my-2 w-full px-10">
+            <hr className="light-action-line dark:border-dark-action-line"/>
+        </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Total cost</p>
@@ -225,7 +227,9 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             {isPending ? <LoadingCircle /> : protocolData?.refundableDeposit} ADA
           </p>
         </div>
-        <hr className="my-2 w-100 self-center border-gray-600" />
+        <div className="my-2 w-full px-10">
+            <hr className="light-action-line dark:border-dark-action-line"/>
+        </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">You will send</p>

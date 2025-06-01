@@ -24,16 +24,9 @@ export function Layout({ children, apiUrl, network, config, posthog: posthogConf
     <EnvContext.Provider value={{ apiUrl, network, config, initialIsDark: null, posthog: posthogConfig }}>
       <PostHogProvider client={posthog}>
         <WalletProvider>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-screen ">
             <div className="infinite-background"></div>
             <Header />
-            <main className="flex-1">{children}</main>
-            <main className="flex-1">{children}</main>
-            <main className="flex-1">{children}</main>
-            <main className="flex-1">{children}</main>
-            <main className="flex-1">{children}</main>
-            <main className="flex-1">{children}</main>
-            <main className="flex-1">{children}</main>
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
