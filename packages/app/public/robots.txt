@@ -25,4 +25,4 @@ Disallow: /*?wallet=*
 Disallow: /*?address=*
 
 # Sitemaps
-Sitemap: https://yoursite.com/sitemap.xml
+Sitemap: https://djed.artifex.finance/sitemap.xml
