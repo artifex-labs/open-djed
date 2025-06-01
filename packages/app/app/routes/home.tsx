@@ -1,13 +1,21 @@
 import { TokenDetails } from '~/components/TokenDetails'
 import { ReserveDetails } from '~/components/ReserveDetails'
+import type { LoaderData } from '~/types/loader'
+import { useLoaderData } from 'react-router'
 
 export function meta() {
+  const { network } = useLoaderData<LoaderData>()
   return [
     { title: 'Reverse DJED | The open-source alternative to DJED.xyz' },
     {
       name: 'description',
       content:
         "Mint and burn DJED, Cardano's overcollateralized stablecoin, with our open-source platform. Transparent alternative to DJED.xyz - accessible 24/7 anywhere.",
+    },
+    {
+      tagName: 'link',
+      rel: 'canonical',
+      href: `https://${network === 'Preprod' ? 'preprod.' : ''}djed.artifex.finance`,
     },
   ]
 }

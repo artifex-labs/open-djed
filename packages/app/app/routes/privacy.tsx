@@ -1,7 +1,16 @@
+import { useLoaderData } from 'react-router'
+import type { LoaderData } from '~/types/loader'
+
 export function meta() {
+  const { network } = useLoaderData<LoaderData>()
   return [
     { title: 'Reverse DJED | Privacy Policy' },
     { name: 'description', content: 'Learn how Reverse DJED handles your data and privacy.' },
+    {
+      tagName: 'link',
+      rel: 'canonical',
+      href: `https://${network === 'Preprod' ? 'preprod.' : ''}djed.artifex.finance/privacy`,
+    },
   ]
 }
 

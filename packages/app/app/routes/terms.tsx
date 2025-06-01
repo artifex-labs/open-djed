@@ -1,7 +1,16 @@
+import { useLoaderData } from 'react-router'
+import type { LoaderData } from '~/types/loader'
+
 export function meta() {
+  const { network } = useLoaderData<LoaderData>()
   return [
     { title: 'Reverse DJED | Terms of Service' },
     { name: 'description', content: 'Review the terms of using Reverse DJED.' },
+    {
+      tagName: 'link',
+      rel: 'canonical',
+      href: `https://${network === 'Preprod' ? 'preprod.' : ''}djed.artifex.finance/terms`,
+    },
   ]
 }
 
