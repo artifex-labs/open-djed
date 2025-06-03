@@ -148,7 +148,7 @@ export const getLucid = async () => {
   return lucid
 }
 
-async function handleOrderCreation(createOrderFn: () => TxBuilder) {
+async function completeTransaction(createOrderFn: () => TxBuilder) {
   try {
     const tx = await createOrderFn().complete({ localUPLCEval: false })
     return tx
@@ -157,9 +157,8 @@ async function handleOrderCreation(createOrderFn: () => TxBuilder) {
       if (err.message.includes('EvaluateTransaction')) {
         if (err.message.includes('Unknown transaction input (missing from UTxO set)')) {
           throw new UTxOContentionError()
-        } else {
-          throw new ScriptExecutionError()
         }
+        throw new ScriptExecutionError()
       }
       if (err.message.includes("Your wallet does not have enough funds to cover the required assets")) {
         throw new BalanceTooLowError()
@@ -276,11 +275,11 @@ const app = new Hono()
         }
         const tx = await (param.token === 'DJED'
           ? param.action === 'Mint'
-            ? handleOrderCreation(() => createMintDjedOrder(config))
-            : handleOrderCreation(() => createBurnDjedOrder(config))
+            ? completeTransaction(() => createMintDjedOrder(config))
+            : completeTransaction(() => createBurnDjedOrder(config))
           : param.action === 'Mint'
-            ? handleOrderCreation(() => createMintShenOrder(config))
-            : handleOrderCreation(() => createBurnShenOrder(config)))
+            ? completeTransaction(() => createMintShenOrder(config))
+            : completeTransaction(() => createBurnShenOrder(config)))
         const txCbor = tx.toCBOR()
         console.log('Tx CBOR: ', txCbor)
         const txHash = tx.toHash()
