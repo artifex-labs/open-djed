@@ -19,7 +19,7 @@ export default function PrivacyPage() {
     <div className="flex flex-col gap-10 justify-center items-center w-full pt-8 px-4 md:px-8">
       <div className="flex flex-col text-center">
         <h1 className="text-4xl font-bold">Privacy Policy</h1>
-        <p className="text-sm text-muted-foreground mt-1">Effective Date: May 21, 2025</p>
+        <p className="text-sm text-muted-foreground mt-1">Effective Date: June 3, 2025</p>
       </div>
 
       <div className="w-full max-w-4xl flex flex-col gap-6 text-base leading-relaxed">
@@ -39,8 +39,9 @@ export default function PrivacyPage() {
           <h3 className="text-lg font-medium mb-1">Wallets</h3>
           <p>
             When users interact with the app using their Cardano wallet, we interact only with the wallet
-            interface via the CIP-30 standard. We do not receive or store your wallet address or any private
-            keys.
+            interface via the CIP-30 standard. We do not receive or store your private keys. We reserve the
+            right to store your addresses and transactions for analytical purposes to allow us to learn from
+            your usage of the app and to improve it based on this information.
           </p>
         </section>
 
