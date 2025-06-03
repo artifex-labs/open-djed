@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server'
-import { Lucid, Data, coreToUtxo, slotToUnixTime, CML, type LucidEvolution } from '@lucid-evolution/lucid'
+import { Lucid, Data, coreToUtxo, slotToUnixTime, CML, type LucidEvolution, type TxBuilder, TxBuilderError } from '@lucid-evolution/lucid'
 import {
   createBurnDjedOrder,
   createBurnShenOrder,
@@ -22,6 +22,7 @@ import { Blockfrost } from '@reverse-djed/blockfrost'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import TTLCache from '@isaacs/ttlcache'
 import { createMiddleware } from 'hono/factory'
+import { AppError, BadRequestError, BalanceTooLowError, ScriptExecutionError, UTxOContentionError, ValidationError } from './errors'
 
 //NOTE: We only need this cache for transactions, not for other requests. Using this for `protocol-data` sligltly increases the response time.
 const requestCache = new TTLCache<string, { value: Response; expiry: number }>({ ttl: 10_000 })
@@ -138,6 +139,31 @@ export const getLucid = async () => {
   return lucid
 }
 
+async function handleOrderCreation(
+  createOrderFn: () => TxBuilder
+) {
+  try {
+    const tx = (await createOrderFn().complete({ localUPLCEval: false }))
+    return tx
+  } catch (err) {
+    if (err instanceof TxBuilderError) {
+      if (err.message.includes("EvaluateTransaction")) {
+        if (err.message.includes("Unknown transaction input (missing from UTxO set)")) {
+          throw new UTxOContentionError()
+        } else {
+          throw new ScriptExecutionError()
+        }
+      }
+      if (err.message.includes("Your wallet does not have enough funds to cover the required assets")) {
+        throw new BalanceTooLowError()
+      }
+    }
+
+    throw err
+  }
+}
+
+
 const tokenSchema = z.enum(['DJED', 'SHEN']).openapi({ example: 'DJED' })
 export type TokenType = z.infer<typeof tokenSchema>
 
@@ -206,49 +232,59 @@ const app = new Hono()
     zValidator('param', z.object({ token: tokenSchema, action: actionSchema, amount: z.string() })),
     zValidator('json', txRequestBodySchema),
     async (c) => {
-      const [lucid, oracleUTxO, poolUTxO, now] = await Promise.all([
-        getLucid(),
-        getOracleUTxO(),
-        getPoolUTxO(),
-        getChainTime(),
-      ])
-      const param = c.req.valid('param')
-      console.log('Param: ', param)
-      const amount = BigInt(Math.round(Number(param.amount) * 1e6))
-      if (amount < 0n) {
-        throw new Error('Quantity must be positive number.')
+      try {
+        const [lucid, oracleUTxO, poolUTxO, now] = await Promise.all([
+          getLucid(),
+          getOracleUTxO(),
+          getPoolUTxO(),
+          getChainTime(),
+        ])
+        const param = c.req.valid('param')
+        console.log('Param: ', param)
+        const amount = BigInt(Math.round(Number(param.amount) * 1e6))
+        if (amount < 0n) {
+          throw new Error('Quantity must be positive number.')
+        }
+        const json = c.req.valid('json')
+        console.log('Json: ', json)
+        const address = CML.Address.from_hex(json.hexAddress).to_bech32()
+        lucid.selectWallet.fromAddress(
+          address,
+          json.utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
+        )
+        const config = {
+          lucid,
+          registry,
+          amount,
+          address,
+          oracleUTxO,
+          poolUTxO,
+          orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
+          now,
+        }
+        const tx = await (
+          param.token === 'DJED'
+            ? param.action === 'Mint'
+              ? handleOrderCreation(() => createMintDjedOrder(config))
+              : handleOrderCreation(() => createBurnDjedOrder(config))
+            : param.action === 'Mint'
+              ? handleOrderCreation(() => createMintShenOrder(config))
+              : handleOrderCreation(() => createBurnShenOrder(config))
+        )
+        const txCbor = tx.toCBOR()
+        console.log('Tx CBOR: ', txCbor)
+        const txHash = tx.toHash()
+        console.log('Tx hash: ', txHash)
+        return c.text(txCbor)
+      } catch (err) {
+        if (err instanceof AppError) {
+          console.error(`${err.name}: ${err.message}`)
+          return c.json({ error: err.name, message: err.message }, err.status)
+        }
+
+        console.error('Unhandled error:', err)
+        return c.json({ error: 'InternalServerError', message: 'Something went wrong.' }, 500)
       }
-      const json = c.req.valid('json')
-      console.log('Json: ', json)
-      const address = CML.Address.from_hex(json.hexAddress).to_bech32()
-      lucid.selectWallet.fromAddress(
-        address,
-        json.utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
-      )
-      const config = {
-        lucid,
-        registry,
-        amount,
-        address,
-        oracleUTxO,
-        poolUTxO,
-        orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
-        now,
-      }
-      const tx = await (
-        param.token === 'DJED'
-          ? param.action === 'Mint'
-            ? createMintDjedOrder(config)
-            : createBurnDjedOrder(config)
-          : param.action === 'Mint'
-            ? createMintShenOrder(config)
-            : createBurnShenOrder(config)
-      ).complete({ localUPLCEval: false })
-      const txCbor = tx.toCBOR()
-      console.log('Tx CBOR: ', txCbor)
-      const txHash = tx.toHash()
-      console.log('Tx hash: ', txHash)
-      return c.text(txCbor)
     },
   )
 
