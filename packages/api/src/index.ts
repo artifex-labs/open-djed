@@ -243,11 +243,17 @@ const app = new Hono()
         console.log('Param: ', param)
         const amount = BigInt(Math.round(Number(param.amount) * 1e6))
         if (amount < 0n) {
-          throw new Error('Quantity must be positive number.')
+          throw new BadRequestError('Quantity must be positive number.')
         }
         const json = c.req.valid('json')
         console.log('Json: ', json)
-        const address = CML.Address.from_hex(json.hexAddress).to_bech32()
+        let address;
+
+        try {
+          address = CML.Address.from_hex(json.hexAddress).to_bech32()
+        } catch {
+          throw new ValidationError('Invalid Cardano address format.')
+        }
         lucid.selectWallet.fromAddress(
           address,
           json.utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
