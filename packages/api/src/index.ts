@@ -1,5 +1,14 @@
 import { serve } from '@hono/node-server'
-import { Lucid, Data, coreToUtxo, slotToUnixTime, CML, type LucidEvolution, type TxBuilder, TxBuilderError } from '@lucid-evolution/lucid'
+import {
+  Lucid,
+  Data,
+  coreToUtxo,
+  slotToUnixTime,
+  CML,
+  type LucidEvolution,
+  type TxBuilder,
+  TxBuilderError,
+} from '@lucid-evolution/lucid'
 import {
   createBurnDjedOrder,
   createBurnShenOrder,
@@ -139,16 +148,14 @@ export const getLucid = async () => {
   return lucid
 }
 
-async function handleOrderCreation(
-  createOrderFn: () => TxBuilder
-) {
+async function handleOrderCreation(createOrderFn: () => TxBuilder) {
   try {
-    const tx = (await createOrderFn().complete({ localUPLCEval: false }))
+    const tx = await createOrderFn().complete({ localUPLCEval: false })
     return tx
   } catch (err) {
     if (err instanceof TxBuilderError) {
-      if (err.message.includes("EvaluateTransaction")) {
-        if (err.message.includes("Unknown transaction input (missing from UTxO set)")) {
+      if (err.message.includes('EvaluateTransaction')) {
+        if (err.message.includes('Unknown transaction input (missing from UTxO set)')) {
           throw new UTxOContentionError()
         } else {
           throw new ScriptExecutionError()
@@ -162,7 +169,6 @@ async function handleOrderCreation(
     throw err
   }
 }
-
 
 const tokenSchema = z.enum(['DJED', 'SHEN']).openapi({ example: 'DJED' })
 export type TokenType = z.infer<typeof tokenSchema>
@@ -268,15 +274,13 @@ const app = new Hono()
           orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
           now,
         }
-        const tx = await (
-          param.token === 'DJED'
-            ? param.action === 'Mint'
-              ? handleOrderCreation(() => createMintDjedOrder(config))
-              : handleOrderCreation(() => createBurnDjedOrder(config))
-            : param.action === 'Mint'
-              ? handleOrderCreation(() => createMintShenOrder(config))
-              : handleOrderCreation(() => createBurnShenOrder(config))
-        )
+        const tx = await (param.token === 'DJED'
+          ? param.action === 'Mint'
+            ? handleOrderCreation(() => createMintDjedOrder(config))
+            : handleOrderCreation(() => createBurnDjedOrder(config))
+          : param.action === 'Mint'
+            ? handleOrderCreation(() => createMintShenOrder(config))
+            : handleOrderCreation(() => createBurnShenOrder(config)))
         const txCbor = tx.toCBOR()
         console.log('Tx CBOR: ', txCbor)
         const txHash = tx.toHash()
