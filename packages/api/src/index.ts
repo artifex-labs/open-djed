@@ -7,7 +7,6 @@ import {
   CML,
   type LucidEvolution,
   type TxBuilder,
-  TxBuilderError,
 } from '@lucid-evolution/lucid'
 import {
   createBurnDjedOrder,
@@ -31,7 +30,14 @@ import { Blockfrost } from '@reverse-djed/blockfrost'
 import { OracleDatum, OrderDatum, PoolDatum } from '@reverse-djed/data'
 import TTLCache from '@isaacs/ttlcache'
 import { createMiddleware } from 'hono/factory'
-import { AppError, BadRequestError, BalanceTooLowError, ScriptExecutionError, UTxOContentionError, ValidationError } from './errors'
+import {
+  AppError,
+  BadRequestError,
+  BalanceTooLowError,
+  ScriptExecutionError,
+  UTxOContentionError,
+  ValidationError,
+} from './errors'
 
 //NOTE: We only need this cache for transactions, not for other requests. Using this for `protocol-data` sligltly increases the response time.
 const requestCache = new TTLCache<string, { value: Response; expiry: number }>({ ttl: 10_000 })
@@ -160,7 +166,7 @@ async function completeTransaction(createOrderFn: () => TxBuilder) {
         }
         throw new ScriptExecutionError()
       }
-      if (err.message.includes("Your wallet does not have enough funds to cover the required assets")) {
+      if (err.message.includes('Your wallet does not have enough funds to cover the required assets')) {
         throw new BalanceTooLowError()
       }
     }
@@ -252,7 +258,7 @@ const app = new Hono()
         }
         const json = c.req.valid('json')
         console.log('Json: ', json)
-        let address;
+        let address
 
         try {
           address = CML.Address.from_hex(json.hexAddress).to_bech32()
