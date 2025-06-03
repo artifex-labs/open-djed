@@ -212,8 +212,9 @@ const app = new Hono()
         getPoolUTxO(),
         getChainTime(),
       ])
-      const { token, action, amount: amountStr } = c.req.valid('param')
-      const amount = BigInt(Math.round(Number(amountStr) * 1e6))
+      const param = c.req.valid('param')
+      console.log('Param: ', param)
+      const amount = BigInt(Math.round(Number(param.amount) * 1e6))
       if (amount < 0n) {
         throw new Error('Quantity must be positive number.')
       }
@@ -226,23 +227,27 @@ const app = new Hono()
       const config = {
         lucid,
         registry,
-        amount: amount,
+        amount,
         address,
         oracleUTxO,
         poolUTxO,
         orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
         now,
       }
-      if (token === 'DJED') {
-        if (action === 'Mint') {
-          return c.text((await createMintDjedOrder(config).complete({ localUPLCEval: false })).toCBOR())
-        }
-        return c.text((await createBurnDjedOrder(config).complete({ localUPLCEval: false })).toCBOR())
-      }
-      if (action === 'Mint') {
-        return c.text((await createMintShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
-      }
-      return c.text((await createBurnShenOrder(config).complete({ localUPLCEval: false })).toCBOR())
+      const tx = await (
+        param.token === 'DJED'
+          ? param.action === 'Mint'
+            ? createMintDjedOrder(config)
+            : createBurnDjedOrder(config)
+          : param.action === 'Mint'
+            ? createMintShenOrder(config)
+            : createBurnShenOrder(config)
+      ).complete({ localUPLCEval: false })
+      const txCbor = tx.toCBOR()
+      console.log('Tx CBOR: ', txCbor)
+      const txHash = tx.toHash()
+      console.log('Tx hash: ', txHash)
+      return c.text(txCbor)
     },
   )
 
