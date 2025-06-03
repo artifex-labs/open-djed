@@ -153,7 +153,7 @@ async function completeTransaction(createOrderFn: () => TxBuilder) {
     const tx = await createOrderFn().complete({ localUPLCEval: false })
     return tx
   } catch (err) {
-    if (err instanceof TxBuilderError) {
+    if (err instanceof Error) {
       if (err.message.includes('EvaluateTransaction')) {
         if (err.message.includes('Unknown transaction input (missing from UTxO set)')) {
           throw new UTxOContentionError()
