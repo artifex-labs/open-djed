@@ -10,7 +10,7 @@ import Sidebar from './Sidebar'
 import { useLocalStorage } from 'usehooks-ts'
 import { DEFAULT_SHOW_BALANCE } from '~/utils'
 
-const SUPPORTED_WALLET_IDS = new Set(['eternl', 'begin', 'gerowallet', 'vespr', 'lace'])
+const SUPPORTED_WALLET_IDS = ['eternl', 'lace', 'vespr', 'begin', 'gerowallet']
 
 export const Header = () => {
   const [isWalletSidebarOpen, setIsWalletSidebarOpen] = useState(false)
@@ -263,10 +263,10 @@ export const Header = () => {
                 <p className="text-xl py-4 pl-5 font-semibold">Choose your wallet:</p>
               )}
             </div>
-            {wallets.map(({ id, name, icon }) =>
-              !SUPPORTED_WALLET_IDS.has(id) ? (
-                <div key={id}></div>
-              ) : (
+            {wallets
+              .filter(({ id }) => SUPPORTED_WALLET_IDS.includes(id))
+              .sort((a, b) => SUPPORTED_WALLET_IDS.indexOf(a.id) - SUPPORTED_WALLET_IDS.indexOf(b.id))
+              .map(({ id, name, icon }) => (
                 <div
                   className="flex flex-row gap-2 items-center justify-between p-4 rounded-lg hover:bg-primary hover:text-white pr-6"
                   key={id}
@@ -280,8 +280,7 @@ export const Header = () => {
                   </div>
                   <i className="fa-solid fa-chevron-right"></i>
                 </div>
-              ),
-            )}
+              ))}
           </div>
         )}
       </Sidebar>
