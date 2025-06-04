@@ -89,6 +89,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
     }
   }
 
+  const registry = registryByNetwork[network]
   // FIXME: This is not perfect yet.
   const balance =
     Math.round(
@@ -97,7 +98,8 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           (action === 'Burn'
             ? wallet?.balance[token]
             : ((wallet?.balance.ADA ?? 0) -
-                Number(registryByNetwork['Mainnet'].operatorFeeConfig.max) / 1e6) /
+                (Number(registry.operatorFeeConfig.max) + (protocolData?.refundableDeposit ?? 1823130)) /
+                  1e6) /
               (protocolData ? protocolData[token].buyPrice : 0)) ?? 0,
           0,
         ),
@@ -105,7 +107,6 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           0,
       ) * 1e6,
     ) / 1e6
-  const registry = registryByNetwork[network]
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">
