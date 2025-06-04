@@ -218,11 +218,12 @@ const app = new Hono()
       if (amount < 0n) {
         throw new Error('Quantity must be positive number.')
       }
-      const { hexAddress, utxosCborHex } = c.req.valid('json')
-      const address = CML.Address.from_hex(hexAddress).to_bech32()
+      const json = c.req.valid('json')
+      console.log('Json: ', json)
+      const address = CML.Address.from_hex(json.hexAddress).to_bech32()
       lucid.selectWallet.fromAddress(
         address,
-        utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
+        json.utxosCborHex.map((cborHex) => coreToUtxo(CML.TransactionUnspentOutput.from_cbor_hex(cborHex))),
       )
       const config = {
         lucid,
