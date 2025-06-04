@@ -10,6 +10,8 @@ import Sidebar from './Sidebar'
 import { useLocalStorage } from 'usehooks-ts'
 import { DEFAULT_SHOW_BALANCE } from '~/utils'
 
+const SUPPORTED_WALLET_IDS = new Set(['eternl', 'begin', 'gerowallet', 'vespr', 'lace'])
+
 export const Header = () => {
   const [isWalletSidebarOpen, setIsWalletSidebarOpen] = useState(false)
   const { network, config } = useEnv()
@@ -261,21 +263,25 @@ export const Header = () => {
                 <p className="text-xl py-4 pl-5 font-semibold">Choose your wallet:</p>
               )}
             </div>
-            {wallets.map(({ id, name, icon }) => (
-              <div
-                className="flex flex-row gap-2 items-center justify-between p-4 rounded-lg hover:bg-primary hover:text-white pr-6"
-                key={id}
-                onClick={() => {
-                  connect(id)
-                }}
-              >
-                <div className="flex flex-row justify-start items-center">
-                  <img src={icon} alt={`${name} icon`} className="w-12 h-12 mr-3" />
-                  <span className="text-lg">{name.replace(/^\w/, (c) => c.toUpperCase())}</span>
+            {wallets.map(({ id, name, icon }) =>
+              !SUPPORTED_WALLET_IDS.has(id) ? (
+                <div key={id}></div>
+              ) : (
+                <div
+                  className="flex flex-row gap-2 items-center justify-between p-4 rounded-lg hover:bg-primary hover:text-white pr-6"
+                  key={id}
+                  onClick={() => {
+                    connect(id)
+                  }}
+                >
+                  <div className="flex flex-row justify-start items-center">
+                    <img src={icon} alt={`${name} icon`} className="w-12 h-12 mr-3" />
+                    <span className="text-lg">{name.replace(/^\w/, (c) => c.toUpperCase())}</span>
+                  </div>
+                  <i className="fa-solid fa-chevron-right"></i>
                 </div>
-                <i className="fa-solid fa-chevron-right"></i>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         )}
       </Sidebar>
