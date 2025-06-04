@@ -114,7 +114,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
             ADA: b[0] / 1e6,
             DJED: (b[1].get(policyId)?.get(djedTokenName) ?? 0) / 1e6,
             SHEN: (b[1].get(policyId)?.get(shenTokenName) ?? 0) / 1e6,
-            handle: hexHandle ? hexToAscii(hexHandle) : undefined,
+            handle: hexHandle ? hexToAscii(hexHandle.replace(/^000de140/, '')) : undefined,
           }
         })
         .parse(decodedBalance)
