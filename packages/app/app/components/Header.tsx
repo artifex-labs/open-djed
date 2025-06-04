@@ -7,13 +7,11 @@ import { useEnv } from '~/context/EnvContext'
 import { useWallet } from '~/context/WalletContext'
 import { ThemeToggle } from './ThemeToggle'
 import { FiMenu, FiX } from 'react-icons/fi'
-import { useQuery } from '@tanstack/react-query'
 
 export const Header = () => {
   const [isOpen, setOpen] = useState(false)
   const { network, config } = useEnv()
   const { wallet, wallets, connect, detectWallets } = useWallet()
-  const { data: address } = useQuery({ queryKey: ['address'], queryFn: () => wallet?.address() ?? '' })
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Navigation links data
@@ -96,8 +94,8 @@ export const Header = () => {
               {wallet
                 ? wallet.balance.handle
                   ? `$${wallet.balance.handle}`
-                  : address
-                    ? `${address.slice(0, 10)}...`
+                  : wallet.address
+                    ? `${wallet.address.slice(0, 10)}...`
                     : 'Loading address...'
                 : 'Connect wallet'}
             </Button>
@@ -156,8 +154,8 @@ export const Header = () => {
               {wallet
                 ? wallet.balance.handle
                   ? `$${wallet.balance.handle}`
-                  : address
-                    ? `${address.slice(0, 10)}...`
+                  : wallet.address
+                    ? `${wallet.address.slice(0, 10)}...`
                     : 'Loading address...'
                 : 'Connect wallet'}
             </Button>
