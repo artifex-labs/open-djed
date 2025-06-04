@@ -14,7 +14,8 @@ type WalletMetadata = {
 type Wallet = {
   signTx: (txCbor: string) => Promise<string>
   submitTx: (txCbor: string) => Promise<string>
-  address: () => Promise<string>
+  getChangeAddress: () => Promise<string>
+  address: string | null
   utxos: () => Promise<string[] | undefined>
   balance: {
     ADA: number
@@ -22,6 +23,7 @@ type Wallet = {
     SHEN: number
     handle?: string
   }
+  icon: string
 }
 
 type WalletContextType = {
@@ -29,6 +31,7 @@ type WalletContextType = {
   wallets: WalletMetadata[]
   connect: (id: string) => Promise<void>
   detectWallets: () => void
+  disconnect: () => void
 }
 const hexToAscii = (hex: string) => {
   const clean = hex.replace(/[^0-9A-Fa-f]/g, '')
@@ -64,6 +67,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
   const [connectedWalletId, setConnectedWalletId] = useLocalStorage<string | null>('connectedWalletId', null)
   const { network } = useEnv()
+  const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
   useEffect(() => {
     ;(async () => {
@@ -136,24 +140,33 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         })
         .parse(decodedBalance)
       setConnectedWalletId(id)
+      const getChangeAddress = async () => {
+        const address = await api.getChangeAddress()
+        setWalletAddress(address)
+        console.log('Address:', walletAddress || address)
+        return address
+      }
       setWallet({
+        icon: window.cardano[id].icon,
         balance: parsedBalance,
-        address: async () => {
-          const address = await api.getChangeAddress()
-          console.log('Address:', address)
-          return address
-        },
+        address: await getChangeAddress(),
         utxos: () => api.getUtxos(),
         signTx: (txCbor: string) => api.signTx(txCbor, false),
         submitTx: api.submitTx,
+        getChangeAddress,
       })
     } catch (err) {
       console.error(`Failed to enable ${id}`, err)
     }
   }
 
+  const disconnect = () => {
+    setWallet(null)
+    setConnectedWalletId(null)
+  }
+
   return (
-    <WalletContext.Provider value={{ wallet, wallets, connect, detectWallets }}>
+    <WalletContext.Provider value={{ wallet, wallets, connect, detectWallets, disconnect }}>
       {children}
     </WalletContext.Provider>
   )
