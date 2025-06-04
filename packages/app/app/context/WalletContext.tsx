@@ -1,8 +1,9 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { decode } from 'cbor2'
 import { useEnv } from './EnvContext'
 import { z } from 'zod'
 import { registryByNetwork } from '@reverse-djed/registry'
+import { useLocalStorage } from 'usehooks-ts'
 
 type WalletMetadata = {
   id: string
@@ -61,7 +62,23 @@ const uint8ArrayToHexString = (uint8Array: Uint8Array) =>
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [wallet, setWallet] = useState<Wallet | null>(null)
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
+  const [connectedWalletId, setConnectedWalletId] = useLocalStorage<string | null>('connectedWalletId', null)
   const { network } = useEnv()
+
+  useEffect(() => {
+    ;(async () => {
+      if (connectedWalletId) {
+        try {
+          await connect(connectedWalletId)
+        } catch (err) {
+          console.error('Failed to reconnect wallet:', err)
+        }
+      }
+    })().catch((err) => {
+      // This is just to satisfy the linter. Actual errors are caught inside already.
+      console.error('Failed to reconnect wallet:', err)
+    })
+  }, [])
 
   const detectWallets = () => {
     if (typeof window === 'undefined') return
@@ -118,6 +135,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
           }
         })
         .parse(decodedBalance)
+      setConnectedWalletId(id)
       setWallet({
         balance: parsedBalance,
         address: async () => {
