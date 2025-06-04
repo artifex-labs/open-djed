@@ -35,7 +35,7 @@ export class InternalServerError extends AppError {
 }
 
 export class UTxOContentionError extends AppError {
-  constructor(message = 'UTxO is already being used or locked.') {
+  constructor(message = 'A UTxO included in the transaction inputs was already spent.') {
     super(message, 409)
   }
 }

@@ -170,7 +170,6 @@ async function completeTransaction(createOrderFn: () => TxBuilder) {
         throw new BalanceTooLowError()
       }
     }
-
     throw err
   }
 }
@@ -279,13 +278,15 @@ const app = new Hono()
           orderMintingPolicyRefUTxO: registry.orderMintingPolicyRefUTxO,
           now,
         }
-        const tx = await (param.token === 'DJED'
-          ? param.action === 'Mint'
-            ? completeTransaction(() => createMintDjedOrder(config))
-            : completeTransaction(() => createBurnDjedOrder(config))
-          : param.action === 'Mint'
-            ? completeTransaction(() => createMintShenOrder(config))
-            : completeTransaction(() => createBurnShenOrder(config)))
+        const tx = await completeTransaction(
+          param.token === 'DJED'
+            ? param.action === 'Mint'
+              ? () => createMintDjedOrder(config)
+              : () => createBurnDjedOrder(config)
+            : param.action === 'Mint'
+              ? () => createMintShenOrder(config)
+              : () => createBurnShenOrder(config),
+        )
         const txCbor = tx.toCBOR()
         console.log('Tx CBOR: ', txCbor)
         const txHash = tx.toHash()
@@ -296,7 +297,6 @@ const app = new Hono()
           console.error(`${err.name}: ${err.message}`)
           return c.json({ error: err.name, message: err.message }, err.status)
         }
-
         console.error('Unhandled error:', err)
         return c.json({ error: 'InternalServerError', message: 'Something went wrong.' }, 500)
       }
