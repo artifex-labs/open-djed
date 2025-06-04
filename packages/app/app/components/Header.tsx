@@ -8,13 +8,14 @@ import { ThemeToggle } from './ThemeToggle'
 import { FiEye, FiEyeOff, FiMenu, FiX } from 'react-icons/fi'
 import Sidebar from './Sidebar'
 import { useLocalStorage } from 'usehooks-ts'
+import { DEFAULT_SHOW_BALANCE } from '~/utils'
 
 export const Header = () => {
   const [isWalletSidebarOpen, setIsWalletSidebarOpen] = useState(false)
   const { network, config } = useEnv()
   const { wallet, wallets, connect, detectWallets, disconnect } = useWallet()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [showBalance, setShowBalance] = useLocalStorage<boolean | null>('showBalance', null)
+  const [showBalance, setShowBalance] = useLocalStorage<boolean | null>('showBalance', DEFAULT_SHOW_BALANCE)
 
   // Navigation links data
   const navLinks = [

@@ -11,3 +11,5 @@ export function formatNumber(
     maximumFractionDigits: options.maximumFractionDigits ?? 6,
   }).format(numericValue)
 }
+
+export const DEFAULT_SHOW_BALANCE = true

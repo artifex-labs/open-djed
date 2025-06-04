@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
-import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { useLocalStorage } from 'usehooks-ts'
-import { formatNumber } from '~/utils'
+import { DEFAULT_SHOW_BALANCE, formatNumber } from '~/utils'
 
 type AmountInputProps = {
   value: number
@@ -25,7 +24,7 @@ export const AmountInput = ({
   disabled = false,
   unit = 'ADA',
 }: AmountInputProps) => {
-  const [showActionBalance, setShowActionBalance] = useLocalStorage<boolean | null>('showActionBalance', null)
+  const showActionBalance = useLocalStorage<boolean | null>('showBalance', DEFAULT_SHOW_BALANCE)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value
@@ -110,12 +109,9 @@ export const AmountInput = ({
           {showActionBalance ? (
             <span>{formatNumber(roundToDecimals(max))}</span>
           ) : (
-            <span className="inline-block w-20 h-1 bg-gray-300 rounded-md blur-sm" />
+            <span className="inline-block w-20 h-1 dark:bg-gray-300 bg-gray-500 rounded-md blur-sm" />
           )}
           {unit}
-          <span onClick={() => setShowActionBalance(!showActionBalance)}>
-            {showActionBalance ? <FiEyeOff /> : <FiEye />}
-          </span>
         </div>
       </div>
     </div>
