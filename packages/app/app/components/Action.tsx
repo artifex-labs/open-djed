@@ -59,7 +59,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
     try {
       const utxos = await wallet.utxos()
       if (!utxos) throw new Error('No UTXOs found')
-      const address = await wallet.address()
+      const address = await wallet.getChangeAddress()
 
       const response = await client.api[':token'][':action'][':amount']['tx'].$post({
         param: { token, action, amount: amount.toString() },
