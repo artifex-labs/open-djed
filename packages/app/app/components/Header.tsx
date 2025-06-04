@@ -192,7 +192,10 @@ export const Header = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col justify-start items-start gap-4 w-full pb-6" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="flex flex-col justify-start items-start gap-4 w-full pb-6"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="flex flex-row justify-between w-full">
                   <h1 className="font-bold">Available Balance:</h1>
                   <div className="tooltip tooltip-left">
@@ -212,7 +215,7 @@ export const Header = () => {
                   </span>
                   <p>
                     {showBalance ? (
-                      <span className='mr-4'>{wallet.balance.ADA}</span>
+                      <span className="mr-4">{wallet.balance.ADA}</span>
                     ) : (
                       <span className="inline-block w-32 h-4 bg-gray-300 rounded-md blur-sm mr-4" />
                     )}
@@ -225,7 +228,7 @@ export const Header = () => {
                   </span>
                   <p>
                     {showBalance ? (
-                      <span className='mr-4'>{wallet.balance.DJED}</span>
+                      <span className="mr-4">{wallet.balance.DJED}</span>
                     ) : (
                       <span className="inline-block w-32 h-4 bg-gray-300 rounded-md blur-sm mr-4" />
                     )}
@@ -238,7 +241,7 @@ export const Header = () => {
                   </span>
                   <p>
                     {showBalance ? (
-                      <span className='mr-4'>{wallet.balance.SHEN}</span>
+                      <span className="mr-4">{wallet.balance.SHEN}</span>
                     ) : (
                       <span className="inline-block w-32 h-4 bg-gray-300 rounded-md blur-sm mr-4" />
                     )}
@@ -250,7 +253,13 @@ export const Header = () => {
           </div>
         ) : (
           <div className="flex flex-col justify-start h-full px-4 py-4">
-            <div>{wallets.length === 0 ? <p className="font-semibold text-red-500">No wallets detected.</p> : <p className="text-xl py-4 pl-5 font-semibold">Choose your wallet:</p>}</div>
+            <div>
+              {wallets.length === 0 ? (
+                <p className="font-semibold text-red-500">No wallets detected.</p>
+              ) : (
+                <p className="text-xl py-4 pl-5 font-semibold">Choose your wallet:</p>
+              )}
+            </div>
             {wallets.map(({ id, name, icon }) => (
               <div
                 className="flex flex-row gap-2 items-center justify-between p-4 rounded-lg hover:bg-primary hover:text-white pr-6"
@@ -259,9 +268,9 @@ export const Header = () => {
                   connect(id)
                 }}
               >
-                <div className='flex flex-row justify-start items-center'>
+                <div className="flex flex-row justify-start items-center">
                   <img src={icon} alt={`${name} icon`} className="w-12 h-12 mr-3" />
-                  <span className='text-lg'>{name.replace(/^\w/, (c) => c.toUpperCase())}</span>
+                  <span className="text-lg">{name.replace(/^\w/, (c) => c.toUpperCase())}</span>
                 </div>
                 <i className="fa-solid fa-chevron-right"></i>
               </div>
