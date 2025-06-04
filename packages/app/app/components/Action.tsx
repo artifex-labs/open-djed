@@ -11,6 +11,7 @@ import Toast from './Toast'
 import { LoadingCircle } from './LoadingCircle'
 import { formatNumber } from '~/utils'
 import { Rational } from '@reverse-djed/math'
+import { AppError } from '@reverse-djed/api/src/errors'
 
 type ActionProps = {
   action: ActionType
@@ -60,12 +61,17 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       if (!utxos) throw new Error('No UTXOs found')
       const address = await wallet.address()
 
-      const txCbor = await client.api[':token'][':action'][':amount']['tx']
-        .$post({
-          param: { token, action, amount: amount.toString() },
-          json: { hexAddress: address, utxosCborHex: utxos },
-        })
-        .then((r) => r.text())
+      const response = await client.api[':token'][':action'][':amount']['tx'].$post({
+        param: { token, action, amount: amount.toString() },
+        json: { hexAddress: address, utxosCborHex: utxos },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new AppError(errorData.message)
+      }
+
+      const txCbor = await response.text()
 
       console.log('Unsigned transaction CBOR: ', txCbor)
       const signature = await wallet.signTx(txCbor)
@@ -83,6 +89,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       onActionComplete()
     } catch (err) {
       console.error('Action failed:', err)
+      if (err instanceof AppError) {
+        setToastProps({ message: `${err.message}`, type: 'error', show: true })
+        onActionComplete()
+        return
+      }
 
       setToastProps({ message: `Transaction failed. Please try again.`, type: 'error', show: true })
       onActionComplete()
