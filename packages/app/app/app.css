@@ -12,25 +12,31 @@
     'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
 
-  --color-light-bg: #f0f0f0;
+  --color-light-bg: #fffefe;
   --color-light-text: #121212;
-  --color-light-foreground: #dbd1de;
+  --color-light-foreground: #fffefe;
   --color-light-disabled: #c5c5c5;
+  --color-light-navbar: #ffffff;
+  --color-light-footer: #ffffff;
+  --color-light-action-line: #757575;
 
-  --color-dark-bg: #121212;
+  --color-dark-bg: #0b1a23;
   --color-dark-text: #ffffff;
-  --color-dark-foreground: #4a424d;
+  --color-dark-foreground: #000d1c;
   --color-dark-disabled: #717171;
+  --color-dark-navbar: #000d1c;
+  --color-dark-footer: #000d1c;
+  --color-dark-action-line: #305a87;
 
-  --color-primary: #971ec7;
-  --color-primary-hover: #b25bd5;
+  --color-primary: #4885c7;
+  --color-primary-hover: #305a87;
 }
 
 html,
 body {
   height: 100%;
 
-  @apply bg-light-bg dark:bg-dark-bg/75 text-light-text dark:text-dark-text;
+  @apply text-light-text dark:text-dark-text;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
