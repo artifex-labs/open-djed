@@ -1,4 +1,4 @@
-# Reverse DJED | The open-source alternative to DJED.xyz
+# Open DJED | The open-source alternative to DJED.xyz
 # https://djed.artifex.finance/
 
 User-agent: *

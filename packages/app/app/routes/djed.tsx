@@ -5,7 +5,7 @@ import type { LoaderData } from '~/types/loader'
 export function meta() {
   const { network } = useLoaderData<LoaderData>()
   return [
-    { title: 'Reverse DJED | DJED Stablecoin - Mint & burn' },
+    { title: 'Open DJED | DJED Stablecoin - Mint & burn' },
     {
       name: 'description',
       content:

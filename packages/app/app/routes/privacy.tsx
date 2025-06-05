@@ -4,8 +4,8 @@ import type { LoaderData } from '~/types/loader'
 export function meta() {
   const { network } = useLoaderData<LoaderData>()
   return [
-    { title: 'Reverse DJED | Privacy Policy' },
-    { name: 'description', content: 'Learn how Reverse DJED handles your data and privacy.' },
+    { title: 'Open DJED | Privacy Policy' },
+    { name: 'description', content: 'Learn how Open DJED handles your data and privacy.' },
     {
       tagName: 'link',
       rel: 'canonical',

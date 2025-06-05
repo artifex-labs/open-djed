@@ -66,8 +66,8 @@ export const Header = () => {
           <div className="flex-1">
             <Link to="/">
               <div className="flex flex-row text-xl items-center">
-                <img src="/reverse-djed.svg" alt="Reverse DJED" />
-                Яeverse DJED
+                <img src="/djed.svg" alt="Open DJED" />
+                Open DJED
               </div>
             </Link>
           </div>
