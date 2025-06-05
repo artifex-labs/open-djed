@@ -1,6 +1,6 @@
 # Blockfrost
 
-Package holding `reverse-djed` custom lucid blockfrost client.
+Package holding Open DJED custom lucid blockfrost client.
 
 TODO:
 

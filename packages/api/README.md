@@ -1,6 +1,6 @@
 # API
 
-Package holding `reverse-djed` web API. This API should be used by the web app for work that requires access to external APIs like Blockfrost.
+Package holding Open DJED web API. This API is used by the web app for work that requires access to external APIs like Blockfrost.
 
 TODO:
 

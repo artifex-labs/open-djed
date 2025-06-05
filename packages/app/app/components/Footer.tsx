@@ -41,9 +41,7 @@ const Footer = () => {
 
         <div className="tooltip">
           <div className="tooltip-content">
-            <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-              Look at reverse djed source code
-            </div>
+            <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">Look at source code</div>
           </div>
           <a
             href="https://github.com/artifex-labs/reverse-djed"

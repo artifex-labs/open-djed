@@ -6,7 +6,7 @@ import { useLoaderData } from 'react-router'
 export function meta() {
   const { network } = useLoaderData<LoaderData>()
   return [
-    { title: 'Reverse DJED | The open-source alternative to DJED.xyz' },
+    { title: 'Open DJED | The open-source alternative to DJED.xyz' },
     {
       name: 'description',
       content:
@@ -25,7 +25,7 @@ export default function Home() {
     <div className="flex flex-col gap-10 justify-center items-center w-full pt-8 px-4 md:px-8">
       <div className="flex flex-col">
         <div className="flex flex-row justify-center items-center gap-2 flex-wrap">
-          <h1 className="text-5xl font-bold text-center">ЯEVERSE DJED</h1>
+          <h1 className="text-5xl font-bold text-center">OPEN DJED</h1>
           <p className="text-lg text-primary">stablecoin</p>
         </div>
       </div>
