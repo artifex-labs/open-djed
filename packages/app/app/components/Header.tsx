@@ -60,7 +60,7 @@ export const Header = () => {
   return (
     <>
       {/* Navbar */}
-      <header className="top-0 left-0 right-0 py-4 px-8 bg-white dark:bg-dark-bg shadow-sm dark:shadow-primary/30 z-50 ">
+      <header className="sticky top-0 left-0 right-0 py-4 px-8 bg-light-navbar dark:bg-dark-navbar shadow-sm dark:shadow-primary/30 z-50 transition-all duration-200 ease-in-out">
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-1">
@@ -73,7 +73,7 @@ export const Header = () => {
           </div>
 
           {/* Center links - Desktop only */}
-          <div className="hidden lg:flex justify-center space-x-6">
+          <div className="hidden lg:flex justify-center space-x-6 mx-10">
             {navLinks.map((link) => (
               <NavLink key={link.to} to={link.to} className={getNavLinkClasses}>
                 {link.label}

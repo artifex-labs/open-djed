@@ -86,7 +86,7 @@ const Select = ({ options, className = '', onChange, defaultValue, name, size = 
           ref={buttonRef}
           type="button"
           onClick={toggleDropdown}
-          className="w-full flex justify-between items-center bg-white border border-primary px-4 py-2 rounded shadow dark:bg-dark-bg focus:outline-none"
+          className="w-full flex justify-between items-center bg-white border border-primary px-4 py-2 rounded shadow dark:bg-dark-bg focus:outline-none transition-all duration-200 ease-in-out"
           name={name}
         >
           {selected.label}
