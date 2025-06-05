@@ -1,3 +1,3 @@
 # CLI
 
-Package holding `reverse-djed` CLI. Commands are used to interact with the `reverse-djed` transaction builders.
+Package holding Open DJED CLI. Commands are used to interact with chain data and to build transactions.

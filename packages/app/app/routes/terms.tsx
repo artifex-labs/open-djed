@@ -4,8 +4,8 @@ import type { LoaderData } from '~/types/loader'
 export function meta() {
   const { network } = useLoaderData<LoaderData>()
   return [
-    { title: 'Reverse DJED | Terms of Service' },
-    { name: 'description', content: 'Review the terms of using Reverse DJED.' },
+    { title: 'Open DJED | Terms of Service' },
+    { name: 'description', content: 'Review the terms of using Open DJED.' },
     {
       tagName: 'link',
       rel: 'canonical',
@@ -24,16 +24,16 @@ export default function TermsPage() {
 
       <div className="w-full max-w-4xl flex flex-col gap-6 text-base leading-relaxed">
         <p>
-          Welcome to Reverse Djed! By accessing or using our application, you agree to be bound by these Terms
-          of Service ("Terms"). If you do not agree with any part of these Terms, you may not use the
+          Welcome to Open Djed! By accessing or using our application, you agree to be bound by these Terms of
+          Service ("Terms"). If you do not agree with any part of these Terms, you may not use the
           application.
         </p>
 
         <section>
           <h2 className="text-xl font-semibold mb-2">1. Description</h2>
           <p>
-            Reverse Djed is an open-source web application that interacts with the Cardano blockchain. Users
-            can connect their Cardano wallets via the CIP-30 standard to interact with the app.
+            Open Djed is an open-source web application that interacts with the Cardano blockchain. Users can
+            connect their Cardano wallets via the CIP-30 standard to interact with the app.
           </p>
         </section>
 
