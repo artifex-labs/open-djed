@@ -1,7 +1,7 @@
 import { useProtocolData } from '~/hooks/useProtocolData'
 import { NavLink } from 'react-router'
 import type { TokenType } from '@reverse-djed/api'
-import { formatNumber } from '~/utils'
+import { formatValue } from '~/utils'
 import { LoadingCircle } from './LoadingCircle'
 
 type TokenDetailsProps = {
@@ -21,59 +21,34 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
           <div className="flex flex-row justify-between">
             <p className="font-medium">Buy Price</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].buyPrice, { maximumFractionDigits: 4 })
-              )}{' '}
-              ADA
+              {isPending ? <LoadingCircle /> : formatValue(data.protocolData[token].buyPrice)}
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Sell Price</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].sellPrice, { maximumFractionDigits: 4 })
-              )}{' '}
-              ADA
+              {isPending ? <LoadingCircle /> : formatValue(data.protocolData[token].sellPrice)}
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Circulating Supply</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].circulatingSupply, { maximumFractionDigits: 4 })
-              )}{' '}
-              {token}
+              {isPending ? <LoadingCircle /> : formatValue(data.protocolData[token].circulatingSupply)}
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Mintable Amount</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].mintableAmount, { maximumFractionDigits: 4 })
-              )}{' '}
-              {token}
+              {isPending ? <LoadingCircle /> : formatValue(data.protocolData[token].mintableAmount)}
             </p>
           </div>
           <div className="flex flex-row justify-between">
             <p className="font-medium">Burnable Amount</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].burnableAmount, { maximumFractionDigits: 4 })
-              )}{' '}
-              {token}
+              {isPending ? <LoadingCircle /> : formatValue(data.protocolData[token].burnableAmount)}
             </p>
           </div>
         </div>

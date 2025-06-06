@@ -1,6 +1,6 @@
 import { maxReserveRatio, minReserveRatio } from '@reverse-djed/math'
 import { useProtocolData } from '~/hooks/useProtocolData'
-import { formatNumber } from '~/utils'
+import { formatNumber, formatValue } from '~/utils'
 import { LoadingCircle } from './LoadingCircle'
 
 export function ReserveDetails() {
@@ -29,12 +29,7 @@ export function ReserveDetails() {
         <div className="flex flex-row justify-between">
           <p className="font-medium">Reserve Value</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <LoadingCircle />
-            ) : (
-              formatNumber(data.protocolData.reserve.amount, { maximumFractionDigits: 4 })
-            )}{' '}
-            ADA
+            {isPending ? <LoadingCircle /> : formatValue(data.protocolData.reserve.amount)}
           </p>
         </div>
       </div>

@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { useWallet } from '~/context/WalletContext'
 import Button from '~/components/Button'
 import { useApiClient } from '~/context/ApiClientContext'
-import { useProtocolData, type Value } from '~/hooks/useProtocolData'
+import { useProtocolData } from '~/hooks/useProtocolData'
 import { registryByNetwork } from '@reverse-djed/registry'
 import { AmountInput } from '~/components/AmountInput'
 import type { ActionType, TokenType } from '@reverse-djed/api'
 import { useEnv } from '~/context/EnvContext'
 import Toast from './Toast'
 import { LoadingCircle } from './LoadingCircle'
-import { formatNumber } from '~/utils'
+import { formatValue } from '~/utils'
 import { Rational } from '@reverse-djed/math'
 import { AppError } from '@reverse-djed/api/src/errors'
 
@@ -18,17 +18,6 @@ type ActionProps = {
   token: TokenType
   onActionStart: () => void
   onActionComplete: () => void
-}
-
-const VALUE_KEYS = ['ADA', 'DJED', 'SHEN']
-
-const formatValue = (value: Value) => {
-  const filteredValue = Object.entries(value).filter(([, v]) => v && v > 0)
-  if (filteredValue.length === 0) return `0 ADA`
-  return filteredValue
-    .sort((a, b) => VALUE_KEYS.indexOf(a[0]) - VALUE_KEYS.indexOf(b[0]))
-    .map(([k, v]) => `${formatNumber(v, { maximumFractionDigits: 4 })} ${k}`)
-    .join(' ')
 }
 
 export const Action = ({ action, token, onActionStart, onActionComplete }: ActionProps) => {
@@ -109,13 +98,14 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           (action === 'Burn'
             ? wallet?.balance[token]
             : ((wallet?.balance.ADA ?? 0) -
-                (Number(registry.operatorFeeConfig.max) + (protocolData?.refundableDeposit ?? 1823130)) /
+                (Number(registry.operatorFeeConfig.max) + (protocolData?.refundableDeposit.ADA ?? 1823130)) /
                   1e6) /
-              (protocolData ? protocolData[token].buyPrice : 0)) ?? 0,
+              (protocolData ? protocolData[token].buyPrice.ADA : 0)) ?? 0,
           0,
         ),
-        (action === 'Mint' ? protocolData?.[token].mintableAmount : protocolData?.[token].burnableAmount) ??
-          0,
+        (action === 'Mint'
+          ? protocolData?.[token].mintableAmount[token]
+          : protocolData?.[token].burnableAmount[token]) ?? 0,
       ) * 1e6,
     ) / 1e6
   return (
@@ -179,14 +169,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <LoadingCircle />
-            ) : actionData ? (
-              formatNumber(actionData?.operatorFee, { maximumFractionDigits: 4 })
-            ) : (
-              '-'
-            )}{' '}
-            ADA
+            {isPending ? <LoadingCircle /> : actionData ? formatValue(actionData?.operatorFee) : '-'}
           </p>
         </div>
         <div className="my-2 w-full px-10">
@@ -200,10 +183,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
                   The sum of the base cost{actionData ? ` (${formatValue(actionData?.baseCost)})` : ''},
                   action fee{actionData ? ` (${formatValue(actionData?.actionFee)})` : ''} and operator fee
-                  {actionData
-                    ? ` (${formatNumber(actionData.operatorFee, { maximumFractionDigits: 4 })} ADA)`
-                    : ''}
-                  .
+                  {actionData ? ` (${formatValue(actionData.operatorFee)})` : ''}.
                 </div>
               </div>
               <i className="fa-solid fa-circle-info pt-1"></i>
@@ -227,7 +207,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : protocolData?.refundableDeposit} ADA
+            {isPending ? <LoadingCircle /> : formatValue(protocolData?.refundableDeposit ?? {})}
           </p>
         </div>
         <div className="my-2 w-full px-10">
@@ -239,8 +219,8 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             <div className="tooltip">
               <div className="tooltip-content">
                 <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  Sum of total cost {actionData ? `(${formatValue(actionData?.totalCost)})` : ''} and
-                  refundable deposit{protocolData ? ` (${protocolData.refundableDeposit} ADA)` : ''}.
+                  Sum of total cost {actionData ? `(${formatValue(actionData.totalCost)})` : ''} and
+                  refundable deposit{protocolData ? ` (${formatValue(protocolData.refundableDeposit)})` : ''}.
                 </div>
               </div>
               <i className="fa-solid fa-circle-info pt-1"></i>
@@ -286,7 +266,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             {isPending ? (
               <LoadingCircle />
             ) : (
-              `${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price) ? formatNumber(actionData.price) : '0'} ADA/${token}`
+              `${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price.ADA) ? formatValue(actionData.price) : '0 ADA'}/${token}`
             )}
           </p>
         </div>
