@@ -21,14 +21,23 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
           <div className="flex flex-row justify-between">
             <p className="font-medium">Buy Price</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? <LoadingCircle /> : formatNumber(data.protocolData[token].buyPrice.toFixed(4))} ADA
+              {isPending ? (
+                <LoadingCircle />
+              ) : (
+                formatNumber(data.protocolData[token].buyPrice, { maximumFractionDigits: 4 })
+              )}{' '}
+              ADA
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Sell Price</p>
             <p className="text-lg flex justify-center items-center">
-              {isPending ? <LoadingCircle /> : formatNumber(data.protocolData[token].sellPrice.toFixed(4))}{' '}
+              {isPending ? (
+                <LoadingCircle />
+              ) : (
+                formatNumber(data.protocolData[token].sellPrice, { maximumFractionDigits: 4 })
+              )}{' '}
               ADA
             </p>
           </div>
@@ -39,7 +48,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
               {isPending ? (
                 <LoadingCircle />
               ) : (
-                formatNumber(data.protocolData[token].circulatingSupply.toFixed(4))
+                formatNumber(data.protocolData[token].circulatingSupply, { maximumFractionDigits: 4 })
               )}{' '}
               {token}
             </p>
@@ -51,7 +60,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
               {isPending ? (
                 <LoadingCircle />
               ) : (
-                formatNumber(data.protocolData[token].mintableAmount.toFixed(4))
+                formatNumber(data.protocolData[token].mintableAmount, { maximumFractionDigits: 4 })
               )}{' '}
               {token}
             </p>
@@ -62,7 +71,7 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
               {isPending ? (
                 <LoadingCircle />
               ) : (
-                formatNumber(data.protocolData[token].burnableAmount.toFixed(4))
+                formatNumber(data.protocolData[token].burnableAmount, { maximumFractionDigits: 4 })
               )}{' '}
               {token}
             </p>

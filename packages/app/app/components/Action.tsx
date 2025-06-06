@@ -27,7 +27,7 @@ const formatValue = (value: Value) => {
   if (filteredValue.length === 0) return `0 ADA`
   return filteredValue
     .sort((a, b) => VALUE_KEYS.indexOf(a[0]) - VALUE_KEYS.indexOf(b[0]))
-    .map(([k, v]) => `${formatNumber(v.toFixed(4))} ${k}`)
+    .map(([k, v]) => `${formatNumber(v, { maximumFractionDigits: 4 })} ${k}`)
     .join(' ')
 }
 
@@ -182,7 +182,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             {isPending ? (
               <LoadingCircle />
             ) : actionData ? (
-              formatNumber(actionData?.operatorFee.toFixed(4))
+              formatNumber(actionData?.operatorFee, { maximumFractionDigits: 4 })
             ) : (
               '-'
             )}{' '}
@@ -200,7 +200,10 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
                   The sum of the base cost{actionData ? ` (${formatValue(actionData?.baseCost)})` : ''},
                   action fee{actionData ? ` (${formatValue(actionData?.actionFee)})` : ''} and operator fee
-                  {actionData ? ` (${formatNumber(actionData.operatorFee.toFixed(4))} ADA)` : ''}.
+                  {actionData
+                    ? ` (${formatNumber(actionData.operatorFee, { maximumFractionDigits: 4 })} ADA)`
+                    : ''}
+                  .
                 </div>
               </div>
               <i className="fa-solid fa-circle-info pt-1"></i>
