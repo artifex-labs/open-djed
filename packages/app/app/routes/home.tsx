@@ -47,11 +47,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-10 justify-center items-center w-full pt-8 px-4 md:px-8">
-      <div className="flex flex-col">
+      <div className="flex flex-col justify-center items-center gap-4">
         <div className="flex flex-row justify-center items-center gap-2 flex-wrap">
           <h1 className="text-5xl font-bold text-center">OPEN DJED</h1>
           <p className="text-lg text-primary">stablecoin</p>
         </div>
+        <span onClick={() => setOpenModal(true)} className="text-sm text-primary underline cursor-pointer">
+          What is Open DJED?
+        </span>
       </div>
       <div className="w-full max-w-5xl flex flex-col rounded-md p-4 md:p-6 items-center gap-6">
         <div className="flex flex-col md:flex-row justify-center items-stretch gap-6 sm:gap-8 w-full">
