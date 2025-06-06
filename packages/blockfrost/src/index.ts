@@ -45,7 +45,7 @@ export class Blockfrost extends Lucid.Blockfrost {
     }).then((res) => res.json() as { fault?: unknown; status_code?: number; message?: string })
     if (!res || res.fault) {
       const message =
-        res?.status_code === 400
+        res.status_code === 400
           ? res.message
           : `Could not evaluate the transaction: ${JSON.stringify(res)}. Transaction: ${tx}`
       throw new Error(message)
