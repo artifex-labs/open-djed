@@ -29,6 +29,7 @@ export function useProtocolData() {
         async (
           r,
         ): Promise<{
+          to: (value: Value, token: TokenType | 'ADA') => number
           protocolData: Record<
             TokenType,
             {
@@ -78,6 +79,8 @@ export function useProtocolData() {
           const registry = registryByNetwork[network]
           const refundableDeposit = { ADA: Number(poolDatum.minADA) / 1e6 }
           return {
+            to: (value: Value, token: TokenType | 'ADA'): number =>
+              valueTo(value, poolDatum, oracleDatum, token),
             protocolData: {
               DJED: {
                 buyPrice: { ADA: djedADAMintRate(oracleDatum, registry.MintDJEDFeePercentage).toNumber() },
