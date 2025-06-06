@@ -29,7 +29,12 @@ export function ReserveDetails() {
         <div className="flex flex-row justify-between">
           <p className="font-medium">Reserve Value</p>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatNumber(data.protocolData.reserve.amount.toFixed(4))} ADA
+            {isPending ? (
+              <LoadingCircle />
+            ) : (
+              formatNumber(data.protocolData.reserve.amount, { maximumFractionDigits: 4 })
+            )}{' '}
+            ADA
           </p>
         </div>
       </div>
