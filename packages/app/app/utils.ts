@@ -1,3 +1,4 @@
+import type { TokenType } from '@reverse-djed/api'
 import {
   adaDJEDRate,
   adaSHENRate,
@@ -37,16 +38,7 @@ export type ADAValue = {
   ADA: number
 }
 
-export type TokenValue = {
-  DJED: {
-    DJED: number
-  }
-  SHEN: {
-    SHEN: number
-  }
-}
-
-export type Value = Partial<Record<'ADA' | 'DJED' | 'SHEN', number>>
+export type Value = Partial<Record<'ADA' | TokenType, number>>
 
 export const sumValues = (...values: Value[]): Value =>
   values.reduce(
@@ -100,7 +92,7 @@ export const valueTo = (
   value: Value,
   poolDatum: PartialPoolDatum,
   oracleDatum: PartialOracleDatum,
-  token: 'DJED' | 'SHEN' | 'ADA',
+  token: TokenType | 'ADA',
 ): number =>
   token === 'DJED'
     ? valueToDJED(value, poolDatum, oracleDatum)
