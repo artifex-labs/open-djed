@@ -68,15 +68,15 @@ export default function Home() {
       <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title={`Welcome to Open DJED!`}>
         <div className="space-y-4 mt-4 text-lg leading-relaxed">
           <p>
-            <strong>Open DJED</strong> is a transparent, community-driven implementation of the DJED
-            algorithmic stablecoin protocol, designed to bring decentralized financial stability to the{' '}
-            <strong>Cardano</strong> blockchain—without the barriers of proprietary code.
+            <strong>Open DJED</strong> is a transparent, community-driven web application for interacting with
+            the DJED algorithmic stablecoin protocol on <strong>Cardano</strong>—built without the barriers of
+            proprietary code.
           </p>
 
           <p>
             Developed by <strong>Artifex Labs</strong>, Open DJED is the result of a deep reverse-engineering
-            effort of the original DJED protocol. We’ve preserved the core mechanics and economic
-            model—ensuring compatibility and reliability—while opening up the source code for the entire
+            effort of the original DJED application. We've recreated the user interface and interaction logic
+            while maintaining full protocol compatibility—then made everything open source for the entire
             Cardano ecosystem to explore, audit, and improve.
           </p>
 
@@ -91,20 +91,29 @@ export default function Home() {
                 <strong>Protocol-compatible</strong> – Same overcollateralized logic that powers DJED.
               </li>
               <li>
-                <i className="fas fa-coins text-primary mr-2"></i>
-                <strong>Lower network fees</strong> – Optimized contracts reduce fees by ~0.1 ADA.
-              </li>
-              <li>
-                <i className="fas fa-receipt text-primary mr-2"></i>
-                <strong>Transparent fees</strong> – Follows COTI’s structure with full on-chain visibility.
-              </li>
-              <li>
                 <i className="fas fa-wrench text-primary mr-2"></i>
                 <strong>Fully open source</strong> – All code is auditable, forkable, and community-owned.
               </li>
               <li>
                 <i className="fas fa-seedling text-primary mr-2"></i>
-                <strong>Community-first</strong> – Built for and by the Cardano ecosystem.
+                <strong>Community-first</strong> – Built for and by the Cardano community.
+              </li>
+              <li>
+                <i className="fas fa-signal text-primary mr-2"></i>
+                <strong>Enhanced reliability</strong> – Alternative access during COTI app downtime or issues.
+              </li>
+              <li>
+                <i className="fas fa-earth-americas text-primary mr-2"></i>
+                <strong>Global accessibility</strong> – Available to users worldwide without geographic
+                restrictions.
+              </li>
+              <li>
+                <i className="fas fa-receipt text-primary mr-2"></i>
+                <strong>Transparent fees</strong> – Follows COTI's fee structure transparently, no surcharges.
+              </li>
+              <li>
+                <i className="fas fa-coins text-primary mr-2"></i>
+                <strong>Lower network fees</strong> – Optimized contracts reduce fees by ~0.1 ADA.
               </li>
             </ul>
           </div>
@@ -114,11 +123,20 @@ export default function Home() {
               <i className="fas fa-compass text-primary mr-2"></i>
               Our Mission
             </p>
-            <p>
-              <strong>Artifex Labs</strong> is dedicated to building open-source, permissionless tools that
-              strengthen the Cardano ecosystem. Open DJED is our first major release—and we’re just getting
-              started!
-            </p>
+            <div className="space-y-4">
+              <p>
+                We built Open DJED to address critical accessibility challenges with the original COTI DJED
+                application. Recurring downtime, system issues, and geographic restrictions created barriers
+                for legitimate users seeking to interact with the DJED protocol. Open DJED provides an
+                alternative interface that eliminates these obstacles while maintaining full protocol
+                compatibility.
+              </p>
+
+              <p>
+                <strong>Artifex Labs</strong> builds open-source, permissionless tools for the Cardano
+                ecosystem. Open DJED is our first major release—and we're only just getting started!
+              </p>
+            </div>
           </div>
 
           <p className="font-bold">
