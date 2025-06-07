@@ -14,22 +14,24 @@ const TokenDetailsRow = ({
   label,
   value,
   toUSD,
+  decimals,
 }: {
   isPending: boolean
   label: string
   value: Value | undefined
   toUSD?: (value: Value) => number
+  decimals?: number
 }) => {
   return (
     <div className="flex flex-row justify-between">
       <p className="font-medium">{label}</p>
       <div className="flex flex-col items-end">
         <p className="text-lg">{isPending ? <LoadingCircle /> : formatValue(value ?? {})}</p>
-        <p className="text-sm text-gray-700 dark:text-gray-400">
+        <p className="text-xs text-gray-700 dark:text-gray-400">
           {isPending ? (
             <LoadingCircle />
           ) : toUSD ? (
-            `$${formatNumber(toUSD(value ?? {}), { maximumFractionDigits: 2 })}`
+            `$${formatNumber(toUSD(value ?? {}), { maximumFractionDigits: decimals ?? 2 })}`
           ) : (
             '-'
           )}
@@ -54,12 +56,14 @@ export const TokenDetails = ({ token, route }: TokenDetailsProps) => {
             label="Buy Price"
             value={data?.protocolData[token].buyPrice}
             toUSD={toUSD}
+            decimals={3}
           />
           <TokenDetailsRow
             isPending={isPending}
             label="Sell Price"
             value={data?.protocolData[token].sellPrice}
             toUSD={toUSD}
+            decimals={3}
           />
           <TokenDetailsRow
             isPending={isPending}

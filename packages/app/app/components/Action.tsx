@@ -9,7 +9,7 @@ import type { ActionType, TokenType } from '@reverse-djed/api'
 import { useEnv } from '~/context/EnvContext'
 import Toast from './Toast'
 import { LoadingCircle } from './LoadingCircle'
-import { formatValue } from '~/utils'
+import { formatNumber, formatValue, type Value } from '~/utils'
 import { Rational } from '@reverse-djed/math'
 import { AppError } from '@reverse-djed/api/src/errors'
 
@@ -108,6 +108,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           : protocolData?.[token].burnableAmount[token]) ?? 0,
       ) * 1e6,
     ) / 1e6
+  const toUSD = data ? (value: Value) => data.to(value, 'DJED') : undefined
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">
@@ -127,9 +128,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.baseCost ?? {})}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? <LoadingCircle /> : formatValue(actionData?.baseCost ?? {})}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `$${formatNumber(toUSD(actionData?.baseCost ?? {}), { maximumFractionDigits: 2 })}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -144,9 +158,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.actionFee ?? {})}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? <LoadingCircle /> : formatValue(actionData?.actionFee ?? {})}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `$${formatNumber(toUSD(actionData?.actionFee ?? {}), { maximumFractionDigits: 2 })}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -168,9 +195,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : actionData ? formatValue(actionData?.operatorFee) : '-'}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? <LoadingCircle /> : formatValue(actionData?.operatorFee ?? {})}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `$${formatNumber(toUSD(actionData?.operatorFee ?? {}), { maximumFractionDigits: 2 })}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
         <div className="my-2 w-full px-10">
           <hr className="light-action-line dark:border-dark-action-line" />
@@ -189,9 +229,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.totalCost ?? {})}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? <LoadingCircle /> : formatValue(actionData?.totalCost ?? {})}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `$${formatNumber(toUSD(actionData?.totalCost ?? {}), { maximumFractionDigits: 2 })}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -206,9 +259,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(protocolData?.refundableDeposit ?? {})}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? <LoadingCircle /> : formatValue(protocolData?.refundableDeposit ?? {})}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `$${formatNumber(toUSD(protocolData?.refundableDeposit ?? {}), { maximumFractionDigits: 2 })}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
         <div className="my-2 w-full px-10">
           <hr className="light-action-line dark:border-dark-action-line" />
@@ -226,9 +292,22 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.toSend ?? {})}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? <LoadingCircle /> : formatValue(actionData?.toSend ?? {})}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `$${formatNumber(toUSD(actionData?.toSend ?? {}), { maximumFractionDigits: 2 })}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -242,13 +321,26 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <LoadingCircle />
-            ) : (
-              `${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive ?? {})}`
-            )}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? (
+                  <LoadingCircle />
+                ) : (
+                  `${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive ?? {})}`
+                )}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `${action === 'Burn' ? '~' : ''}$${formatNumber(toUSD(actionData?.toReceive ?? {}), { maximumFractionDigits: 2 })}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -262,13 +354,26 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <LoadingCircle />
-            ) : (
-              `${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price.ADA) ? formatValue(actionData.price) : '0 ADA'}/${token}`
-            )}
-          </p>
+          <div className="flex flex-col items-end">
+            <p className="text-lg flex justify-center items-center">
+              <p className="text-lg flex justify-center items-center">
+                {isPending ? (
+                  <LoadingCircle />
+                ) : (
+                  `${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price.ADA) ? formatValue(actionData.price) : '0 ADA'}/${token}`
+                )}
+              </p>
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-400">
+              {isPending ? (
+                <LoadingCircle />
+              ) : toUSD ? (
+                `${action === 'Burn' ? '~' : ''}$${actionData && Number.isFinite(actionData.price.ADA) ? formatNumber(toUSD(actionData?.price ?? {}), { maximumFractionDigits: 3 }) : '0'}`
+              ) : (
+                '-'
+              )}
+            </p>
+          </div>
         </div>
       </div>
 

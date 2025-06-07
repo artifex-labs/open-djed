@@ -33,7 +33,7 @@ export function ReserveDetails() {
             <p className="text-lg flex justify-center items-center">
               {isPending ? <LoadingCircle /> : formatValue(data.protocolData.reserve.amount)}
             </p>
-            <p className="text-sm text-gray-700 dark:text-gray-400">
+            <p className="text-xs text-gray-700 dark:text-gray-400">
               {isPending ? (
                 <LoadingCircle />
               ) : toUSD ? (
