@@ -66,7 +66,7 @@ export const Header = () => {
           <div className="flex-1">
             <Link to="/">
               <div className="flex flex-row text-xl items-center">
-                <img src="/djed.svg" alt="Open DJED" />
+                <img src="/logos/djed.svg" alt="Open DJED" />
                 Open DJED
               </div>
             </Link>
@@ -214,7 +214,7 @@ export const Header = () => {
                 </div>
                 <div className="flex flex-row justify-between items-center gap-6 w-full font-bold">
                   <span className="rounded-full w-10 h-10 overflow-hidden">
-                    <img src="/cardano-ada-logo.svg" alt="ADA logo" />
+                    <img src="/logos/cardano-ada-logo.svg" alt="ADA logo" />
                   </span>
                   <p>
                     {showBalance ? (
@@ -227,7 +227,7 @@ export const Header = () => {
                 </div>
                 <div className="flex flex-row justify-between items-center gap-6 w-full font-bold">
                   <span className="rounded-full w-10 h-10 overflow-hidden">
-                    <img src="/djed.svg" alt="Djed logo" />
+                    <img src="/logos/djed.svg" alt="Djed logo" />
                   </span>
                   <p>
                     {showBalance ? (
@@ -240,7 +240,7 @@ export const Header = () => {
                 </div>
                 <div className="flex flex-row justify-between items-center gap-6 w-full font-bold">
                   <span className="rounded-full w-10 h-10 overflow-hidden">
-                    <img src="/shen-logo.png" alt="Shen logo" />
+                    <img src="/logos/shen-logo.png" alt="Shen logo" />
                   </span>
                   <p>
                     {showBalance ? (
