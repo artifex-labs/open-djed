@@ -119,7 +119,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       ) * 1e6,
     ) / 1e6
   return (
-    <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
+    <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">
         {action} {token}
       </h2>
