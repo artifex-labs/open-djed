@@ -11,7 +11,17 @@ type TokenDetailsProps = {
 
 export function TokenDetails({ token, route }: TokenDetailsProps) {
   const { isPending, error, data } = useProtocolData()
+
   if (error) return <div className="text-red-500 font-bold">ERROR: {error.message}</div>
+
+  if (isPending) {
+    return (
+      <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full h-[404px] flex items-center justify-center">
+        <LoadingCircle size="xl" />
+      </div>
+    )
+  }
+
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full mx-auto overflow-x-auto">
       <h2 className="text-2xl font-bold mb-6 ">{token} Token Details</h2>
@@ -21,59 +31,34 @@ export function TokenDetails({ token, route }: TokenDetailsProps) {
           <div className="flex flex-row justify-between">
             <p className="font-medium">Buy Price</p>
             <p className="text-lg flex justify-center items-center text-right">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].buyPrice, { maximumFractionDigits: 4 })
-              )}{' '}
-              ADA
+              {formatNumber(data.protocolData[token].buyPrice, { maximumFractionDigits: 4 })} ADA
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Sell Price</p>
             <p className="text-lg flex justify-center items-center text-right">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].sellPrice, { maximumFractionDigits: 4 })
-              )}{' '}
-              ADA
+              {formatNumber(data.protocolData[token].sellPrice, { maximumFractionDigits: 4 })} ADA
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Circulating Supply</p>
             <p className="text-lg flex justify-center items-center text-right">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].circulatingSupply, { maximumFractionDigits: 4 })
-              )}{' '}
-              {token}
+              {formatNumber(data.protocolData[token].circulatingSupply, { maximumFractionDigits: 4 })} {token}
             </p>
           </div>
 
           <div className="flex flex-row justify-between">
             <p className="font-medium">Mintable Amount</p>
             <p className="text-lg flex justify-center items-center text-right">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].mintableAmount, { maximumFractionDigits: 4 })
-              )}{' '}
-              {token}
+              {formatNumber(data.protocolData[token].mintableAmount, { maximumFractionDigits: 4 })} {token}
             </p>
           </div>
           <div className="flex flex-row justify-between">
             <p className="font-medium">Burnable Amount</p>
             <p className="text-lg flex justify-center items-center text-right">
-              {isPending ? (
-                <LoadingCircle />
-              ) : (
-                formatNumber(data.protocolData[token].burnableAmount, { maximumFractionDigits: 4 })
-              )}{' '}
-              {token}
+              {formatNumber(data.protocolData[token].burnableAmount, { maximumFractionDigits: 4 })} {token}
             </p>
           </div>
         </div>

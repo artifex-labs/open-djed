@@ -118,9 +118,18 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           0,
       ) * 1e6,
     ) / 1e6
+
+  if (isPending) {
+    return (
+      <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 h-[590px] flex items-center justify-center">
+        <LoadingCircle size="xl" />
+      </div>
+    )
+  }
+
   return (
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6">
-			<h2 className="text-2xl font-bold mb-6">
+      <h2 className="text-2xl font-bold mb-6">
         {action} {token}
       </h2>
 
@@ -138,7 +147,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.baseCost ?? {})}
+            {formatValue(actionData?.baseCost ?? {})}
           </p>
         </div>
         <div className="flex justify-between">
@@ -155,7 +164,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.actionFee ?? {})}
+            {formatValue(actionData?.actionFee ?? {})}
           </p>
         </div>
         <div className="flex justify-between">
@@ -179,18 +188,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <LoadingCircle />
-            ) : actionData ? (
-              formatNumber(actionData?.operatorFee, { maximumFractionDigits: 4 })
-            ) : (
-              '-'
-            )}{' '}
-            ADA
+            {actionData ? formatNumber(actionData?.operatorFee, { maximumFractionDigits: 4 }) : '-'} ADA
           </p>
         </div>
         <div className="my-2 w-full px-10">
-          <hr className="light-action-line dark:border-dark-action-line" />
+          <hr className="light-action-line border-light-action-line dark:border-dark-action-line" />
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -210,7 +212,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.totalCost ?? {})}
+            {formatValue(actionData?.totalCost ?? {})}
           </p>
         </div>
         <div className="flex justify-between">
@@ -226,12 +228,10 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : protocolData?.refundableDeposit} ADA
-          </p>
+          <p className="text-lg flex justify-center items-center">{protocolData?.refundableDeposit} ADA</p>
         </div>
         <div className="my-2 w-full px-10">
-          <hr className="light-action-line dark:border-dark-action-line" />
+          <hr className="light-action-line border-light-action-line dark:border-dark-action-line" />
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -246,9 +246,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               <i className="fa-solid fa-circle-info pt-1"></i>
             </div>
           </div>
-          <p className="text-lg flex justify-center items-center">
-            {isPending ? <LoadingCircle /> : formatValue(actionData?.toSend ?? {})}
-          </p>
+          <p className="text-lg flex justify-center items-center">{formatValue(actionData?.toSend ?? {})}</p>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -263,11 +261,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <LoadingCircle />
-            ) : (
-              `${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive ?? {})}`
-            )}
+            {`${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive ?? {})}`}
           </p>
         </div>
         <div className="flex justify-between">
@@ -283,11 +277,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             </div>
           </div>
           <p className="text-lg flex justify-center items-center">
-            {isPending ? (
-              <LoadingCircle />
-            ) : (
-              `${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price) ? formatNumber(actionData.price) : '0'} ADA/${token}`
-            )}
+            {`${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price) ? formatNumber(actionData.price) : '0'} ADA/${token}`}
           </p>
         </div>
       </div>
