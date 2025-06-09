@@ -67,7 +67,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
   const [connectedWalletId, setConnectedWalletId] = useLocalStorage<string | null>('connectedWalletId', null)
   const { network } = useEnv()
-  const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
   useEffect(() => {
     ;(async () => {
