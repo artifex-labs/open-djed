@@ -67,7 +67,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [wallets, setWallets] = useState<WalletMetadata[]>([])
   const [connectedWalletId, setConnectedWalletId] = useLocalStorage<string | null>('connectedWalletId', null)
   const { network } = useEnv()
-  const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
   useEffect(() => {
     ;(async () => {
@@ -142,14 +141,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       setConnectedWalletId(id)
       const getChangeAddress = async () => {
         const address = await api.getChangeAddress()
-        setWalletAddress(address)
-        console.log('Address:', walletAddress || address)
         return address
       }
       setWallet({
         icon: window.cardano[id].icon,
         balance: parsedBalance,
-        address: await getChangeAddress(),
+        address: await getChangeAddress().then(async (a) =>
+          (await import('@dcspark/cardano-multiplatform-lib-browser')).Address.from_hex(a).to_bech32(),
+        ),
         utxos: () => api.getUtxos(),
         signTx: (txCbor: string) => api.signTx(txCbor, false),
         submitTx: api.submitTx,
