@@ -57,6 +57,14 @@ export const Header = () => {
     }
   }, [])
 
+  const walletButtonText = wallet
+    ? wallet.balance.handle
+      ? `$${wallet.balance.handle}`
+      : wallet.address
+        ? `${wallet.address.slice(0, 5)}...${wallet.address.slice(-6)}`
+        : 'Loading address...'
+    : 'Connect wallet'
+
   return (
     <>
       {/* Navbar */}
@@ -96,13 +104,7 @@ export const Header = () => {
             />
             <ThemeToggle />
             <Button onClick={() => setIsWalletSidebarOpen(true)} className="w-48">
-              {wallet
-                ? wallet.balance.handle
-                  ? `$${wallet.balance.handle}`
-                  : wallet.address
-                    ? `${wallet.address.slice(0, 10)}...`
-                    : 'Loading address...'
-                : 'Connect wallet'}
+              {walletButtonText}
             </Button>
           </div>
 
@@ -156,13 +158,7 @@ export const Header = () => {
           {/* Bottom content */}
           <div className="px-6 py-4">
             <Button onClick={() => setIsWalletSidebarOpen(true)} className="w-full">
-              {wallet
-                ? wallet.balance.handle
-                  ? `$${wallet.balance.handle}`
-                  : wallet.address
-                    ? `${wallet.address.slice(0, 10)}...`
-                    : 'Loading address...'
-                : 'Connect wallet'}
+              {walletButtonText}
             </Button>
           </div>
         </div>
@@ -182,7 +178,11 @@ export const Header = () => {
                   <span className="rounded-full w-10 h-10 overflow-hidden">
                     <img src={wallet.icon} alt="Wallet Icon" className="w-full h-full object-cover" />
                   </span>
-                  <p>{wallet.address?.slice(0, 20)}...</p>
+                  <p>
+                    {wallet.address
+                      ? wallet.address.slice(0, 10) + '...' + wallet.address.slice(-10)
+                      : 'No address detected'}
+                  </p>
                   <div className="tooltip tooltip-left">
                     <div className="tooltip-content">
                       <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
