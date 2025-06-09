@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { Header } from './Header'
 import { WalletProvider } from '../context/WalletContext'
 import { EnvContext } from '../context/EnvContext'
-import Footer from './Footer'
+import Footer from './Footer/Footer'
 import type { Network } from '@reverse-djed/registry'
 import '../statics/css/layout.css'
 
