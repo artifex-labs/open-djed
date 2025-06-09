@@ -77,12 +77,7 @@ const Footer = () => {
               rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
               className="hover:text-primary focus:outline-none transition-colors flex items-center gap-1"
             >
-              <FooterIcon
-                element={element}
-                lightIcon={lightIcon}
-                darkIcon={darkIcon}
-                label={label}
-              />
+              <FooterIcon element={element} lightIcon={lightIcon} darkIcon={darkIcon} label={label} />
               <span>{label}</span>
             </a>
           </div>
