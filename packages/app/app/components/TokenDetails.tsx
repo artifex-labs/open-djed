@@ -2,7 +2,7 @@ import { useProtocolData } from '~/hooks/useProtocolData'
 import { NavLink } from 'react-router'
 import type { TokenType } from '@reverse-djed/api'
 import { formatNumber, formatValue, type Value } from '~/utils'
-import { LoadingCircle } from './LoadingCircle'
+import { SkeletonWrapper } from './SkeletonWrapper'
 
 type TokenDetailsProps = {
   token: TokenType
@@ -25,18 +25,12 @@ const TokenDetailsRow = ({
   return (
     <div className="flex flex-row justify-between">
       <p className="font-medium">{label}</p>
-      <div className="flex flex-col items-end">
-        <p className="text-lg text-right">{isPending ? <LoadingCircle /> : formatValue(value ?? {})}</p>
+      <SkeletonWrapper isPending={isPending}>
+        <p className="text-lg">{formatValue(value ?? {})}</p>
         <p className="text-xs text-gray-700 dark:text-gray-400">
-          {isPending ? (
-            <LoadingCircle />
-          ) : toUSD ? (
-            `$${formatNumber(toUSD(value ?? {}), { maximumFractionDigits: decimals ?? 2 })}`
-          ) : (
-            '-'
-          )}
+          {toUSD ? `$${formatNumber(toUSD(value ?? {}), { maximumFractionDigits: decimals ?? 2 })}` : '-'}
         </p>
-      </div>
+      </SkeletonWrapper>
     </div>
   )
 }
