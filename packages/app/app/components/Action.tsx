@@ -110,7 +110,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
     ) / 1e6
   const toUSD = data ? (value: Value) => data.to(value, 'DJED') : undefined
   return (
-    <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6 w-full md:min-w-lg max-w-2xl mx-auto">
+    <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-4 md:p-6">
       <h2 className="text-2xl font-bold mb-6">
         {action} {token}
       </h2>
@@ -213,7 +213,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           </div>
         </div>
         <div className="my-2 w-full px-10">
-          <hr className="light-action-line dark:border-dark-action-line" />
+          <hr className="light-action-line border-light-action-line dark:border-dark-action-line" />
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -277,7 +277,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           </div>
         </div>
         <div className="my-2 w-full px-10">
-          <hr className="light-action-line dark:border-dark-action-line" />
+          <hr className="light-action-line border-light-action-line dark:border-dark-action-line" />
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
