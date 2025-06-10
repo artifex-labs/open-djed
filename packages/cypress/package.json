@@ -1,0 +1,24 @@
+{
+  "name": "@reverse-djed/cypress",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "cy:open": "cypress open --e2e",
+    "cy:open:chrome": "cypress open --e2e --browser chrome",
+    "cy:open:firefox": "cypress open --e2e --browser firefox",
+    "cy:run": "cypress run --e2e",
+    "cy:run:chrome": "cypress run --e2e --browser chrome",
+    "cy:run:firefox": "cypress run --e2e --browser firefox",
+    "cy:run:edge": "cypress run --e2e --browser edge"
+  },
+  "lint-staged": {
+    "*.{ts,js,mjs}": "eslint --cache"
+  },
+  "dependencies": {
+    "cypress": "^14.4.1",
+    "dotenv": "^16.5.0",
+    "install": "^0.13.0",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {}
+}
