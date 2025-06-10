@@ -66,7 +66,7 @@ export default function Home() {
 
       {/* Info Modal */}
       <Modal isOpen={openModal} onClose={() => setOpenModal(false)} title={`Welcome to Open DJED!`}>
-        <div className="space-y-4 mt-4 text-lg leading-relaxed">
+        <div className="space-y-4 mt-4 text-lg leading-relaxed p-4">
           <p>
             <strong>Open DJED</strong> is a transparent, community-driven web application for interacting with
             the DJED algorithmic stablecoin protocol on <strong>Cardano</strong>—built without the barriers of

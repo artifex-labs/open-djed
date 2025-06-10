@@ -16,7 +16,7 @@ export function meta() {
 
 export default function PrivacyPage() {
   return (
-    <div className="flex flex-col gap-10 justify-center items-center w-full pt-8 px-4 md:px-8">
+    <div className="flex flex-col gap-10 justify-center items-center w-full p-8">
       <div className="flex flex-col text-center">
         <h1 className="text-4xl font-bold">Privacy Policy</h1>
         <p className="text-sm text-muted-foreground mt-1">Effective Date: June 3, 2025</p>
