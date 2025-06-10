@@ -1,5 +1,6 @@
 import { type JSX } from 'react'
 import FooterIcon from './FooterIcon'
+import Tooltip from '../Tooltip'
 
 interface FooterLink {
   label: string
@@ -67,24 +68,21 @@ const Footer = () => {
 
       <div className="flex flex-col md:flex-row gap-6 items-center">
         {footerLinks.map(({ label, href, tooltip, element, lightIcon, darkIcon }) => (
-          <div className="tooltip" key={label}>
-            <div className="tooltip-content">
-              <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">{tooltip}</div>
-            </div>
-            <a
-              href={href}
-              target={href.startsWith('http') ? '_blank' : undefined}
-              rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="hover:text-primary focus:outline-none transition-colors flex items-center gap-1"
-            >
-              <FooterIcon
-                element={element}
-                lightIcon={lightIcon}
-                darkIcon={darkIcon}
-                label={label}
-              />
-              <span>{label}</span>
-            </a>
+          <div key={label}>
+            <Tooltip
+              text={tooltip}
+              children={
+                <a
+                  href={href}
+                  target={href.startsWith('http') ? '_blank' : undefined}
+                  rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  className="hover:text-primary focus:outline-none transition-colors flex items-center gap-1"
+                >
+                  <FooterIcon element={element} lightIcon={lightIcon} darkIcon={darkIcon} label={label} />
+                  <span>{label}</span>
+                </a>
+              }
+            />
           </div>
         ))}
       </div>

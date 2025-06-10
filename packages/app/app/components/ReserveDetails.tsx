@@ -14,11 +14,15 @@ export function ReserveDetails() {
       <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <p className="font-medium">Min Reserve Ratio</p>
-          <p className="text-lg flex justify-center items-center text-right">{minReserveRatio.toNumber() * 100}%</p>
+          <p className="text-lg flex justify-center items-center text-right">
+            {minReserveRatio.toNumber() * 100}%
+          </p>
         </div>
         <div className="flex flex-row justify-between">
           <p className="font-medium">Max Reserve Ratio</p>
-          <p className="text-lg flex justify-center items-center text-right">{maxReserveRatio.toNumber() * 100}%</p>
+          <p className="text-lg flex justify-center items-center text-right">
+            {maxReserveRatio.toNumber() * 100}%
+          </p>
         </div>
         <div className="flex flex-row justify-between">
           <p className="font-medium">Reserve Ratio</p>

@@ -12,6 +12,7 @@ import { LoadingCircle } from './LoadingCircle'
 import { formatNumber, formatValue, type Value } from '~/utils'
 import { Rational } from '@reverse-djed/math'
 import { AppError } from '@reverse-djed/api/src/errors'
+import Tooltip from './Tooltip'
 
 type ActionProps = {
   action: ActionType
@@ -119,14 +120,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Base cost</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  The base value to pay without fees.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip text="The base value to pay without fees." />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
@@ -148,15 +142,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{action} fee</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  Fee paid to the pool and distributed to SHEN holders when they burn tokens. Calculated as{' '}
-                  {actionData?.actionFeePercentage ?? '-'}% of the base cost.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip
+              text={`
+              Fee paid to the pool and distributed to SHEN holders when they burn tokens. 
+              Calculated as ${actionData?.actionFeePercentage ?? '-'}% of the base cost.`}
+            />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
@@ -178,22 +168,18 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Operator fee</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  Fee paid to the COTI treasury for order processing. Calculated as{' '}
-                  {registry.operatorFeeConfig.percentage.toNumber() * 100}% of the sum of base cost
-                  {actionData ? ` (${formatValue(actionData?.baseCost)})` : ''} and action fee
-                  {actionData ? ` (${formatValue(actionData?.actionFee)})` : ''}, with a minimum of{' '}
-                  {new Rational({
-                    numerator: registry.operatorFeeConfig.min,
-                    denominator: 1_000_000n,
-                  }).toNumber()}{' '}
-                  ADA and maximum of {Number(registry.operatorFeeConfig.max) * 1e-6} ADA.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip
+              text={`
+                Fee paid to the COTI treasury for order processing. Calculated as
+                ${registry.operatorFeeConfig.percentage.toNumber() * 100}% of the sum of base cost
+                ${actionData ? ` (${formatValue(actionData?.baseCost)})` : ''} and action fee
+                ${actionData ? ` (${formatValue(actionData?.actionFee)})` : ''}, with a minimum of
+                ${new Rational({
+                  numerator: registry.operatorFeeConfig.min,
+                  denominator: 1_000_000n,
+                }).toNumber()} 
+                ADA and maximum of ${Number(registry.operatorFeeConfig.max) * 1e-6} ADA.`}
+            />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
@@ -218,16 +204,12 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Total cost</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  The sum of the base cost{actionData ? ` (${formatValue(actionData?.baseCost)})` : ''},
-                  action fee{actionData ? ` (${formatValue(actionData?.actionFee)})` : ''} and operator fee
-                  {actionData ? ` (${formatValue(actionData.operatorFee)})` : ''}.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip
+              text={`
+                The sum of the base cost${actionData ? ` (${formatValue(actionData?.baseCost)})` : ''},
+                action fee${actionData ? ` (${formatValue(actionData?.actionFee)})` : ''} and operator fee
+                ${actionData ? ` (${formatValue(actionData.operatorFee)})` : ''}.`}
+            />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
@@ -249,15 +231,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Refundable deposit</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  Amount of ADA a user must send in order to create a order. This value is refunded when the
-                  order is processed or cancelled.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip
+              text={`
+                Amount of ADA a user must send in order to create a order. This value is refunded when the
+                order is processed or cancelled.`}
+            />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
@@ -282,15 +260,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">You will send</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  Sum of total cost {actionData ? `(${formatValue(actionData.totalCost)})` : ''} and
-                  refundable deposit{protocolData ? ` (${formatValue(protocolData.refundableDeposit)})` : ''}.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip
+              text={`
+                Sum of total cost ${actionData ? `(${formatValue(actionData.totalCost)})` : ''} and
+                refundable deposit${protocolData ? ` (${formatValue(protocolData.refundableDeposit)})` : ''}.`}
+            />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
@@ -312,14 +286,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">You will receive</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  Sum of the desired amount and the refundable deposit.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip text="Sum of the desired amount and the refundable deposit." />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
@@ -345,14 +312,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Price</p>
-            <div className="tooltip">
-              <div className="tooltip-content">
-                <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                  Final price (in ADA per {token}) after fees.
-                </div>
-              </div>
-              <i className="fa-solid fa-circle-info pt-1"></i>
-            </div>
+            <Tooltip text={`Final price (in ADA per ${token}) after fees.`} />
           </div>
           <div className="flex flex-col items-end">
             <p className="text-lg flex justify-center items-center">
