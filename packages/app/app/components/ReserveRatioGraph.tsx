@@ -61,16 +61,20 @@ export function ReserveRatioGraph({ currentRatio, minRatio, maxRatio }: ReserveR
           />
         </div>
 
+        {/* Labels */}
         {reserveLabels.map(({ label, value, position }) => (
           <div
             key={label}
             className="absolute z-20 flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 top-1/2"
-            style={{ left: `${(value / 10) * 100}%` }}
+            style={{ left: `${(value / 10) * 100}%`}}
           >
-            <div className={`text-[10px] font-semibold text-black dark:text-white ${position}`}>{label}</div>
+            <div className={`text-[10px] font-semibold text-black dark:text-white ${position}`}>
+              {label}
+            </div>
           </div>
         ))}
 
+        {/* Markers */}
         {reserveMarkers.map(({ value, style }, index) => (
           <div
             key={index}
