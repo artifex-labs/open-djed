@@ -9,6 +9,7 @@ import { FiEye, FiEyeOff, FiMenu, FiX } from 'react-icons/fi'
 import Sidebar from './Sidebar'
 import { useLocalStorage } from 'usehooks-ts'
 import { DEFAULT_SHOW_BALANCE } from '~/utils'
+import Tooltip from './Tooltip'
 
 const SUPPORTED_WALLET_IDS = ['eternl', 'lace', 'vespr', 'begin', 'gerowallet']
 
@@ -183,16 +184,15 @@ export const Header = () => {
                       ? wallet.address.slice(0, 10) + '...' + wallet.address.slice(-10)
                       : 'No address detected'}
                   </p>
-                  <div className="tooltip tooltip-left">
-                    <div className="tooltip-content">
-                      <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                        Disconnect your wallet.
-                      </div>
-                    </div>
-                    <span className="cursor-pointer" onClick={disconnect}>
-                      <i className="fa-solid fa-plug-circle-xmark w-full"></i>
-                    </span>
-                  </div>
+                  <Tooltip
+                    text="Disconnect your wallet"
+                    tooltipDirection="left"
+                    children={
+                      <span className="cursor-pointer" onClick={disconnect}>
+                        <i className="fa-solid fa-plug-circle-xmark w-full"></i>
+                      </span>
+                    }
+                  />
                 </div>
               </div>
               <div
@@ -201,16 +201,15 @@ export const Header = () => {
               >
                 <div className="flex flex-row justify-between w-full">
                   <h1 className="font-bold">Available Balance:</h1>
-                  <div className="tooltip tooltip-left">
-                    <div className="tooltip-content">
-                      <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">
-                        {showBalance ? 'Hide' : 'Show'} your current balance
-                      </div>
-                    </div>
-                    <span className="cursor-pointer" onClick={() => setShowBalance(!showBalance)}>
-                      {showBalance ? <FiEyeOff /> : <FiEye />}
-                    </span>
-                  </div>
+                  <Tooltip
+                    text={`${showBalance ? 'Hide' : 'Show'} your current balance`}
+                    tooltipDirection="left"
+                    children={
+                      <span className="cursor-pointer" onClick={() => setShowBalance(!showBalance)}>
+                        {showBalance ? <FiEyeOff /> : <FiEye />}
+                      </span>
+                    }
+                  />
                 </div>
                 <div className="flex flex-row justify-between items-center gap-6 w-full font-bold">
                   <span className="rounded-full w-10 h-10 overflow-hidden">
