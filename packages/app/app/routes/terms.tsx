@@ -68,12 +68,12 @@ export default function TermsPage() {
           <p>
             View the source code on GitHub:{' '}
             <a
-              href="https://github.com/artifex-labs/reverse-djed"
+              href="https://github.com/artifex-labs/open-djed"
               target="_blank"
               rel="noopener noreferrer"
               className="underline text-primary"
             >
-              github.com/artifex-labs/reverse-djed
+              github.com/artifex-labs/open-djed
             </a>
           </p>
         </section>

@@ -28,7 +28,7 @@ const Footer = () => {
     },
     {
       label: 'Github',
-      href: 'https://github.com/artifex-labs/reverse-djed',
+      href: 'https://github.com/artifex-labs/open-djed',
       tooltip: 'Look at source code',
       lightIcon: '/logos/github-dark.svg',
       darkIcon: '/logos/github-white.svg',
