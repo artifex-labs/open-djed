@@ -5,8 +5,10 @@ interface TooltipProps {
 }
 
 const Tooltip = ({ text, tooltipDirection = 'top', children }: TooltipProps) => {
+  const tooltipClass = `tooltip tooltip-${tooltipDirection}`
+
   return (
-    <div className={`tooltip tooltip-${tooltipDirection}`}>
+    <div className={tooltipClass}>
       <div className="tooltip-content">
         <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">{text}</div>
       </div>
