@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useLayoutEffect, useState, type ReactNode } from 'react'
 
 function setThemeCookie(theme: 'dark' | 'light') {
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -26,22 +26,13 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false
-
-    const cookieTheme = getThemeCookie()
-    if (cookieTheme) {
-      return cookieTheme === 'dark'
+    if (typeof window === 'undefined') {
+      return false
     }
-
-    const savedTheme = localStorage.getItem('theme')
-    if (savedTheme) {
-      return savedTheme === 'dark'
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
+    return document.documentElement.classList.contains('dark')
   })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const html = document.documentElement
     if (isDarkMode) {
       html.classList.add('dark')

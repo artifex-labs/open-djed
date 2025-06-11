@@ -37,9 +37,15 @@ export default function App() {
                   var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                   var isDark = (theme === 'dark') || (!theme && systemDark);
 
-                  document.documentElement.classList.toggle('dark', isDark);
-                  document.documentElement.classList.toggle('light', !isDark);
-                } catch (e) {}
+                  var html = document.documentElement;
+                  html.classList.toggle('dark', isDark);
+                  html.classList.toggle('light', !isDark);
+                  
+                  // Optional: Set a flag that theme is loaded
+                  html.setAttribute('data-theme-loaded', 'true');
+                } catch (e) {
+                  console.warn('Theme script error:', e);
+                }
              })();
            `,
           }}
