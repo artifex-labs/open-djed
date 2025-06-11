@@ -29,7 +29,7 @@ export const AmountInput = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value
     const parsed = parseFloat(raw)
-    if (!isNaN(parsed)) {
+    if (!isNaN(parsed) && parsed >= 0 && parsed <= 999_999_999) {
       onChange(roundToDecimals(parsed))
     } else if (raw === '') {
       onChange(0)
@@ -71,12 +71,12 @@ export const AmountInput = ({
             onChange={handleInputChange}
             placeholder="Enter amount"
           />{' '}
-          {isOverMax && <div className="text-red-500 text-sm mt-1">Amount exceeds available balance</div>}
         </div>
         <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
           {unit}
         </span>
       </div>
+      {isOverMax && <div className="text-red-500 text-sm mt-1">Amount exceeds available balance</div>}
 
       <div className="flex justify-between items-center text-xs text-gray-500">
         <div className="flex gap-2 text-sm">
