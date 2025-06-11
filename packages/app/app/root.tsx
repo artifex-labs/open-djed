@@ -18,7 +18,7 @@ export default function App() {
   const { apiUrl, network, config, initialIsDark, posthog } = useLoaderData<LoaderData>()
 
   return (
-    <html lang="en" className={initialIsDark === 'dark' ? 'dark' : initialIsDark === 'light' ? 'light' : ''}>
+    <html lang="en" className={initialIsDark || ''}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,11 +38,10 @@ export default function App() {
                   var isDark = (theme === 'dark') || (!theme && systemDark);
 
                   var html = document.documentElement;
-                  html.classList.toggle('dark', isDark);
-                  html.classList.toggle('light', !isDark);
-                  
-                  // Optional: Set a flag that theme is loaded
-                  html.setAttribute('data-theme-loaded', 'true');
+                  // Remove any existing classes first
+                  html.classList.remove('dark', 'light');
+                  // Add the correct class
+                  html.classList.add(isDark ? 'dark' : 'light');
                 } catch (e) {
                   console.warn('Theme script error:', e);
                 }

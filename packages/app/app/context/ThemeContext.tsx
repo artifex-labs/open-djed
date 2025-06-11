@@ -1,4 +1,4 @@
-import { createContext, useContext, useLayoutEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 function setThemeCookie(theme: 'dark' | 'light') {
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -9,10 +9,10 @@ function setThemeCookie(theme: 'dark' | 'light') {
   document.cookie = cookie
 }
 
-function getThemeCookie(): 'dark' | 'light' | null {
+/* function getThemeCookie(): 'dark' | 'light' | null {
   const match = document.cookie.match(/(?:^|; )theme=(dark|light)(?:;|$)/)
   return match ? (match[1] as 'dark' | 'light') : null
-}
+} */
 
 type ThemeContextType = {
   isDarkMode: boolean
@@ -25,32 +25,48 @@ const ThemeContext = createContext<ThemeContextType>({
 })
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    if (typeof window === 'undefined') {
-      return false
-    }
-    return document.documentElement.classList.contains('dark')
-  })
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    const theme =
+      document.cookie.match(/(?:^|; )theme=(dark|light)(?:;|$)/)?.[1] ??
+      localStorage.getItem('theme')
+
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const shouldUseDark = theme === 'dark' || (!theme && systemDark)
+
+    setIsDarkMode(shouldUseDark)
+
     const html = document.documentElement
-    if (isDarkMode) {
-      html.classList.add('dark')
-      html.classList.remove('light')
-    } else {
-      html.classList.remove('dark')
-      html.classList.add('light')
-    }
+    html.classList.remove('dark', 'light')
+    html.classList.add(shouldUseDark ? 'dark' : 'light')
+
+    setIsHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isHydrated) return
+
+    const html = document.documentElement
+    html.classList.remove('dark', 'light')
+    html.classList.add(isDarkMode ? 'dark' : 'light')
 
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
     setThemeCookie(isDarkMode ? 'dark' : 'light')
-  }, [isDarkMode])
+  }, [isDarkMode, isHydrated])
 
   const toggleTheme = () => {
     setIsDarkMode((prev) => !prev)
   }
 
-  return <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>{children}</ThemeContext.Provider>
+  if (!isHydrated) return null
+
+  return (
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  )
 }
 
 export const useTheme = () => useContext(ThemeContext)
