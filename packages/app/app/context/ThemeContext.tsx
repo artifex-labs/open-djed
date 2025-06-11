@@ -21,24 +21,12 @@ type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType>({
   isDarkMode: false,
-  toggleTheme: () => {},
+  toggleTheme: () => { },
 })
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false
-
-    const cookieTheme = getThemeCookie()
-    if (cookieTheme) {
-      return cookieTheme === 'dark'
-    }
-
-    const savedTheme = localStorage.getItem('theme')
-    if (savedTheme) {
-      return savedTheme === 'dark'
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
+    return true
   })
 
   useEffect(() => {
