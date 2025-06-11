@@ -8,11 +8,11 @@ import { AmountInput } from '~/components/AmountInput'
 import type { ActionType, TokenType } from '@reverse-djed/api'
 import { useEnv } from '~/context/EnvContext'
 import Toast from './Toast'
-import { LoadingCircle } from './LoadingCircle'
 import { formatNumber, formatValue, type Value } from '~/utils'
 import { Rational } from '@reverse-djed/math'
 import { AppError } from '@reverse-djed/api/src/errors'
 import Tooltip from './Tooltip'
+import { SkeletonWrapper } from './SkeletonWrapper'
 
 type ActionProps = {
   action: ActionType
@@ -122,22 +122,16 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
             <p className="font-medium">Base cost</p>
             <Tooltip text="The base value to pay without fees." />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? <LoadingCircle /> : formatValue(actionData?.baseCost ?? {})}
-              </p>
+              {formatValue(actionData?.baseCost ?? {})}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `$${formatNumber(toUSD(actionData?.baseCost ?? {}), { maximumFractionDigits: 2 })}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `$${formatNumber(toUSD(actionData?.baseCost ?? {}), { maximumFractionDigits: 2 })}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -148,22 +142,16 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
               Calculated as ${actionData?.actionFeePercentage ?? '-'}% of the base cost.`}
             />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? <LoadingCircle /> : formatValue(actionData?.actionFee ?? {})}
-              </p>
+              {formatValue(actionData?.actionFee ?? {})}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `$${formatNumber(toUSD(actionData?.actionFee ?? {}), { maximumFractionDigits: 2 })}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `$${formatNumber(toUSD(actionData?.actionFee ?? {}), { maximumFractionDigits: 2 })}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -181,22 +169,16 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 ADA and maximum of ${Number(registry.operatorFeeConfig.max) * 1e-6} ADA.`}
             />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? <LoadingCircle /> : formatValue(actionData?.operatorFee ?? {})}
-              </p>
+              {formatValue(actionData?.operatorFee ?? {})}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `$${formatNumber(toUSD(actionData?.operatorFee ?? {}), { maximumFractionDigits: 2 })}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `$${formatNumber(toUSD(actionData?.operatorFee ?? {}), { maximumFractionDigits: 2 })}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
         <div className="my-2 w-full px-10">
           <hr className="light-action-line border-light-action-line dark:border-dark-action-line" />
@@ -211,22 +193,16 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 ${actionData ? ` (${formatValue(actionData.operatorFee)})` : ''}.`}
             />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? <LoadingCircle /> : formatValue(actionData?.totalCost ?? {})}
-              </p>
+              {formatValue(actionData?.totalCost ?? {})}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `$${formatNumber(toUSD(actionData?.totalCost ?? {}), { maximumFractionDigits: 2 })}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `$${formatNumber(toUSD(actionData?.totalCost ?? {}), { maximumFractionDigits: 2 })}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
@@ -237,22 +213,16 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 order is processed or cancelled.`}
             />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? <LoadingCircle /> : formatValue(protocolData?.refundableDeposit ?? {})}
-              </p>
+              {formatValue(protocolData?.refundableDeposit ?? {})}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `$${formatNumber(toUSD(protocolData?.refundableDeposit ?? {}), { maximumFractionDigits: 2 })}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `$${formatNumber(toUSD(protocolData?.refundableDeposit ?? {}), { maximumFractionDigits: 2 })}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
         <div className="my-2 w-full px-10">
           <hr className="light-action-line border-light-action-line dark:border-dark-action-line" />
@@ -266,74 +236,48 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
                 refundable deposit${protocolData ? ` (${formatValue(protocolData.refundableDeposit)})` : ''}.`}
             />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? <LoadingCircle /> : formatValue(actionData?.toSend ?? {})}
-              </p>
+              {formatValue(actionData?.toSend ?? {})}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `$${formatNumber(toUSD(actionData?.toSend ?? {}), { maximumFractionDigits: 2 })}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `$${formatNumber(toUSD(actionData?.toSend ?? {}), { maximumFractionDigits: 2 })}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">You will receive</p>
             <Tooltip text="Sum of the desired amount and the refundable deposit." />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? (
-                  <LoadingCircle />
-                ) : (
-                  `${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive ?? {})}`
-                )}
-              </p>
+              {`${action === 'Burn' ? '~' : ''}${formatValue(actionData?.toReceive ?? {})}`}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `${action === 'Burn' ? '~' : ''}$${formatNumber(toUSD(actionData?.toReceive ?? {}), { maximumFractionDigits: 2 })}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `${action === 'Burn' ? '~' : ''}$${formatNumber(toUSD(actionData?.toReceive ?? {}), { maximumFractionDigits: 2 })}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">Price</p>
             <Tooltip text={`Final price (in ADA per ${token}) after fees.`} />
           </div>
-          <div className="flex flex-col items-end">
+          <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
-              <p className="text-lg flex justify-center items-center">
-                {isPending ? (
-                  <LoadingCircle />
-                ) : (
-                  `${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price.ADA) ? formatValue(actionData.price) : '0 ADA'}/${token}`
-                )}
-              </p>
+              {`${action === 'Burn' ? '~' : ''}${actionData && Number.isFinite(actionData.price.ADA) ? formatValue(actionData.price) : '0 ADA'}/${token}`}
             </p>
             <p className="text-xs text-gray-700 dark:text-gray-400">
-              {isPending ? (
-                <LoadingCircle />
-              ) : toUSD ? (
-                `${action === 'Burn' ? '~' : ''}$${actionData && Number.isFinite(actionData.price.ADA) ? formatNumber(toUSD(actionData?.price ?? {}), { maximumFractionDigits: 3 }) : '0'}`
-              ) : (
-                '-'
-              )}
+              {toUSD
+                ? `${action === 'Burn' ? '~' : ''}$${actionData && Number.isFinite(actionData.price.ADA) ? formatNumber(toUSD(actionData?.price ?? {}), { maximumFractionDigits: 3 }) : '0'}`
+                : '-'}
             </p>
-          </div>
+          </SkeletonWrapper>
         </div>
       </div>
 
