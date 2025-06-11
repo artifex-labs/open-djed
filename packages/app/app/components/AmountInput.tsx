@@ -24,7 +24,7 @@ export const AmountInput = ({
   disabled = false,
   unit = 'ADA',
 }: AmountInputProps) => {
-  const showActionBalance = useLocalStorage<boolean | null>('showBalance', DEFAULT_SHOW_BALANCE)
+  const [showBalance] = useLocalStorage<boolean | null>('showBalance', DEFAULT_SHOW_BALANCE)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value
@@ -106,7 +106,7 @@ export const AmountInput = ({
         </div>
         <div className="flex flex-row justify-center items-center gap-2">
           Maximum:
-          {showActionBalance ? (
+          {showBalance ? (
             <span>{formatNumber(roundToDecimals(max))}</span>
           ) : (
             <span className="inline-block w-20 h-1 dark:bg-gray-300 bg-gray-500 rounded-md blur-sm" />
