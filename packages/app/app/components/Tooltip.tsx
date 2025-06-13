@@ -10,7 +10,7 @@ const Tooltip = ({ text, tooltipDirection = 'top', children }: TooltipProps) => 
       <div className="tooltip-content">
         <div className="bg-white dark:bg-black rounded-lg p-2 opacity-95">{text}</div>
       </div>
-      {children ? <div className="cursor-help">{children}</div> : <i className="fa-solid fa-circle-info"></i>}
+      {children || <i className="fa-solid fa-circle-info"></i>}
     </div>
   )
 }
