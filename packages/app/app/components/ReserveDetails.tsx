@@ -15,8 +15,9 @@ export function ReserveDetails() {
       <h2 className="text-xl font-bold mb-6">Reserve Details</h2>
 
       <div className="flex flex-col gap-2">
+        <p className="font-medium">Reserve Ratio</p>
         {isPending ? (
-          <Skeleton width="w-36" />
+          <Skeleton width="w-full" height="h-3" />
         ) : (
           <ReserveRatioGraph
             currentRatio={currentRatio}

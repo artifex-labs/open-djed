@@ -31,34 +31,13 @@ export function ReserveRatioGraph({ currentRatio, minRatio, maxRatio }: ReserveR
 
   return (
     <div className="flex flex-col gap-2 mb-4">
-      <p className="font-medium">Reserve Ratio</p>
-
       <div className="relative w-full h-6 rounded-lg overflow-visible">
         <div className="absolute top-1/2 left-0 w-full h-3 bg-white dark:bg-gray-900 rounded-lg transform -translate-y-1/2 z-0" />
 
-        <div className="absolute top-1/2 left-0 h-3 w-full flex overflow-hidden z-10 transform -translate-y-1/2 rounded-lg">
-          <div
-            style={{
-              width: `${(minRatio / 10) * 100}%`,
-              background: 'linear-gradient(to right, #bb9930)',
-              borderTopLeftRadius: '0.5rem',
-              borderBottomLeftRadius: '0.5rem',
-            }}
-          />
-          <div
-            style={{
-              width: `${((maxRatio - minRatio) / 10) * 100}%`,
-              background: 'linear-gradient(to right, #14532d)',
-            }}
-          />
-          <div
-            style={{
-              width: `${100 - (maxRatio / 10) * 100}%`,
-              background: 'linear-gradient(to right, #bb9930)',
-              borderTopRightRadius: '0.5rem',
-              borderBottomRightRadius: '0.5rem',
-            }}
-          />
+        <div className="absolute top-1/2 left-0 h-3 w-full flex overflow-hidden z-10 -translate-y-1/2 rounded-lg">
+          <div className="bg-[#bb9930] rounded-l-lg" style={{ width: `${(minRatio / 10) * 100}%` }} />
+          <div className="bg-[#14532d]" style={{ width: `${((maxRatio - minRatio) / 10) * 100}%` }} />
+          <div className="bg-[#bb9930] rounded-r-lg" style={{ width: `${100 - (maxRatio / 10) * 100}%` }} />
         </div>
 
         {reserveLabels.map(({ label, value, position }) => (
