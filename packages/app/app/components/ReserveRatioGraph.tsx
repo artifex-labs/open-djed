@@ -8,23 +8,23 @@ interface ReserveRatioGraphProps {
 }
 
 export function ReserveRatioGraph({ currentRatio, minRatio, maxRatio }: ReserveRatioGraphProps) {
-  const reserveLabels = [
-    { label: 'Min', value: minRatio, position: 'top-full mt-7' },
-    { label: 'Max', value: maxRatio, position: 'top-full mt-7' },
-    { label: 'Current', value: currentRatio, position: 'bottom-full mb-8' },
-  ]
-
-  const reserveMarkers = [
+  const reserves = [
     {
+      label: 'Min',
       value: minRatio,
+      position: 'top-full mt-7',
       style: 'w-0.5 h-3 bg-black',
     },
     {
+      label: 'Max',
       value: maxRatio,
+      position: 'top-full mt-7',
       style: 'w-0.5 h-3 bg-black',
     },
     {
+      label: 'Current',
       value: currentRatio,
+      position: 'bottom-full mb-8',
       style: 'w-4 h-4 mt-1.5 rounded-full border-2 bg-white border-black dark:bg-black dark:border-white',
     },
   ]
@@ -40,25 +40,24 @@ export function ReserveRatioGraph({ currentRatio, minRatio, maxRatio }: ReserveR
           <div className="bg-[#bb9930] rounded-r-lg" style={{ width: `${100 - (maxRatio / 10) * 100}%` }} />
         </div>
 
-        {reserveLabels.map(({ label, value, position }) => (
-          <div
-            key={label}
-            className="absolute z-20 flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 top-1/2"
-            style={{ left: `${(value / 10) * 100}%` }}
-          >
-            <div className={`text-[10px] font-semibold text-black dark:text-white ${position}`}>{label}</div>
-          </div>
-        ))}
-
-        {reserveMarkers.map(({ value, style }, index) => (
-          <div
-            key={index}
-            className="absolute z-20 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${(value / 10) * 100}%` }}
-          >
-            <Tooltip text={`${formatNumber(Math.round(value * 100), { minimumFractionDigits: 0 })}%`}>
+        {reserves.map(({ label, value, position, style }, index) => (
+          <div key={index}>
+            <div
+              className="absolute z-20 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${(value / 10) * 100}%` }}
+            >
               <div className={style} />
-            </Tooltip>
+            </div>
+            <div
+              className="absolute z-20 flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 top-1/2"
+              style={{ left: `${(value / 10) * 100}%` }}
+            >
+              <div className={`text-[10px] font-semibold text-black dark:text-white ${position}`}>
+                <Tooltip text={`${formatNumber(Math.round(value * 100), { minimumFractionDigits: 0 })}%`}>
+                  {label}
+                </Tooltip>
+              </div>
+            </div>
           </div>
         ))}
       </div>
