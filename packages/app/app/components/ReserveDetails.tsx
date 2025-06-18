@@ -17,9 +17,9 @@ export function ReserveDetails() {
     <div className="bg-light-foreground dark:bg-dark-foreground shadow-md rounded-xl p-2 md:p-4 w-full max-w-lg">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Reserve Details</h2>
-        <div className="flex items-center space-x-2 bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative">
+        <div className="flex items-center space-x-2 bg-primary dark:bg-primary rounded-full p-1 relative">
           <div
-            className={`absolute h-8 w-8 bg-white dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out ${
+            className={`absolute h-8 w-8 bg-white dark:bg-black rounded-full transition-all duration-300 ease-in-out ${
               showGraph ? 'translate-x-10' : 'translate-x-0'
             }`}
           />
