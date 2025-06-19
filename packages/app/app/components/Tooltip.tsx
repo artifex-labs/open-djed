@@ -6,7 +6,13 @@ interface TooltipProps {
   children?: React.ReactNode
 }
 
-const Tooltip = ({ text, tooltipDirection = 'top', style, tooltipModalClass: tooltipModalClass, children }: TooltipProps) => {
+const Tooltip = ({
+  text,
+  tooltipDirection = 'top',
+  style,
+  tooltipModalClass: tooltipModalClass,
+  children,
+}: TooltipProps) => {
   const tooltipClass = `tooltip tooltip-${tooltipDirection}`.trim()
   const tooltipModalStyle = `tooltip-content ${tooltipModalClass}`.trim()
 
