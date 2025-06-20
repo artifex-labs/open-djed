@@ -25,13 +25,13 @@ export function ReserveDetails() {
           />
           <button
             onClick={() => setShowGraph(false)}
-            className={`p-2 rounded-full z-10 transition-all duration-300 transform ${!showGraph ? 'text-gray-800 dark:text-white scale-105' : 'text-gray-600 dark:text-gray-400 hover:scale-105'}`}
+            className={`p-2 rounded-full z-10 transition-all duration-300 cursor-pointer transform ${!showGraph ? 'text-gray-800 dark:text-white scale-105' : 'text-gray-600 dark:text-gray-400 hover:scale-105'}`}
           >
             <i className="fa-solid fa-table"></i>
           </button>
           <button
             onClick={() => setShowGraph(true)}
-            className={`p-2 rounded-full z-10 transition-all duration-300 transform ${showGraph ? 'text-gray-800 dark:text-white scale-105' : 'text-gray-600 dark:text-gray-400 hover:scale-105'}`}
+            className={`p-2 rounded-full z-10 transition-all duration-300 cursor-pointer transform ${showGraph ? 'text-gray-800 dark:text-white scale-105' : 'text-gray-600 dark:text-gray-400 hover:scale-105'}`}
           >
             <i className="fa-solid fa-chart-simple"></i>
           </button>

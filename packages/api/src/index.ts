@@ -34,6 +34,7 @@ import {
   AppError,
   BadRequestError,
   BalanceTooLowError,
+  InternalServerError,
   ScriptExecutionError,
   UTxOContentionError,
   ValidationError,
@@ -117,7 +118,6 @@ export const getOracleUTxO = async () => {
   return oracleUTxO
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getOrderUTxOs = async () => {
   const cached = chainDataCache.get<OrderUTxO[]>('orderUTxOs')
   if (cached) return cached
@@ -299,6 +299,111 @@ const app = new Hono()
         }
         console.error('Unhandled error:', err)
         return c.json({ error: 'InternalServerError', message: 'Something went wrong.' }, 500)
+      }
+    },
+  )
+  .post(
+    '/orders',
+    cacheMiddleware,
+    describeRoute({
+      description: 'Get the orders UTxOs',
+      tags: ['Action'],
+      responses: {
+        200: {
+          description: 'Successfully got the orders UTxOs',
+          content: {
+            'text/plain': {
+              example: 'UTxO',
+            },
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          content: {
+            'text/plain': {
+              example: 'Bad Request',
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+          content: {
+            'text/plain': {
+              example: 'Internal Server Error',
+            },
+          },
+        },
+      },
+    }),
+    zValidator('json', txRequestBodySchema),
+    async (c) => {
+      let json
+
+      try {
+        json = c.req.valid('json')
+        if (!json?.hexAddress) {
+          throw new ValidationError('Missing hexAddress in request.')
+        }
+      } catch (e) {
+        console.error('Invalid or missing request payload.', e)
+        throw new ValidationError('Invalid or missing request payload.')
+      }
+
+      let address: string
+      try {
+        address = CML.Address.from_hex(json.hexAddress).to_bech32()
+      } catch (e) {
+        console.error('Invalid Cardano address format.', e)
+        throw new ValidationError('Invalid Cardano address format.')
+      }
+
+      console.log('hexAddr: ', json.hexAddress)
+      console.log('utxosCborHex: ', json.utxosCborHex)
+      console.log('Address: ', address)
+
+      try {
+        const allOrders = await getOrderUTxOs()
+        console.log('AllOrders: ', allOrders)
+
+        //const filteredOrders = allOrders.filter((o) => o.address === address);
+
+        const sanitizedOrders = allOrders.map((o) => ({
+          ...o,
+          assets: Object.fromEntries(Object.entries(o.assets).map(([k, v]) => [k, (v as bigint).toString()])),
+          orderDatum: {
+            ...o.orderDatum,
+            creationDate: o.orderDatum.creationDate.toString(),
+            adaUSDExchangeRate: {
+              numerator: o.orderDatum.adaUSDExchangeRate.numerator.toString(),
+              denominator: o.orderDatum.adaUSDExchangeRate.denominator.toString(),
+            },
+            actionFields:
+              'MintDJED' in o.orderDatum.actionFields
+                ? {
+                    MintDJED: {
+                      djedAmount: o.orderDatum.actionFields.MintDJED.djedAmount.toString(),
+                      adaAmount: o.orderDatum.actionFields.MintDJED.adaAmount.toString(),
+                    },
+                  }
+                : Object.fromEntries(
+                    Object.entries(o.orderDatum.actionFields).map(([key, value]) => [
+                      key,
+                      Object.fromEntries(
+                        Object.entries(value).map(([k, v]) => [k, typeof v === 'bigint' ? v.toString() : v]),
+                      ),
+                    ]),
+                  ),
+          },
+        }))
+
+        return c.json({ orders: sanitizedOrders })
+      } catch (err) {
+        if (err instanceof AppError) {
+          throw err
+        }
+
+        console.error('Unhandled error in orders endpoint:', err)
+        throw new InternalServerError()
       }
     },
   )
