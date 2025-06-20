@@ -1,6 +1,7 @@
 import { type JSX } from 'react'
 import FooterIcon from './FooterIcon'
 import Tooltip from '../Tooltip'
+import { useTranslation } from 'react-i18next'
 
 interface FooterLink {
   label: string
@@ -12,58 +13,62 @@ interface FooterLink {
 }
 
 const Footer = () => {
+  const { t } = useTranslation()
+
   const footerLinks: FooterLink[] = [
     {
-      label: 'Discord',
+      label: t('footer.links.discord'),
       href: 'https://discord.gg/MhYP7w8n8p',
-      tooltip: 'Join our community Discord server',
+      tooltip: t('footer.tooltips.discord'),
       lightIcon: '/logos/discord-logo.png',
     },
     {
-      label: 'Twitter',
+      label: t('footer.links.twitter'),
       href: 'https://x.com/artifex_labs',
-      tooltip: 'Follow us for more news',
+      tooltip: t('footer.tooltips.twitter'),
       lightIcon: '/logos/x-dark-logo.svg',
       darkIcon: '/logos/x-logo.svg',
     },
     {
-      label: 'Github',
+      label: t('footer.links.github'),
       href: 'https://github.com/artifex-labs/open-djed',
-      tooltip: 'Look at source code',
+      tooltip: t('footer.tooltips.github'),
       lightIcon: '/logos/github-dark.svg',
       darkIcon: '/logos/github-white.svg',
     },
     {
-      label: 'djed.xyz',
+      label: t('footer.links.djed'),
       href: 'https://djed.xyz',
-      tooltip: 'Official djed app',
+      tooltip: t('tefooterrms.tooltips.djed'),
       lightIcon: '/logos/djed.svg',
     },
     {
-      label: 'Status',
+      label: t('footer.links.status'),
       href: 'https://status.artifex.finance/',
-      tooltip: 'Service status page',
+      tooltip: t('footer.tooltips.status'),
       element: <i className="fas fa-heartbeat text-red-500"></i>,
     },
     {
-      label: 'Terms',
+      label: t('footer.links.terms'),
       href: '/terms',
-      tooltip: 'Terms of Service',
+      tooltip: t('footer.tooltips.terms'),
       element: <i className="fas fa-file-contract text-primary-500"></i>,
     },
     {
-      label: 'Privacy',
+      label: t('footer.links.privacy'),
       href: '/privacy',
-      tooltip: 'Privacy Policy',
+      tooltip: t('footer.tooltips.privacy'),
       element: <i className="fas fa-user-secret text-primary-500"></i>,
     },
   ]
 
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className="flex flex-col md:flex-row gap-8 p-8 justify-between bg-light-footer dark:bg-dark-footer border-t border-light-foreground dark:border-primary/30 w-full text-center max-h-fit transition-all duration-200 ease-in-out">
       <div className="flex flex-col md:flex-row gap-6 items-center">
-        <img src="/logos/artifex-logo.png" alt="Artifex Labs Logo" className="w-[50px]" />
-        <p className="pt-1">All rights reserved © 2025</p>
+        <img src="/logos/artifex-logo.png" alt={t('footer.logoAlt')} className="w-[50px]" />
+        <p className="pt-1">{t('footer.rightsReserved', { year: currentYear })}</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 items-center">

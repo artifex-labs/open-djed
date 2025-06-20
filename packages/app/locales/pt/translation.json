@@ -20,5 +20,22 @@
   "terms.sections.changes.title": "6. Alterações",
   "terms.sections.changes.content": "Podemos atualizar estes Termos periodicamente. Quaisquer alterações serão refletidas nesta página com uma data efetiva atualizada.",
   "terms.sections.contact.title": "7. Contacto",
-  "terms.sections.contact.content": "Para questões relacionadas com estes Termos, entre em contacto connosco através de:"
+  "terms.sections.contact.content": "Para questões relacionadas com estes Termos, entre em contacto connosco através de:",
+  "months.may": "Maio",
+  "footer.links.discord": "Discord",
+  "footer.tooltips.discord": "Junta-te ao nosso servidor Discord",
+  "footer.links.twitter": "Twitter",
+  "footer.tooltips.twitter": "Segue-nos para mais novidades",
+  "footer.links.github": "Github",
+  "footer.tooltips.github": "Consulta o código-fonte",
+  "footer.links.djed": "djed.xyz",
+  "footer.tooltips.djed": "Aplicação oficial do Djed",
+  "footer.links.status": "Estado",
+  "footer.tooltips.status": "Página de estado do serviço",
+  "footer.links.terms": "Termos",
+  "footer.tooltips.terms": "Termos de Serviço",
+  "footer.links.privacy": "Privacidade",
+  "footer.tooltips.privacy": "Política de Privacidade",
+  "footer.logoAlt": "Logótipo da Artifex Labs",
+  "footer.rightsReserved": "Todos os direitos reservados © {{year}}"
 }

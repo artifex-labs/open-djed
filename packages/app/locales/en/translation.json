@@ -20,5 +20,22 @@
   "terms.sections.changes.title": "6. Changes",
   "terms.sections.changes.content": "We may revise these Terms from time to time. Any changes will be reflected on this page with an updated effective date.",
   "terms.sections.contact.title": "7. Contact",
-  "terms.sections.contact.content": "For questions about these Terms, contact us at:"
+  "terms.sections.contact.content": "For questions about these Terms, contact us at:",
+  "months.may": "May",
+  "footer.links.discord": "Discord",
+  "footer.tooltips.discord": "Join our community Discord server",
+  "footer.links.twitter": "Twitter",
+  "footer.tooltips.twitter": "Follow us for more news",
+  "footer.links.github": "Github",
+  "footer.tooltips.github": "Look at source code",
+  "footer.links.djed": "djed.xyz",
+  "tefooterrms.tooltips.djed": "Official djed app",
+  "footer.links.status": "Status",
+  "footer.tooltips.status": "Service status page",
+  "footer.links.terms": "Terms",
+  "footer.tooltips.terms": "Terms of Service",
+  "footer.links.privacy": "Privacy",
+  "footer.tooltips.privacy": "Privacy Policy",
+  "footer.logoAlt": "Artifex Labs Logo",
+  "footer.rightsReserved": "All rights reserved © {{year}}"
 }
