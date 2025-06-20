@@ -10,10 +10,12 @@ import Sidebar from './Sidebar'
 import { useLocalStorage } from 'usehooks-ts'
 import { DEFAULT_SHOW_BALANCE } from '~/utils'
 import Tooltip from './Tooltip'
+import { useTranslation } from 'react-i18next'
 
 const SUPPORTED_WALLET_IDS = ['eternl', 'lace', 'vespr', 'begin', 'gerowallet']
 
 export const Header = () => {
+  const { t } = useTranslation()
   const [isWalletSidebarOpen, setIsWalletSidebarOpen] = useState(false)
   const { network, config } = useEnv()
   const { wallet, wallets, connect, detectWallets, disconnect } = useWallet()
@@ -63,8 +65,8 @@ export const Header = () => {
       ? `$${wallet.balance.handle}`
       : wallet.address
         ? `${wallet.address.slice(0, 5)}...${wallet.address.slice(-6)}`
-        : 'Loading address...'
-    : 'Connect wallet'
+        : `$${t('header.address.loading')}...`
+    : t('header.wallet.connect')
 
   return (
     <>
@@ -182,10 +184,10 @@ export const Header = () => {
                   <p>
                     {wallet.address
                       ? wallet.address.slice(0, 10) + '...' + wallet.address.slice(-10)
-                      : 'No address detected'}
+                      : t('header.address.not.detected')}
                   </p>
                   <Tooltip
-                    text="Disconnect your wallet"
+                    text={t('wallet.disconnect')}
                     tooltipDirection="left"
                     children={
                       <span className="cursor-pointer" onClick={disconnect}>
@@ -200,7 +202,7 @@ export const Header = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex flex-row justify-between w-full">
-                  <h1 className="font-bold">Available Balance:</h1>
+                  <h1 className="font-bold">{t('header.available.balance')}:</h1>
                   <Tooltip
                     text={`${showBalance ? 'Hide' : 'Show'} your current balance`}
                     tooltipDirection="left"
@@ -257,9 +259,9 @@ export const Header = () => {
           <div className="flex flex-col justify-start h-full px-4 py-4">
             <div>
               {wallets.length === 0 ? (
-                <p className="font-semibold text-red-500">No wallets detected.</p>
+                <p className="font-semibold text-red-500">{t('wallet.not.detected')}.</p>
               ) : (
-                <p className="text-xl py-4 pl-5 font-semibold">Choose your wallet:</p>
+                <p className="text-xl py-4 pl-5 font-semibold">{t('wallet.choose')}:</p>
               )}
             </div>
             {wallets
