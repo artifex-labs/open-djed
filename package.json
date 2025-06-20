@@ -24,5 +24,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "zod-openapi": "^4.2.4"
+  }
 }

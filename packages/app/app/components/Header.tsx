@@ -10,6 +10,9 @@ import Sidebar from './Sidebar'
 import { useLocalStorage } from 'usehooks-ts'
 import { DEFAULT_SHOW_BALANCE } from '~/utils'
 import Tooltip from './Tooltip'
+import { useApiClient } from '~/context/ApiClientContext'
+import type { OrderUTxO } from '@reverse-djed/txs'
+import { formatNumber } from '~/utils'
 
 const SUPPORTED_WALLET_IDS = ['eternl', 'lace', 'vespr', 'begin', 'gerowallet']
 
@@ -19,6 +22,67 @@ export const Header = () => {
   const { wallet, wallets, connect, detectWallets, disconnect } = useWallet()
   const [menuOpen, setMenuOpen] = useState(false)
   const [showBalance, setShowBalance] = useLocalStorage<boolean | null>('showBalance', DEFAULT_SHOW_BALANCE)
+  const [orders, setOrders] = useState<OrderUTxO[]>([])
+  const [tooltipText, setTooltipText] = useState('Click to copy full Tx Hash')
+  const client = useApiClient()
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        if (!wallet?.getChangeAddress) return
+
+        const utxos = await wallet.utxos()
+        if (!utxos) throw new Error('No UTXOs found')
+        const address = await wallet.getChangeAddress()
+        if (!address) throw new Error('Failed to get change address')
+
+        const res = await client.api['orders'].$post({
+          json: { hexAddress: address, utxosCborHex: utxos },
+        })
+
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
+        const data = await res.json()
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const parsedOrders = data.orders.map((order: any) => ({
+          ...order,
+          orderDatum: {
+            ...order.orderDatum,
+            creationDate: BigInt(order.orderDatum.creationDate),
+            adaUSDExchangeRate: {
+              numerator: BigInt(order.orderDatum.adaUSDExchangeRate.numerator),
+              denominator: BigInt(order.orderDatum.adaUSDExchangeRate.denominator),
+            },
+            actionFields: parseActionFieldsToBigInt(order.orderDatum.actionFields),
+          },
+        }))
+
+        setOrders(parsedOrders)
+      } catch (err) {
+        console.error('Failed to fetch orders:', err)
+      }
+    }
+
+    fetchOrders().catch((err) => {
+      console.error('Unexpected error in fetchOrders:', err)
+    })
+  }, [wallet])
+
+  // Helper to cast inner fields in actionFields to bigint
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const parseActionFieldsToBigInt = (actionFields: any) => {
+    const key = Object.keys(actionFields)[0]
+    const value = actionFields[key]
+
+    const bigintValue: Record<string, bigint> = {}
+    for (const field in value) {
+      bigintValue[field] = BigInt(value[field])
+    }
+
+    return {
+      [key]: bigintValue,
+    }
+  }
 
   // Navigation links data
   const navLinks = [
@@ -196,7 +260,7 @@ export const Header = () => {
                 </div>
               </div>
               <div
-                className="flex flex-col justify-start items-start gap-4 w-full pb-6"
+                className="flex flex-col justify-start items-start gap-4 w-full pb-6 border-b border-gray-300"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex flex-row justify-between w-full">
@@ -249,6 +313,83 @@ export const Header = () => {
                     )}
                     SHEN
                   </p>
+                </div>
+              </div>
+              <div
+                className="flex flex-col justify-start items-start gap-4 w-full pb-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex flex-col justify-start items-start gap-4 w-full">
+                  <h1 className="font-bold">Pending Orders:</h1>
+                  <div className="flex flex-col justify-center items-center gap-6 w-full">
+                    {orders.map((order, index) => {
+                      const actionFields = order.orderDatum?.actionFields
+                      const creationDate = new Date(Number(order.orderDatum?.creationDate)).toLocaleString()
+
+                      const copyTxHash = () => {
+                        navigator.clipboard
+                          .writeText(order.txHash)
+                          .then(() => {
+                            setTooltipText('Copied!')
+                            setTimeout(() => setTooltipText('Click to copy full Tx Hash'), 2000)
+                          })
+                          .catch(() => {
+                            setTooltipText('Failed to copy')
+                            setTimeout(() => setTooltipText('Click to copy full Tx Hash'), 2000)
+                          })
+                      }
+
+                      let actionType = ''
+                      let conversionLine = ''
+
+                      if ('MintDJED' in actionFields) {
+                        actionType = 'Mint DJED'
+                        const adaAmountNum = Number(actionFields.MintDJED.adaAmount)
+                        const djedAmountNum = Number(actionFields.MintDJED.djedAmount)
+
+                        conversionLine = `${formatNumber(adaAmountNum)} ADA => ${formatNumber(djedAmountNum)} DJED`
+                      } else if ('BurnDJED' in actionFields) {
+                        actionType = 'Burn DJED'
+                        const djedAmountNum = Number(actionFields.BurnDJED.djedAmount)
+                        conversionLine = `${formatNumber(djedAmountNum)} DJED`
+                      } else if ('MintSHEN' in actionFields) {
+                        actionType = 'Mint SHEN'
+                        const adaAmountNum = Number(actionFields.MintSHEN.adaAmount)
+                        const shenAmountNum = Number(actionFields.MintSHEN.shenAmount)
+                        conversionLine = `${formatNumber(adaAmountNum)} ADA => ${formatNumber(shenAmountNum)} SHEN`
+                      } else if ('BurnSHEN' in actionFields) {
+                        actionType = 'Burn SHEN'
+                        const shenAmountNum = Number(actionFields.BurnSHEN.shenAmount)
+                        conversionLine = `${formatNumber(shenAmountNum)} SHEN`
+                      }
+
+                      return (
+                        <div
+                          key={index}
+                          className="bg-primary text-dark-text p-4 rounded-xl w-full max-w-2xl shadow space-y-2"
+                        >
+                          <p className="font-semibold text-lg">Order #{index + 1}</p>
+                          <div className="flex justify-between text-sm font-medium">
+                            <span className="font-bold text-xl">{actionType}</span>
+                            <span>{creationDate}</span>
+                          </div>
+                          <p className="text-md">{conversionLine}</p>
+                          <Tooltip
+                            text={tooltipText}
+                            tooltipDirection="top"
+                            tooltipModalClass="text-light-text dark:text-dark-text"
+                          >
+                            <p
+                              onClick={copyTxHash}
+                              className="text-sm cursor-pointer select-none hover:underline text-muted-foreground"
+                            >
+                              Tx Hash: {order.txHash.slice(0, 22)}...#{order.outputIndex}
+                            </p>
+                          </Tooltip>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
