@@ -17,29 +17,29 @@ const Footer = () => {
 
   const footerLinks: FooterLink[] = [
     {
-      label: t('footer.links.discord'),
+      label: 'Discord',
       href: 'https://discord.gg/MhYP7w8n8p',
       tooltip: t('footer.tooltips.discord'),
       lightIcon: '/logos/discord-logo.png',
     },
     {
-      label: t('footer.links.twitter'),
+      label: 'Twitter',
       href: 'https://x.com/artifex_labs',
       tooltip: t('footer.tooltips.twitter'),
       lightIcon: '/logos/x-dark-logo.svg',
       darkIcon: '/logos/x-logo.svg',
     },
     {
-      label: t('footer.links.github'),
+      label: 'Github',
       href: 'https://github.com/artifex-labs/open-djed',
       tooltip: t('footer.tooltips.github'),
       lightIcon: '/logos/github-dark.svg',
       darkIcon: '/logos/github-white.svg',
     },
     {
-      label: t('footer.links.djed'),
+      label: 'djed.xyz',
       href: 'https://djed.xyz',
-      tooltip: t('tefooterrms.tooltips.djed'),
+      tooltip: t('footer.tooltips.djed'),
       lightIcon: '/logos/djed.svg',
     },
     {
@@ -67,7 +67,7 @@ const Footer = () => {
   return (
     <footer className="flex flex-col md:flex-row gap-8 p-8 justify-between bg-light-footer dark:bg-dark-footer border-t border-light-foreground dark:border-primary/30 w-full text-center max-h-fit transition-all duration-200 ease-in-out">
       <div className="flex flex-col md:flex-row gap-6 items-center">
-        <img src="/logos/artifex-logo.png" alt={t('footer.logoAlt')} className="w-[50px]" />
+        <img src="/logos/artifex-logo.png" alt="Artifex Labs Logo" className="w-[50px]" />
         <p className="pt-1">{t('footer.rightsReserved', { year: currentYear })}</p>
       </div>
 
