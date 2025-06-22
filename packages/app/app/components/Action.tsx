@@ -122,7 +122,9 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{t('action.baseCost')}</p>
-            <Tooltip text="The base value to pay without fees." />
+            <Tooltip
+              text={t('action.tooltip.baseCost')} 
+            />
           </div>
           <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
@@ -137,11 +139,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">{action} {t('action.fee')}</p>
+            <p className="font-medium">{action} {t('action.actionFee')}</p>
             <Tooltip
-              text={`
-              Fee paid to the pool and distributed to SHEN holders when they burn tokens. 
-              Calculated as ${actionData?.actionFeePercentage ?? '-'}% of the base cost.`}
+              text={t('action.tooltip.actionFee', {
+                percentage: actionData?.actionFeePercentage ?? '-',
+              })}
             />
           </div>
           <SkeletonWrapper isPending={isPending}>
@@ -159,16 +161,16 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{t('action.OperatorFee')}</p>
             <Tooltip
-              text={`
-                Fee paid to the COTI treasury for order processing. Calculated as
-                ${registry.operatorFeeConfig.percentage.toNumber() * 100}% of the sum of base cost
-                ${actionData ? ` (${formatValue(actionData?.baseCost)})` : ''} and action fee
-                ${actionData ? ` (${formatValue(actionData?.actionFee)})` : ''}, with a minimum of
-                ${new Rational({
+              text={t('action.tooltip.operatorFee', {
+                percentage: registry.operatorFeeConfig.percentage.toNumber() * 100,
+                base: actionData ? formatValue(actionData?.baseCost) : '-',
+                fee: actionData ? formatValue(actionData?.actionFee) : '-',
+                min: new Rational({
                   numerator: registry.operatorFeeConfig.min,
                   denominator: 1_000_000n,
-                }).toNumber()} 
-                ADA and maximum of ${Number(registry.operatorFeeConfig.max) * 1e-6} ADA.`}
+                }).toNumber(),
+                max: Number(registry.operatorFeeConfig.max) * 1e-6,
+              })}
             />
           </div>
           <SkeletonWrapper isPending={isPending}>
@@ -189,10 +191,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{t('action.totalCost')}</p>
             <Tooltip
-              text={`
-                The sum of the base cost${actionData ? ` (${formatValue(actionData?.baseCost)})` : ''},
-                action fee${actionData ? ` (${formatValue(actionData?.actionFee)})` : ''} and operator fee
-                ${actionData ? ` (${formatValue(actionData.operatorFee)})` : ''}.`}
+              text={t('action.tooltip.totalCost', {
+                base: actionData ? formatValue(actionData?.baseCost) : '-',
+                fee: actionData ? formatValue(actionData?.actionFee) : '-',
+                operator: actionData ? formatValue(actionData?.operatorFee) : '-',
+              })}
             />
           </div>
           <SkeletonWrapper isPending={isPending}>
@@ -233,9 +236,10 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{t('action.youSend')}</p>
             <Tooltip
-              text={`
-                Sum of total cost ${actionData ? `(${formatValue(actionData.totalCost)})` : ''} and
-                refundable deposit${protocolData ? ` (${formatValue(protocolData.refundableDeposit)})` : ''}.`}
+              text={t('action.tooltip.youSend', {
+                total: actionData ? formatValue(actionData.totalCost) : '-',
+                refundable: protocolData ? formatValue(protocolData.refundableDeposit) : '-',
+              })}
             />
           </div>
           <SkeletonWrapper isPending={isPending}>
@@ -252,7 +256,9 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{t('action.youReceive')}</p>
-            <Tooltip text="Sum of the desired amount and the refundable deposit." />
+            <Tooltip 
+              text={t('action.tooltip.youReceive')}
+            />
           </div>
           <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
@@ -268,7 +274,11 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{t('action.price')}</p>
-            <Tooltip text={`Final price (in ADA per ${token}) after fees.`} />
+            <Tooltip 
+              text={t('action.tooltip.price', {
+                token: token,
+              })}
+            />
           </div>
           <SkeletonWrapper isPending={isPending}>
             <p className="text-lg flex justify-center items-center">
