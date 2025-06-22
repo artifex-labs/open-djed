@@ -39,5 +39,11 @@
   "wallet.disconnect": "Disconnect your wallet",
   "header.available.balance": "Available Balance",
   "wallet.not.detected": "No wallets detected",
-  "wallet.choose": "Choose your wallet"
+  "wallet.choose": "Choose your wallet",
+  "home.whatIsOpenDjed": "What is Open DJED?",
+  "home.whyOpenDjed": "Why Open DJED?",
+  "home.ourMission": "Our Mission",
+  "home.joinUs": "Join us in reshaping DeFi on Cardano—openly, transparently, and together.",
+  "home.dontShowAgain": "Don't show this again",
+  "coin.stablecoin": "__STRING_NOT_TRANSLATED__"
 }
