@@ -6,6 +6,7 @@ export default {
   keySeparator: true,
   namespaceSeparator: false,
   useKeysAsDefaultValue: true,
+  defaultValue: "__STRING_NOT_TRANSLATED__",
   interpolation: {
     prefix: '{{',
     suffix: '}}'
