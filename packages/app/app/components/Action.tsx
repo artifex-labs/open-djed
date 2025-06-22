@@ -213,9 +213,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
           <div className="flex flex-row space-x-4">
             <p className="font-medium">{t('action.refundable')}</p>
             <Tooltip
-              text={`
-                Amount of ADA a user must send in order to create a order. This value is refunded when the
-                order is processed or cancelled.`}
+              text={t('action.tooltip.refundable')}
             />
           </div>
           <SkeletonWrapper isPending={isPending}>

@@ -176,7 +176,7 @@ export const Header = () => {
           <div className="flex flex-col justify-start h-full px-4 py-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col justify-start items-start gap-4 w-full border-b border-gray-300 pb-6">
-                <h1 className="font-bold">Wallet Details:</h1>
+                <h1 className="font-bold">{t('wallet.details')}:</h1>
                 <div className="flex flex-row justify-center items-center gap-6 w-full">
                   <span className="rounded-full w-10 h-10 overflow-hidden">
                     <img src={wallet.icon} alt="Wallet Icon" className="w-full h-full object-cover" />
@@ -204,7 +204,7 @@ export const Header = () => {
                 <div className="flex flex-row justify-between w-full">
                   <h1 className="font-bold">{t('header.available.balance')}:</h1>
                   <Tooltip
-                    text={`${showBalance ? 'Hide' : 'Show'} your current balance`}
+                    text={`${showBalance ? t("common.hide") : t("common.show")} ${t('wallet.balance')}`}
                     tooltipDirection="left"
                     children={
                       <span className="cursor-pointer" onClick={() => setShowBalance(!showBalance)}>
