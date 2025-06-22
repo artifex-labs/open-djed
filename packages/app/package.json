@@ -9,7 +9,7 @@
     "dev": "react-router dev",
     "preview": "bun run build && vite preview",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
-    "i18n:scan": "i18next-scanner --config i18next-scanner.config.cjs"
+    "i18n:extract": "bunx i18next-parser"
   },
   "dependencies": {
     "@dcspark/cardano-multiplatform-lib-browser": "^6.2.0",
@@ -21,7 +21,6 @@
     "framer-motion": "^12.16.0",
     "i18next": "^25.2.1",
     "i18next-browser-languagedetector": "^8.2.0",
-    "i18next-scanner": "^4.6.0",
     "isbot": "^5.1.28",
     "posthog-js": "^1.246.0",
     "react": "^19.1.0",
@@ -42,6 +41,7 @@
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "daisyui": "^5.0.38",
+    "i18next-parser": "^9.3.0",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
