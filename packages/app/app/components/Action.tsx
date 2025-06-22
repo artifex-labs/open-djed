@@ -13,6 +13,7 @@ import { Rational } from '@reverse-djed/math'
 import { AppError } from '@reverse-djed/api/src/errors'
 import Tooltip from './Tooltip'
 import { SkeletonWrapper } from './SkeletonWrapper'
+import { useTranslation } from 'react-i18next'
 
 type ActionProps = {
   action: ActionType
@@ -22,6 +23,7 @@ type ActionProps = {
 }
 
 export const Action = ({ action, token, onActionStart, onActionComplete }: ActionProps) => {
+  const { t } = useTranslation()
   const [amount, setAmount] = useState<number>(0)
   const [toastProps, setToastProps] = useState<{ message: string; type: 'success' | 'error'; show: boolean }>(
     {
@@ -119,7 +121,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
       <div className="flex flex-col gap-2 mb-6">
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">Base cost</p>
+            <p className="font-medium">{t('action.baseCost')}</p>
             <Tooltip text="The base value to pay without fees." />
           </div>
           <SkeletonWrapper isPending={isPending}>
@@ -135,7 +137,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">{action} fee</p>
+            <p className="font-medium">{action} {t('action.fee')}</p>
             <Tooltip
               text={`
               Fee paid to the pool and distributed to SHEN holders when they burn tokens. 
@@ -155,7 +157,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">Operator fee</p>
+            <p className="font-medium">{t('action.OperatorFee')}</p>
             <Tooltip
               text={`
                 Fee paid to the COTI treasury for order processing. Calculated as
@@ -185,7 +187,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">Total cost</p>
+            <p className="font-medium">{t('action.totalCost')}</p>
             <Tooltip
               text={`
                 The sum of the base cost${actionData ? ` (${formatValue(actionData?.baseCost)})` : ''},
@@ -206,7 +208,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">Refundable deposit</p>
+            <p className="font-medium">{t('action.refundable')}</p>
             <Tooltip
               text={`
                 Amount of ADA a user must send in order to create a order. This value is refunded when the
@@ -229,7 +231,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">You will send</p>
+            <p className="font-medium">{t('action.youSend')}</p>
             <Tooltip
               text={`
                 Sum of total cost ${actionData ? `(${formatValue(actionData.totalCost)})` : ''} and
@@ -249,7 +251,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">You will receive</p>
+            <p className="font-medium">{t('action.youReceive')}</p>
             <Tooltip text="Sum of the desired amount and the refundable deposit." />
           </div>
           <SkeletonWrapper isPending={isPending}>
@@ -265,7 +267,7 @@ export const Action = ({ action, token, onActionStart, onActionComplete }: Actio
         </div>
         <div className="flex justify-between">
           <div className="flex flex-row space-x-4">
-            <p className="font-medium">Price</p>
+            <p className="font-medium">{t('action.price')}</p>
             <Tooltip text={`Final price (in ADA per ${token}) after fees.`} />
           </div>
           <SkeletonWrapper isPending={isPending}>
