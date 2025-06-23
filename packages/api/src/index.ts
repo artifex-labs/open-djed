@@ -41,6 +41,7 @@ import {
   UTxOContentionError,
   ValidationError,
 } from './errors'
+import JSONbig from 'json-bigint'
 
 //NOTE: We only need this cache for transactions, not for other requests. Using this for `protocol-data` sligltly increases the response time.
 const requestCache = new TTLCache<string, { value: Response; expiry: number }>({ ttl: 10_000 })
@@ -337,13 +338,16 @@ const app = new Hono()
         },
       },
     }),
-    zValidator('json', txRequestBodySchema),
+    zValidator('json', z.object({changeAddress: z.string(), usedAddresses: z.array(z.string())})),
     async (c) => {
       let json
 
       try {
         json = c.req.valid('json')
-        if (!json?.hexAddress) {
+        if (!json?.changeAddress) {
+          throw new ValidationError('Missing hexAddress in request.')
+        }
+        if (!json?.usedAddresses) {
           throw new ValidationError('Missing hexAddress in request.')
         }
       } catch (e) {
@@ -351,84 +355,64 @@ const app = new Hono()
         throw new ValidationError('Invalid or missing request payload.')
       }
 
-      let address: string
+      let address
       try {
-        address = CML.Address.from_hex(json.hexAddress).to_bech32()
-      } catch (e) {
-        console.error('Invalid Cardano address format.', e)
+        address = CML.Address.from_hex(json.changeAddress).to_bech32()
+      } catch {
         throw new ValidationError('Invalid Cardano address format.')
       }
+
+      console.log("Address: ", address)
+      console.log("Address 32: ", CML.Address.is_valid_bech32(address))
 
       const paymentHash = paymentCredentialOf(address)
       console.log('Payment hash: ', paymentHash)
       const stakeHash = stakeCredentialOf(address)
       console.log(' hash: ', stakeHash)
 
+      console.log("Used addrs: ", json.usedAddresses)
+
       try {
         const allOrders = await getOrderUTxOs()
 
         console.log('All: ', allOrders)
 
-        // Filter orders by payment key hash & stake key hash
-        const filteredOrders = allOrders.filter(
+        let filteredOrders = allOrders.filter(
           (order) =>
             order.orderDatum.address.paymentKeyHash[0] === paymentHash.hash &&
             order.orderDatum.address.stakeKeyHash[0][0][0] === stakeHash.hash,
         )
 
-        // Sanitize filtered orders
-        const sanitizedOrders = filteredOrders.map((o) => ({
-          ...o,
-          assets: Object.fromEntries(Object.entries(o.assets).map(([k, v]) => [k, (v as bigint).toString()])),
-          orderDatum: {
-            ...o.orderDatum,
-            creationDate: o.orderDatum.creationDate.toString(),
-            adaUSDExchangeRate: {
-              numerator: o.orderDatum.adaUSDExchangeRate.numerator.toString(),
-              denominator: o.orderDatum.adaUSDExchangeRate.denominator.toString(),
-            },
-            actionFields:
-              'MintDJED' in o.orderDatum.actionFields
-                ? {
-                    MintDJED: {
-                      djedAmount: o.orderDatum.actionFields.MintDJED.djedAmount.toString(),
-                      adaAmount: o.orderDatum.actionFields.MintDJED.adaAmount.toString(),
-                    },
-                  }
-                : 'BurnDJED' in o.orderDatum.actionFields
-                  ? {
-                      BurnDJED: {
-                        djedAmount: o.orderDatum.actionFields.BurnDJED.djedAmount.toString(),
-                      },
-                    }
-                  : 'MintSHEN' in o.orderDatum.actionFields
-                    ? {
-                        MintSHEN: {
-                          shenAmount: o.orderDatum.actionFields.MintSHEN.shenAmount.toString(),
-                          adaAmount: o.orderDatum.actionFields.MintSHEN.adaAmount.toString(),
-                        },
-                      }
-                    : 'BurnSHEN' in o.orderDatum.actionFields
-                      ? {
-                          BurnSHEN: {
-                            shenAmount: o.orderDatum.actionFields.BurnSHEN.shenAmount.toString(),
-                          },
-                        }
-                      : (() => {
-                          console.error('Unknown actionFields structure:', o.orderDatum.actionFields)
-                          throw new Error('Unsupported actionFields structure')
-                        })(),
-          },
-        }))
+        if (filteredOrders.length === 0) {
+          const usedAddressesKeys = json.usedAddresses.map((addr) => {
+            try {
+              const paymentKeyHash = paymentCredentialOf(addr)
+              const stakeKeyHash = stakeCredentialOf(addr)
+              return { paymentKeyHash: paymentKeyHash.hash, stakeKeyHash: stakeKeyHash.hash }
+            } catch (error) {
+              return { paymentKeyHash: '', stakeKeyHash: '' }
+            }
+          })
 
-        return c.json({ orders: sanitizedOrders })
+          filteredOrders = allOrders.filter((order) =>
+            usedAddressesKeys.some(
+              (key) =>
+                order.orderDatum.address.paymentKeyHash[0] === key.paymentKeyHash &&
+                order.orderDatum.address.stakeKeyHash[0][0][0] === key.stakeKeyHash,
+            ),
+          )
+        }
+
+        return new Response(JSONbig.stringify({ orders: filteredOrders }), {
+          headers: { 'Content-Type': 'application/json' },
+        })
       } catch (err) {
         if (err instanceof AppError) {
           throw err
         }
         console.error('Unhandled error in orders endpoint:', err)
         throw new InternalServerError()
-      }
+      } 
     },
   )
 

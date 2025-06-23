@@ -12,14 +12,15 @@ import { DEFAULT_SHOW_BALANCE } from '~/utils'
 import Tooltip from './Tooltip'
 import { useApiClient } from '~/context/ApiClientContext'
 import type { Order, ActionFields } from '~/types/order'
+import JSONbig from 'json-bigint'
 
 const SUPPORTED_WALLET_IDS = ['eternl', 'lace', 'vespr', 'begin', 'gerowallet']
 
 type ApiActionFields =
-  | { MintDJED: { djedAmount: string; adaAmount: string } }
-  | { BurnDJED: { djedAmount: string } }
-  | { MintSHEN: { shenAmount: string; adaAmount: string } }
-  | { BurnSHEN: { shenAmount: string } }
+  | { MintDJED: { djedAmount: bigint; adaAmount: bigint } }
+  | { BurnDJED: { djedAmount: bigint } }
+  | { MintSHEN: { shenAmount: bigint; adaAmount: bigint } }
+  | { BurnSHEN: { shenAmount: bigint } }
 
 type ApiOrderDatum = {
   actionFields: ApiActionFields
@@ -28,16 +29,17 @@ type ApiOrderDatum = {
     stakeKeyHash: [[[string]]]
   }
   adaUSDExchangeRate: {
-    numerator: string
-    denominator: string
+    numerator: bigint
+    denominator: bigint
   }
-  creationDate: string
+  creationDate: bigint
+  orderStateTokenMintingPolicyId: string
 }
 
 type ApiOrder = {
-  txHash?: string
+  txHash: string
   outputIndex: number
-  assets: Record<string, string>
+  assets: Record<string, bigint>
   orderDatum: ApiOrderDatum
 }
 
@@ -51,81 +53,63 @@ export const Header = () => {
   const [tooltipText, setTooltipText] = useState('Click to copy full Tx Hash')
   const client = useApiClient()
 
-  const convertApiOrderToOrder = (apiOrder: ApiOrder): Order => {
-    const assets = Object.fromEntries(
-      Object.entries(apiOrder.assets).map(([key, value]) => [key, BigInt(value as string)]),
-    )
+const convertApiOrderToOrder = (apiOrder: ApiOrder): Order => {
+  const assets = apiOrder.assets
 
-    let actionFields: ActionFields
-    const apiActionFields = apiOrder.orderDatum.actionFields
+  let actionFields: ActionFields
+  const apiActionFields = apiOrder.orderDatum.actionFields
 
-    if ('MintDJED' in apiActionFields) {
-      actionFields = {
-        MintDJED: {
-          djedAmount: BigInt(apiActionFields.MintDJED.djedAmount),
-          adaAmount: BigInt(apiActionFields.MintDJED.adaAmount),
-        },
-      }
-    } else if ('BurnDJED' in apiActionFields) {
-      actionFields = {
-        BurnDJED: {
-          djedAmount: BigInt(apiActionFields.BurnDJED.djedAmount),
-        },
-      }
-    } else if ('MintSHEN' in apiActionFields) {
-      actionFields = {
-        MintSHEN: {
-          shenAmount: BigInt(apiActionFields.MintSHEN.shenAmount),
-          adaAmount: BigInt(apiActionFields.MintSHEN.adaAmount),
-        },
-      }
-    } else if ('BurnSHEN' in apiActionFields) {
-      actionFields = {
-        BurnSHEN: {
-          shenAmount: BigInt(apiActionFields.BurnSHEN.shenAmount),
-        },
-      }
-    } else {
-      throw new Error('Unknown action field type')
-    }
-
-    return {
-      txHash: apiOrder.txHash || '',
-      outputIndex: apiOrder.outputIndex,
-      assets,
-      orderDatum: {
-        actionFields,
-        address: apiOrder.orderDatum.address?.paymentKeyHash?.[0] || '',
-        adaUSDExchangeRate: {
-          numerator: BigInt(apiOrder.orderDatum.adaUSDExchangeRate.numerator),
-          denominator: BigInt(apiOrder.orderDatum.adaUSDExchangeRate.denominator),
-        },
-        creationDate: BigInt(apiOrder.orderDatum.creationDate),
-        orderStateTokenMintingPolicyId: '',
-      },
-    }
+  if ('MintDJED' in apiActionFields) {
+    actionFields = { MintDJED: { ...apiActionFields.MintDJED } }
+  } else if ('BurnDJED' in apiActionFields) {
+    actionFields = { BurnDJED: { ...apiActionFields.BurnDJED } }
+  } else if ('MintSHEN' in apiActionFields) {
+    actionFields = { MintSHEN: { ...apiActionFields.MintSHEN } }
+  } else if ('BurnSHEN' in apiActionFields) {
+    actionFields = { BurnSHEN: { ...apiActionFields.BurnSHEN } }
+  } else {
+    throw new Error('Unknown action field type')
   }
+
+  return {
+    txHash: apiOrder.txHash,
+    outputIndex: apiOrder.outputIndex,
+    assets,
+    orderDatum: {
+      actionFields,
+      address: apiOrder.orderDatum.address?.paymentKeyHash?.[0],
+      adaUSDExchangeRate: {
+        numerator: apiOrder.orderDatum.adaUSDExchangeRate.numerator,
+        denominator: apiOrder.orderDatum.adaUSDExchangeRate.denominator,
+      },
+      creationDate: apiOrder.orderDatum.creationDate,
+      orderStateTokenMintingPolicyId: apiOrder.orderDatum.orderStateTokenMintingPolicyId,
+    },
+  }
+}
+
 
   const fetchOrders = async () => {
     if (!wallet?.getChangeAddress) return
 
-    const utxos = await wallet.utxos()
-    if (!utxos) throw new Error('No UTXOs found')
-
     const address = await wallet.getChangeAddress()
+    if (!address) throw new Error('Failed to get change address')
+
+    const usedAddress = await wallet.getUsedAddresses()
     if (!address) throw new Error('Failed to get change address')
 
     try {
       const res = await client.api.orders.$post({
-        json: { hexAddress: address, utxosCborHex: utxos },
+        json: { changeAddress: address, usedAddresses: usedAddress},
       })
 
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`)
       }
 
-      const data = await res.json()
-      const convertedOrders = data.orders.map(convertApiOrderToOrder)
+      const data = await res.text()
+      const parsed = JSONbig.parse(data)
+      const convertedOrders = parsed.orders.map(convertApiOrderToOrder)
       setOrders(convertedOrders)
     } catch (err) {
       console.error('Error fetching orders:', err)
