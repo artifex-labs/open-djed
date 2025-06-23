@@ -11,10 +11,35 @@ import { useLocalStorage } from 'usehooks-ts'
 import { DEFAULT_SHOW_BALANCE } from '~/utils'
 import Tooltip from './Tooltip'
 import { useApiClient } from '~/context/ApiClientContext'
-import type { OrderUTxO } from '@reverse-djed/txs'
-import { formatNumber } from '~/utils'
+import type { Order, ActionFields } from '~/types/order'
 
 const SUPPORTED_WALLET_IDS = ['eternl', 'lace', 'vespr', 'begin', 'gerowallet']
+
+type ApiActionFields =
+  | { MintDJED: { djedAmount: string; adaAmount: string } }
+  | { BurnDJED: { djedAmount: string } }
+  | { MintSHEN: { shenAmount: string; adaAmount: string } }
+  | { BurnSHEN: { shenAmount: string } }
+
+type ApiOrderDatum = {
+  actionFields: ApiActionFields
+  address: {
+    paymentKeyHash: [string]
+    stakeKeyHash: [[[string]]]
+  }
+  adaUSDExchangeRate: {
+    numerator: string
+    denominator: string
+  }
+  creationDate: string
+}
+
+type ApiOrder = {
+  txHash?: string
+  outputIndex: number
+  assets: Record<string, string>
+  orderDatum: ApiOrderDatum
+}
 
 export const Header = () => {
   const [isWalletSidebarOpen, setIsWalletSidebarOpen] = useState(false)
@@ -22,67 +47,96 @@ export const Header = () => {
   const { wallet, wallets, connect, detectWallets, disconnect } = useWallet()
   const [menuOpen, setMenuOpen] = useState(false)
   const [showBalance, setShowBalance] = useLocalStorage<boolean | null>('showBalance', DEFAULT_SHOW_BALANCE)
-  const [orders, setOrders] = useState<OrderUTxO[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
   const [tooltipText, setTooltipText] = useState('Click to copy full Tx Hash')
   const client = useApiClient()
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        if (!wallet?.getChangeAddress) return
+  const convertApiOrderToOrder = (apiOrder: ApiOrder): Order => {
+    const assets = Object.fromEntries(
+      Object.entries(apiOrder.assets).map(([key, value]) => [key, BigInt(value as string)]),
+    )
 
-        const utxos = await wallet.utxos()
-        if (!utxos) throw new Error('No UTXOs found')
-        const address = await wallet.getChangeAddress()
-        if (!address) throw new Error('Failed to get change address')
+    let actionFields: ActionFields
+    const apiActionFields = apiOrder.orderDatum.actionFields
 
-        const res = await client.api['orders'].$post({
-          json: { hexAddress: address, utxosCborHex: utxos },
-        })
-
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
-        const data = await res.json()
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const parsedOrders = data.orders.map((order: any) => ({
-          ...order,
-          orderDatum: {
-            ...order.orderDatum,
-            creationDate: BigInt(order.orderDatum.creationDate),
-            adaUSDExchangeRate: {
-              numerator: BigInt(order.orderDatum.adaUSDExchangeRate.numerator),
-              denominator: BigInt(order.orderDatum.adaUSDExchangeRate.denominator),
-            },
-            actionFields: parseActionFieldsToBigInt(order.orderDatum.actionFields),
-          },
-        }))
-
-        setOrders(parsedOrders)
-      } catch (err) {
-        console.error('Failed to fetch orders:', err)
+    if ('MintDJED' in apiActionFields) {
+      actionFields = {
+        MintDJED: {
+          djedAmount: BigInt(apiActionFields.MintDJED.djedAmount),
+          adaAmount: BigInt(apiActionFields.MintDJED.adaAmount),
+        },
       }
-    }
-
-    fetchOrders().catch((err) => {
-      console.error('Unexpected error in fetchOrders:', err)
-    })
-  }, [wallet])
-
-  // Helper to cast inner fields in actionFields to bigint
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const parseActionFieldsToBigInt = (actionFields: any) => {
-    const key = Object.keys(actionFields)[0]
-    const value = actionFields[key]
-
-    const bigintValue: Record<string, bigint> = {}
-    for (const field in value) {
-      bigintValue[field] = BigInt(value[field])
+    } else if ('BurnDJED' in apiActionFields) {
+      actionFields = {
+        BurnDJED: {
+          djedAmount: BigInt(apiActionFields.BurnDJED.djedAmount),
+        },
+      }
+    } else if ('MintSHEN' in apiActionFields) {
+      actionFields = {
+        MintSHEN: {
+          shenAmount: BigInt(apiActionFields.MintSHEN.shenAmount),
+          adaAmount: BigInt(apiActionFields.MintSHEN.adaAmount),
+        },
+      }
+    } else if ('BurnSHEN' in apiActionFields) {
+      actionFields = {
+        BurnSHEN: {
+          shenAmount: BigInt(apiActionFields.BurnSHEN.shenAmount),
+        },
+      }
+    } else {
+      throw new Error('Unknown action field type')
     }
 
     return {
-      [key]: bigintValue,
+      txHash: apiOrder.txHash || '',
+      outputIndex: apiOrder.outputIndex,
+      assets,
+      orderDatum: {
+        actionFields,
+        address: apiOrder.orderDatum.address?.paymentKeyHash?.[0] || '',
+        adaUSDExchangeRate: {
+          numerator: BigInt(apiOrder.orderDatum.adaUSDExchangeRate.numerator),
+          denominator: BigInt(apiOrder.orderDatum.adaUSDExchangeRate.denominator),
+        },
+        creationDate: BigInt(apiOrder.orderDatum.creationDate),
+        orderStateTokenMintingPolicyId: '',
+      },
     }
   }
+
+  const fetchOrders = async () => {
+    if (!wallet?.getChangeAddress) return
+
+    const utxos = await wallet.utxos()
+    if (!utxos) throw new Error('No UTXOs found')
+
+    const address = await wallet.getChangeAddress()
+    if (!address) throw new Error('Failed to get change address')
+
+    try {
+      const res = await client.api.orders.$post({
+        json: { hexAddress: address, utxosCborHex: utxos },
+      })
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+
+      const data = await res.json()
+      const convertedOrders = data.orders.map(convertApiOrderToOrder)
+      setOrders(convertedOrders)
+    } catch (err) {
+      console.error('Error fetching orders:', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchOrders().catch((err) => {
+      console.error('Failed to fetch orders:', err)
+    })
+  }, [wallet])
 
   // Navigation links data
   const navLinks = [
@@ -174,7 +228,7 @@ export const Header = () => {
           </div>
 
           {/* Menu toggle - Mobile only */}
-          <div className="flex flec-row space-x-4 lg:hidden text-primary">
+          <div className="flex flex-row space-x-4 lg:hidden text-primary">
             <ThemeToggle />
             <button
               onClick={toggleMenu}
@@ -322,73 +376,83 @@ export const Header = () => {
                 <div className="flex flex-col justify-start items-start gap-4 w-full">
                   <h1 className="font-bold">Pending Orders:</h1>
                   <div className="flex flex-col justify-center items-center gap-6 w-full">
-                    {orders.map((order, index) => {
-                      const actionFields = order.orderDatum?.actionFields
-                      const creationDate = new Date(Number(order.orderDatum?.creationDate)).toLocaleString()
+                    {orders && orders.length > 0 ? (
+                      orders.map((order, index) => {
+                        const actionFields = order.orderDatum?.actionFields
+                        const creationDate = new Date(Number(order.orderDatum?.creationDate)).toLocaleString()
 
-                      const copyTxHash = () => {
-                        navigator.clipboard
-                          .writeText(order.txHash)
-                          .then(() => {
-                            setTooltipText('Copied!')
-                            setTimeout(() => setTooltipText('Click to copy full Tx Hash'), 2000)
+                        const copyTxHash = () => {
+                          navigator.clipboard
+                            .writeText(order.txHash)
+                            .then(() => {
+                              setTooltipText('Copied!')
+                              setTimeout(() => setTooltipText('Click to copy full Tx Hash'), 2000)
+                            })
+                            .catch(() => {
+                              setTooltipText('Failed to copy')
+                              setTimeout(() => setTooltipText('Click to copy full Tx Hash'), 2000)
+                            })
+                        }
+
+                        const formatLovelace = (amount: bigint) => {
+                          return (Number(amount) / 1000000).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 6,
                           })
-                          .catch(() => {
-                            setTooltipText('Failed to copy')
-                            setTimeout(() => setTooltipText('Click to copy full Tx Hash'), 2000)
-                          })
-                      }
+                        }
 
-                      let actionType = ''
-                      let conversionLine = ''
+                        let actionType = ''
+                        let conversionLine = ''
 
-                      if ('MintDJED' in actionFields) {
-                        actionType = 'Mint DJED'
-                        const adaAmountNum = Number(actionFields.MintDJED.adaAmount)
-                        const djedAmountNum = Number(actionFields.MintDJED.djedAmount)
+                        if ('MintDJED' in actionFields) {
+                          actionType = 'Mint DJED'
+                          const adaAmount = formatLovelace(actionFields.MintDJED.adaAmount)
+                          const djedAmount = formatLovelace(actionFields.MintDJED.djedAmount)
+                          conversionLine = `${adaAmount} ADA => ${djedAmount} DJED`
+                        } else if ('BurnDJED' in actionFields) {
+                          actionType = 'Burn DJED'
+                          const djedAmount = formatLovelace(actionFields.BurnDJED.djedAmount)
+                          conversionLine = `${djedAmount} DJED`
+                        } else if ('MintSHEN' in actionFields) {
+                          actionType = 'Mint SHEN'
+                          const adaAmount = formatLovelace(actionFields.MintSHEN.adaAmount)
+                          const shenAmount = formatLovelace(actionFields.MintSHEN.shenAmount)
+                          conversionLine = `${adaAmount} ADA => ${shenAmount} SHEN`
+                        } else if ('BurnSHEN' in actionFields) {
+                          actionType = 'Burn SHEN'
+                          const shenAmount = formatLovelace(actionFields.BurnSHEN.shenAmount)
+                          conversionLine = `${shenAmount} SHEN`
+                        }
 
-                        conversionLine = `${formatNumber(adaAmountNum)} ADA => ${formatNumber(djedAmountNum)} DJED`
-                      } else if ('BurnDJED' in actionFields) {
-                        actionType = 'Burn DJED'
-                        const djedAmountNum = Number(actionFields.BurnDJED.djedAmount)
-                        conversionLine = `${formatNumber(djedAmountNum)} DJED`
-                      } else if ('MintSHEN' in actionFields) {
-                        actionType = 'Mint SHEN'
-                        const adaAmountNum = Number(actionFields.MintSHEN.adaAmount)
-                        const shenAmountNum = Number(actionFields.MintSHEN.shenAmount)
-                        conversionLine = `${formatNumber(adaAmountNum)} ADA => ${formatNumber(shenAmountNum)} SHEN`
-                      } else if ('BurnSHEN' in actionFields) {
-                        actionType = 'Burn SHEN'
-                        const shenAmountNum = Number(actionFields.BurnSHEN.shenAmount)
-                        conversionLine = `${formatNumber(shenAmountNum)} SHEN`
-                      }
-
-                      return (
-                        <div
-                          key={index}
-                          className="bg-primary text-dark-text p-4 rounded-xl w-full max-w-2xl shadow space-y-2"
-                        >
-                          <p className="font-semibold text-lg">Order #{index + 1}</p>
-                          <div className="flex justify-between text-sm font-medium">
-                            <span className="font-bold text-xl">{actionType}</span>
-                            <span>{creationDate}</span>
-                          </div>
-                          <p className="text-md">{conversionLine}</p>
-                          <Tooltip
-                            text={tooltipText}
-                            tooltipDirection="top"
-                            tooltipModalClass="text-light-text dark:text-dark-text"
+                        return (
+                          <div
+                            key={index}
+                            className="bg-primary text-dark-text p-4 rounded-xl w-full max-w-2xl shadow space-y-2 overflow-y-auto"
                           >
-                            <p
-                              onClick={copyTxHash}
-                              className="text-sm cursor-pointer select-none hover:underline text-muted-foreground"
+                            <p className="font-semibold text-lg">Order #{index + 1}</p>
+                            <div className="flex justify-between text-sm font-medium">
+                              <span className="font-bold text-xl">{actionType}</span>
+                              <span>{creationDate}</span>
+                            </div>
+                            <p className="text-md">{conversionLine}</p>
+                            <Tooltip
+                              text={tooltipText}
+                              tooltipDirection="top"
+                              tooltipModalClass="text-light-text dark:text-dark-text"
                             >
-                              Tx Hash: {order.txHash.slice(0, 22)}...#{order.outputIndex}
-                            </p>
-                          </Tooltip>
-                        </div>
-                      )
-                    })}
+                              <p
+                                onClick={copyTxHash}
+                                className="text-sm cursor-pointer select-none hover:underline text-muted-foreground"
+                              >
+                                Tx Hash: {order.txHash.slice(0, 22)}...#{order.outputIndex}
+                              </p>
+                            </Tooltip>
+                          </div>
+                        )
+                      })
+                    ) : (
+                      <p className="font-semibold text-red-500">No pending orders.</p>
+                    )}
                   </div>
                 </div>
               </div>

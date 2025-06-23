@@ -7,6 +7,8 @@ import {
   CML,
   type LucidEvolution,
   type TxBuilder,
+  paymentCredentialOf,
+  stakeCredentialOf,
 } from '@lucid-evolution/lucid'
 import {
   createBurnDjedOrder,
@@ -357,17 +359,25 @@ const app = new Hono()
         throw new ValidationError('Invalid Cardano address format.')
       }
 
-      console.log('hexAddr: ', json.hexAddress)
-      console.log('utxosCborHex: ', json.utxosCborHex)
-      console.log('Address: ', address)
+      const paymentHash = paymentCredentialOf(address)
+      console.log('Payment hash: ', paymentHash)
+      const stakeHash = stakeCredentialOf(address)
+      console.log(' hash: ', stakeHash)
 
       try {
         const allOrders = await getOrderUTxOs()
-        console.log('AllOrders: ', allOrders)
 
-        //const filteredOrders = allOrders.filter((o) => o.address === address);
+        console.log('All: ', allOrders)
 
-        const sanitizedOrders = allOrders.map((o) => ({
+        // Filter orders by payment key hash & stake key hash
+        const filteredOrders = allOrders.filter(
+          (order) =>
+            order.orderDatum.address.paymentKeyHash[0] === paymentHash.hash &&
+            order.orderDatum.address.stakeKeyHash[0][0][0] === stakeHash.hash,
+        )
+
+        // Sanitize filtered orders
+        const sanitizedOrders = filteredOrders.map((o) => ({
           ...o,
           assets: Object.fromEntries(Object.entries(o.assets).map(([k, v]) => [k, (v as bigint).toString()])),
           orderDatum: {
@@ -385,14 +395,29 @@ const app = new Hono()
                       adaAmount: o.orderDatum.actionFields.MintDJED.adaAmount.toString(),
                     },
                   }
-                : Object.fromEntries(
-                    Object.entries(o.orderDatum.actionFields).map(([key, value]) => [
-                      key,
-                      Object.fromEntries(
-                        Object.entries(value).map(([k, v]) => [k, typeof v === 'bigint' ? v.toString() : v]),
-                      ),
-                    ]),
-                  ),
+                : 'BurnDJED' in o.orderDatum.actionFields
+                  ? {
+                      BurnDJED: {
+                        djedAmount: o.orderDatum.actionFields.BurnDJED.djedAmount.toString(),
+                      },
+                    }
+                  : 'MintSHEN' in o.orderDatum.actionFields
+                    ? {
+                        MintSHEN: {
+                          shenAmount: o.orderDatum.actionFields.MintSHEN.shenAmount.toString(),
+                          adaAmount: o.orderDatum.actionFields.MintSHEN.adaAmount.toString(),
+                        },
+                      }
+                    : 'BurnSHEN' in o.orderDatum.actionFields
+                      ? {
+                          BurnSHEN: {
+                            shenAmount: o.orderDatum.actionFields.BurnSHEN.shenAmount.toString(),
+                          },
+                        }
+                      : (() => {
+                          console.error('Unknown actionFields structure:', o.orderDatum.actionFields)
+                          throw new Error('Unsupported actionFields structure')
+                        })(),
           },
         }))
 
@@ -401,7 +426,6 @@ const app = new Hono()
         if (err instanceof AppError) {
           throw err
         }
-
         console.error('Unhandled error in orders endpoint:', err)
         throw new InternalServerError()
       }
