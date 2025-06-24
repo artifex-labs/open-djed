@@ -309,14 +309,14 @@ const app = new Hono()
     '/orders',
     cacheMiddleware,
     describeRoute({
-      description: 'Get the orders UTxOs',
+      description: 'Get the pending orders',
       tags: ['Action'],
       responses: {
         200: {
-          description: 'Successfully got the orders UTxOs',
+          description: 'Successfully got the pending orders',
           content: {
             'text/plain': {
-              example: 'UTxO',
+              example: 'Order',
             },
           },
         },
@@ -338,15 +338,12 @@ const app = new Hono()
         },
       },
     }),
-    zValidator('json', z.object({changeAddress: z.string(), usedAddresses: z.array(z.string())})),
+    zValidator('json', z.object({ usedAddresses: z.array(z.string()) })),
     async (c) => {
       let json
 
       try {
         json = c.req.valid('json')
-        if (!json?.changeAddress) {
-          throw new ValidationError('Missing hexAddress in request.')
-        }
         if (!json?.usedAddresses) {
           throw new ValidationError('Missing hexAddress in request.')
         }
@@ -355,53 +352,26 @@ const app = new Hono()
         throw new ValidationError('Invalid or missing request payload.')
       }
 
-      let address
-      try {
-        address = CML.Address.from_hex(json.changeAddress).to_bech32()
-      } catch {
-        throw new ValidationError('Invalid Cardano address format.')
-      }
-
-      console.log("Address: ", address)
-      console.log("Address 32: ", CML.Address.is_valid_bech32(address))
-
-      const paymentHash = paymentCredentialOf(address)
-      console.log('Payment hash: ', paymentHash)
-      const stakeHash = stakeCredentialOf(address)
-      console.log(' hash: ', stakeHash)
-
-      console.log("Used addrs: ", json.usedAddresses)
-
       try {
         const allOrders = await getOrderUTxOs()
 
-        console.log('All: ', allOrders)
+        const usedAddressesKeys = json.usedAddresses.map((addr) => {
+          try {
+            const paymentKeyHash = paymentCredentialOf(addr)
+            const stakeKeyHash = stakeCredentialOf(addr)
+            return { paymentKeyHash: paymentKeyHash.hash, stakeKeyHash: stakeKeyHash.hash }
+          } catch {
+            return { paymentKeyHash: '', stakeKeyHash: '' }
+          }
+        })
 
-        let filteredOrders = allOrders.filter(
-          (order) =>
-            order.orderDatum.address.paymentKeyHash[0] === paymentHash.hash &&
-            order.orderDatum.address.stakeKeyHash[0][0][0] === stakeHash.hash,
+        const filteredOrders = allOrders.filter((order) =>
+          usedAddressesKeys.some(
+            (key) =>
+              order.orderDatum.address.paymentKeyHash[0] === key.paymentKeyHash &&
+              order.orderDatum.address.stakeKeyHash[0][0][0] === key.stakeKeyHash,
+          ),
         )
-
-        if (filteredOrders.length === 0) {
-          const usedAddressesKeys = json.usedAddresses.map((addr) => {
-            try {
-              const paymentKeyHash = paymentCredentialOf(addr)
-              const stakeKeyHash = stakeCredentialOf(addr)
-              return { paymentKeyHash: paymentKeyHash.hash, stakeKeyHash: stakeKeyHash.hash }
-            } catch (error) {
-              return { paymentKeyHash: '', stakeKeyHash: '' }
-            }
-          })
-
-          filteredOrders = allOrders.filter((order) =>
-            usedAddressesKeys.some(
-              (key) =>
-                order.orderDatum.address.paymentKeyHash[0] === key.paymentKeyHash &&
-                order.orderDatum.address.stakeKeyHash[0][0][0] === key.stakeKeyHash,
-            ),
-          )
-        }
 
         return new Response(JSONbig.stringify({ orders: filteredOrders }), {
           headers: { 'Content-Type': 'application/json' },
@@ -412,7 +382,7 @@ const app = new Hono()
         }
         console.error('Unhandled error in orders endpoint:', err)
         throw new InternalServerError()
-      } 
+      }
     },
   )
 

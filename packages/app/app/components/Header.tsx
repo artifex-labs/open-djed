@@ -11,37 +11,10 @@ import { useLocalStorage } from 'usehooks-ts'
 import { DEFAULT_SHOW_BALANCE } from '~/utils'
 import Tooltip from './Tooltip'
 import { useApiClient } from '~/context/ApiClientContext'
-import type { Order, ActionFields } from '~/types/order'
 import JSONbig from 'json-bigint'
+import type { OrderUTxO } from '@reverse-djed/txs'
 
 const SUPPORTED_WALLET_IDS = ['eternl', 'lace', 'vespr', 'begin', 'gerowallet']
-
-type ApiActionFields =
-  | { MintDJED: { djedAmount: bigint; adaAmount: bigint } }
-  | { BurnDJED: { djedAmount: bigint } }
-  | { MintSHEN: { shenAmount: bigint; adaAmount: bigint } }
-  | { BurnSHEN: { shenAmount: bigint } }
-
-type ApiOrderDatum = {
-  actionFields: ApiActionFields
-  address: {
-    paymentKeyHash: [string]
-    stakeKeyHash: [[[string]]]
-  }
-  adaUSDExchangeRate: {
-    numerator: bigint
-    denominator: bigint
-  }
-  creationDate: bigint
-  orderStateTokenMintingPolicyId: string
-}
-
-type ApiOrder = {
-  txHash: string
-  outputIndex: number
-  assets: Record<string, bigint>
-  orderDatum: ApiOrderDatum
-}
 
 export const Header = () => {
   const [isWalletSidebarOpen, setIsWalletSidebarOpen] = useState(false)
@@ -49,58 +22,18 @@ export const Header = () => {
   const { wallet, wallets, connect, detectWallets, disconnect } = useWallet()
   const [menuOpen, setMenuOpen] = useState(false)
   const [showBalance, setShowBalance] = useLocalStorage<boolean | null>('showBalance', DEFAULT_SHOW_BALANCE)
-  const [orders, setOrders] = useState<Order[]>([])
+  const [orders, setOrders] = useState<OrderUTxO[]>([])
   const [tooltipText, setTooltipText] = useState('Click to copy full Tx Hash')
   const client = useApiClient()
 
-const convertApiOrderToOrder = (apiOrder: ApiOrder): Order => {
-  const assets = apiOrder.assets
-
-  let actionFields: ActionFields
-  const apiActionFields = apiOrder.orderDatum.actionFields
-
-  if ('MintDJED' in apiActionFields) {
-    actionFields = { MintDJED: { ...apiActionFields.MintDJED } }
-  } else if ('BurnDJED' in apiActionFields) {
-    actionFields = { BurnDJED: { ...apiActionFields.BurnDJED } }
-  } else if ('MintSHEN' in apiActionFields) {
-    actionFields = { MintSHEN: { ...apiActionFields.MintSHEN } }
-  } else if ('BurnSHEN' in apiActionFields) {
-    actionFields = { BurnSHEN: { ...apiActionFields.BurnSHEN } }
-  } else {
-    throw new Error('Unknown action field type')
-  }
-
-  return {
-    txHash: apiOrder.txHash,
-    outputIndex: apiOrder.outputIndex,
-    assets,
-    orderDatum: {
-      actionFields,
-      address: apiOrder.orderDatum.address?.paymentKeyHash?.[0],
-      adaUSDExchangeRate: {
-        numerator: apiOrder.orderDatum.adaUSDExchangeRate.numerator,
-        denominator: apiOrder.orderDatum.adaUSDExchangeRate.denominator,
-      },
-      creationDate: apiOrder.orderDatum.creationDate,
-      orderStateTokenMintingPolicyId: apiOrder.orderDatum.orderStateTokenMintingPolicyId,
-    },
-  }
-}
-
-
   const fetchOrders = async () => {
-    if (!wallet?.getChangeAddress) return
-
-    const address = await wallet.getChangeAddress()
-    if (!address) throw new Error('Failed to get change address')
-
+    if (!wallet) return
     const usedAddress = await wallet.getUsedAddresses()
-    if (!address) throw new Error('Failed to get change address')
+    if (!usedAddress) throw new Error('Failed to get used address')
 
     try {
       const res = await client.api.orders.$post({
-        json: { changeAddress: address, usedAddresses: usedAddress},
+        json: { usedAddresses: usedAddress },
       })
 
       if (!res.ok) {
@@ -109,8 +42,7 @@ const convertApiOrderToOrder = (apiOrder: ApiOrder): Order => {
 
       const data = await res.text()
       const parsed = JSONbig.parse(data)
-      const convertedOrders = parsed.orders.map(convertApiOrderToOrder)
-      setOrders(convertedOrders)
+      setOrders(parsed.orders)
     } catch (err) {
       console.error('Error fetching orders:', err)
     }

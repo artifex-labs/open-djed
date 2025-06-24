@@ -158,7 +158,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         signTx: (txCbor: string) => api.signTx(txCbor, false),
         submitTx: api.submitTx,
         getChangeAddress,
-        getUsedAddresses
+        getUsedAddresses,
       })
     } catch (err) {
       console.error(`Failed to enable ${id}`, err)
