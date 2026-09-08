@@ -2,23 +2,24 @@
 
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { Link } from "@/i18n/navigation"
 import Table, { type HeaderItem } from "@/components/table/Table"
-import Tag, { type Type as TagType } from "@/components/Tag"
-import ButtonIcon from "@/components/ButtonIcon"
+import Tag from "@/components/Tag"
 import BaseCard from "@/components/card/BaseCard"
 import { Skeleton } from "@/components/Skeleton"
+import { useViewport } from "@/hooks/useViewport"
 import { formatNumber } from "@/utils"
 import { formatDateLabel } from "@/utils/date"
-import {
-  CARDANOSCAN_BASE_URL,
-  REWARD_DISTRIBUTION_THRESHOLD_ADA,
-} from "@/lib/constants"
+import { REWARD_DISTRIBUTION_THRESHOLD_ADA } from "@/lib/constants"
 import {
   isKnownDistributionStatus,
   type RewardEpoch,
 } from "@/queries/rewards/rewards.schema"
 import RewardRow, { type RewardRowData } from "./RewardRow"
+import RewardMobileCard from "./RewardMobileCard"
+import RewardTxLinks from "./RewardTxLinks"
+import RewardEpochDetails from "./RewardEpochDetails"
+import { STATUS_TAG } from "./rewardStatus"
+import { formatReward } from "./rewardFormat"
 
 type Props = {
   epochs: RewardEpoch[]
@@ -28,13 +29,6 @@ type Props = {
   currentPage: number
   onPageChange: (page: number) => void
   rowsPerPage: number
-}
-
-const STATUS_TAG: Record<string, TagType> = {
-  snapshot_taken: "surface",
-  to_be_distrusted: "warning",
-  distribution_confirmed: "success",
-  distributed: "success",
 }
 
 const HEADER_KEYS = ["epoch", "amount", "reward", "status", "date"] as const
@@ -50,86 +44,83 @@ const RewardsTable = ({
   rowsPerPage,
 }: Props) => {
   const t = useTranslations()
+  const { isMobile } = useViewport()
 
-  const headers: HeaderItem[] = useMemo(
-    () => [
+  const headers: HeaderItem[] = useMemo(() => {
+    if (isMobile) {
+      return [
+        {
+          column: t("rewards.table.header.epoch"),
+          columnKey: "rewards",
+          size: "auto" as const,
+        },
+      ]
+    }
+    return [
       ...HEADER_KEYS.map((key) => ({
         column: t(`rewards.table.header.${key}`),
         columnKey: key,
         size: "full" as const,
       })),
       { column: undefined, columnKey: "actions", size: "small" as const },
-    ],
-    [t],
-  )
+    ]
+  }, [t, isMobile])
 
-  const dataRows: RewardRowData[] = useMemo(
-    () =>
-      epochs.map((e) => {
-        const statusLabel = isKnownDistributionStatus(e.distributionStatus)
-          ? t(`rewards.status.${e.distributionStatus}`)
-          : e.distributionStatus
+  const dataRows: RewardRowData[] = useMemo(() => {
+    if (isMobile) {
+      return epochs.map((e) => ({
+        key: String(e.epochNumber),
+        columns: [{ content: <RewardMobileCard epoch={e} /> }],
+      }))
+    }
+    return epochs.map((e) => {
+      const statusLabel = isKnownDistributionStatus(e.distributionStatus)
+        ? t(`rewards.status.${e.distributionStatus}`)
+        : e.distributionStatus
 
-        return {
-          key: String(e.epochNumber),
-          columns: [
-            { content: <div className="px-16 py-12">{e.epochNumber}</div> },
-            {
-              content: (
-                <div className="px-16 py-12 text-nowrap">
-                  {formatNumber(e.shenAmount)} SHEN
-                </div>
-              ),
-            },
-            {
-              content: (
-                <div className="px-16 py-12 text-nowrap">
-                  {formatNumber(e.rewardAmount)} ₳
-                </div>
-              ),
-            },
-            {
-              content: (
-                <div className="px-16 py-12">
-                  <Tag
-                    type={STATUS_TAG[e.distributionStatus] ?? "surface"}
-                    role="Secondary"
-                    size="small"
-                    text={statusLabel}
-                  />
-                </div>
-              ),
-            },
-            {
-              content: (
-                <div className="px-16 py-12 text-nowrap">
-                  {formatDateLabel(e.epochEndTime) ?? "-"}
-                </div>
-              ),
-            },
-            {
-              content: (
-                <div className="flex justify-end px-16 py-12">
-                  {e.rewardTxHash && (
-                    <Link
-                      href={`${CARDANOSCAN_BASE_URL}/transaction/${e.rewardTxHash}`}
-                      target="_blank"
-                    >
-                      <ButtonIcon
-                        size="small"
-                        variant="outlined"
-                        icon="External"
-                      />
-                    </Link>
-                  )}
-                </div>
-              ),
-            },
-          ],
-        }
-      }),
-    [epochs, t],
-  )
+      return {
+        key: String(e.epochNumber),
+        details: <RewardEpochDetails epoch={e} />,
+        columns: [
+          { content: <div className="px-16 py-12">{e.epochNumber}</div> },
+          {
+            content: (
+              <div className="px-16 py-12 text-nowrap">
+                {formatNumber(e.shenAmount)} SHEN
+              </div>
+            ),
+          },
+          {
+            content: (
+              <div className="px-16 py-12 text-nowrap">
+                {formatReward(e.rewardAmount, e.distributionStatus)}
+              </div>
+            ),
+          },
+          {
+            content: (
+              <div className="px-16 py-12">
+                <Tag
+                  type={STATUS_TAG[e.distributionStatus] ?? "surface"}
+                  role="Secondary"
+                  size="small"
+                  text={statusLabel}
+                />
+              </div>
+            ),
+          },
+          {
+            content: (
+              <div className="px-16 py-12 text-nowrap">
+                {formatDateLabel(e.epochEndTime) ?? "-"}
+              </div>
+            ),
+          },
+          { content: <RewardTxLinks epoch={e} /> },
+        ],
+      }
+    })
+  }, [epochs, t, isMobile])
 
   const skeletonRowCount =
     totalCount > 0
@@ -140,15 +131,30 @@ const RewardsTable = ({
     () =>
       Array.from({ length: Math.max(skeletonRowCount, 1) }).map((_, r) => ({
         key: `skeleton-${r}`,
-        columns: Array.from({ length: COLUMN_COUNT }).map(() => ({
-          content: (
-            <div className="px-16 py-12">
-              <Skeleton width="w-full" height="h-[18px]" />
-            </div>
-          ),
-        })),
+        isPlaceholder: true,
+        columns: isMobile
+          ? [
+              {
+                content: (
+                  <div className="flex flex-col gap-8 p-8">
+                    <Skeleton width="w-24" height="h-[18px]" />
+                    <Skeleton width="w-full" height="h-[14px]" />
+                    <Skeleton width="w-full" height="h-[14px]" />
+                    <Skeleton width="w-full" height="h-[14px]" />
+                    <Skeleton width="w-full" height="h-[14px]" />
+                  </div>
+                ),
+              },
+            ]
+          : Array.from({ length: COLUMN_COUNT }).map(() => ({
+              content: (
+                <div className="px-16 py-12">
+                  <Skeleton width="w-full" height="h-[18px]" />
+                </div>
+              ),
+            })),
       })),
-    [skeletonRowCount],
+    [skeletonRowCount, isMobile],
   )
 
   if (!loading && epochs.length === 0) {
@@ -180,7 +186,7 @@ const RewardsTable = ({
         currentPage={currentPage}
         onPageChange={onPageChange}
         serverSidePagination
-        fixedLayout
+        fixedLayout={!isMobile}
         RowComponent={RewardRow}
       />
 

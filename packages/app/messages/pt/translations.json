@@ -490,12 +490,18 @@
     },
     "table": {
       "title": "Recompensas por época",
+      "rewardTx": "Ver transação da recompensa",
+      "airdropTx": "Ver transação do airdrop",
       "header": {
         "epoch": "Época",
         "amount": "Montante",
         "reward": "Recompensa",
         "status": "Estado",
         "date": "Data"
+      },
+      "details": {
+        "epochStart": "Início da época",
+        "epochEnd": "Fim da época"
       }
     },
     "status": {

@@ -490,12 +490,18 @@
     },
     "table": {
       "title": "Rewards by epoch",
+      "rewardTx": "View reward transaction",
+      "airdropTx": "View airdrop transaction",
       "header": {
         "epoch": "Epoch",
         "amount": "Amount",
         "reward": "Reward",
         "status": "Status",
         "date": "Date"
+      },
+      "details": {
+        "epochStart": "Epoch start",
+        "epochEnd": "Epoch end"
       }
     },
     "status": {

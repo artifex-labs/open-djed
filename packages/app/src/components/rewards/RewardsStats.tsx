@@ -1,6 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import clsx from "clsx"
 import BaseCard from "@/components/card/BaseCard"
 import { formatNumber } from "@/utils"
 
@@ -13,8 +14,16 @@ type Props = {
 const ada = (value: number | null) =>
   value === null ? "-" : `${formatNumber(value)} ADA`
 
-const StatCard = ({ label, value }: { label: string; value: string }) => (
-  <BaseCard className="gap-6">
+const StatCard = ({
+  label,
+  value,
+  className,
+}: {
+  label: string
+  value: string
+  className?: string
+}) => (
+  <BaseCard className={clsx("gap-6", className)}>
     <span className="text-tertiary text-sm font-medium">{label}</span>
     <span className="text-h3 font-bold">{value}</span>
   </BaseCard>
@@ -28,7 +37,7 @@ const RewardsStats = ({
   const t = useTranslations()
 
   return (
-    <div className="desktop:grid-cols-3 grid grid-cols-1 gap-16">
+    <div className="grid grid-cols-1 gap-16 sm:grid-cols-2 lg:grid-cols-3">
       <StatCard
         label={t("rewards.stats.currentEpoch")}
         value={currentEpoch === null ? "-" : String(currentEpoch)}
@@ -40,6 +49,7 @@ const RewardsStats = ({
       <StatCard
         label={t("rewards.stats.totalPending")}
         value={ada(totalPending)}
+        className="sm:col-span-2 lg:col-span-1"
       />
     </div>
   )

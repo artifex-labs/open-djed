@@ -8,6 +8,7 @@ export const RewardEpochSchema = z.object({
   rewardAmount: z.coerce.number(),
   distributionStatus: z.string(),
   rewardTxHash: z.string().nullable(),
+  airDropTxHash: z.string().nullish(),
 })
 export type RewardEpoch = z.infer<typeof RewardEpochSchema>
 

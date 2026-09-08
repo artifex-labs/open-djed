@@ -22,9 +22,11 @@ const SAMPLE = {
       epochEndTime: "2026-08-27T21:44:51.000Z",
       shenAmount: "300.000132",
       rewardAmount: "0.042526",
-      distributionStatus: "to_be_distrusted",
+      distributionStatus: "distribution_confirmed",
       rewardTxHash:
         "0390fee2e8454afd5c23d89d795ac6b0128bfaf8677f9b2b37a4c69eb53516ed",
+      airDropTxHash:
+        "ae18bec0bbb2853851c808b031172601911cea1de2130d05dc5b59a69bb87f3a",
     },
   ],
   totalRewardNotDistributed: "0.781495",
@@ -39,6 +41,10 @@ describe("AddressRewardsResponseSchema", () => {
     expect(parsed.data[0]?.shenAmount).toBeCloseTo(300.000132, 6)
     expect(parsed.data[1]?.rewardAmount).toBeCloseTo(0.042526, 6)
     expect(parsed.data[0]?.rewardTxHash).toBeNull()
+    expect(parsed.data[0]?.airDropTxHash).toBeUndefined()
+    expect(parsed.data[1]?.airDropTxHash).toBe(
+      "ae18bec0bbb2853851c808b031172601911cea1de2130d05dc5b59a69bb87f3a",
+    )
     expect(parsed.total).toBe(57)
     expect(parsed.totalRewardDistributed).toBeCloseTo(2.02368, 5)
   })
