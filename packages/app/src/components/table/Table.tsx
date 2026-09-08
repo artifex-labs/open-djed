@@ -28,6 +28,7 @@ export type TableProps<T> = {
     hasBorder?: boolean
   }>
   totalPages: number
+  fixedLayout?: boolean
 }
 
 function Table<T>({
@@ -41,6 +42,7 @@ function Table<T>({
   serverSidePagination = false,
   RowComponent,
   totalPages,
+  fixedLayout = false,
 }: TableProps<T>) {
   const [internalCurrentPage, setInternalCurrentPage] = useState(1)
 
@@ -82,7 +84,7 @@ function Table<T>({
         )}
       >
         <div className="inline-block min-w-full align-middle">
-          <table className="w-full">
+          <table className={clsx("w-full", fixedLayout && "table-fixed")}>
             {/* Header */}
             <thead className="bg-background-primary sticky top-0 z-10">
               <tr>
