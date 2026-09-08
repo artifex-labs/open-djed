@@ -482,7 +482,7 @@
     "subtitle": "Delegation rewards for SHEN holders",
     "noWallet": "Connect your wallet to see your rewards",
     "noData": "No available data",
-    "rewardThresholdNote": "* Reward amount lower than {threshold} ₳ will be added to pending rewards",
+    "pendingRewardsHint": "Reward amounts below {threshold} ₳ are added to your pending rewards",
     "stats": {
       "currentEpoch": "Current Epoch",
       "totalDistributed": "Total Distributed Rewards",

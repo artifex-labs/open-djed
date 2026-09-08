@@ -482,7 +482,7 @@
     "subtitle": "Recompensas de delegação para holders de SHEN",
     "noWallet": "Liga a tua wallet para veres as tuas recompensas",
     "noData": "Sem dados disponíveis",
-    "rewardThresholdNote": "* Recompensas inferiores a {threshold} ₳ são adicionadas às recompensas pendentes",
+    "pendingRewardsHint": "Recompensas inferiores a {threshold} ₳ são adicionadas às recompensas pendentes",
     "stats": {
       "currentEpoch": "Época Atual",
       "totalDistributed": "Total de Recompensas Distribuídas",

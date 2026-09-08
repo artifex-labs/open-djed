@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/Skeleton"
 import { useViewport } from "@/hooks/useViewport"
 import { formatNumber } from "@/utils"
 import { formatDateLabel } from "@/utils/date"
-import { REWARD_DISTRIBUTION_THRESHOLD_ADA } from "@/lib/constants"
 import {
   isKnownDistributionStatus,
   type RewardEpoch,
@@ -189,12 +188,6 @@ const RewardsTable = ({
         fixedLayout={!isMobile}
         RowComponent={RewardRow}
       />
-
-      <p className="text-tertiary text-xs">
-        {t("rewards.rewardThresholdNote", {
-          threshold: REWARD_DISTRIBUTION_THRESHOLD_ADA,
-        })}
-      </p>
     </div>
   )
 }

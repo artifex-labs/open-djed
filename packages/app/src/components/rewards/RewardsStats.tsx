@@ -3,7 +3,10 @@
 import { useTranslations } from "next-intl"
 import clsx from "clsx"
 import BaseCard from "@/components/card/BaseCard"
+import Icon from "@/components/icons/Icon"
+import Tooltip from "@/components/tooltip/Tooltip"
 import { formatNumber } from "@/utils"
+import { REWARD_DISTRIBUTION_THRESHOLD_ADA } from "@/lib/constants"
 
 type Props = {
   currentEpoch: number | null
@@ -17,14 +20,23 @@ const ada = (value: number | null) =>
 const StatCard = ({
   label,
   value,
+  tooltip,
   className,
 }: {
   label: string
   value: string
+  tooltip?: string
   className?: string
 }) => (
   <BaseCard className={clsx("gap-6", className)}>
-    <span className="text-tertiary text-sm font-medium">{label}</span>
+    <span className="text-tertiary flex items-center gap-6 text-sm font-medium">
+      {label}
+      {tooltip && (
+        <Tooltip text={tooltip}>
+          <Icon name="Information" size={14} className="cursor-pointer" />
+        </Tooltip>
+      )}
+    </span>
     <span className="text-h3 font-bold">{value}</span>
   </BaseCard>
 )
@@ -49,6 +61,9 @@ const RewardsStats = ({
       <StatCard
         label={t("rewards.stats.totalPending")}
         value={ada(totalPending)}
+        tooltip={t("rewards.pendingRewardsHint", {
+          threshold: REWARD_DISTRIBUTION_THRESHOLD_ADA,
+        })}
         className="sm:col-span-2 lg:col-span-1"
       />
     </div>
