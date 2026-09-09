@@ -10,7 +10,7 @@ import {
 import { decode } from "cbor2"
 import { z } from "zod"
 import { useLocalStorage } from "usehooks-ts"
-import { type Cardano } from "@lucid-evolution/lucid"
+import { type Cardano, type WalletApi } from "@lucid-evolution/lucid"
 import { registryByNetwork } from "@open-djed/registry"
 import { useToast } from "./ToastContext"
 import { ALLOWED_WALLETS } from "@/lib/constants"
@@ -66,6 +66,22 @@ export function getCardanoFromWindowObject(): Cardano | null {
   return window.cardano
 }
 
+type CardanoWalletEntry = Cardano[string]
+
+async function enableWallet(entry: CardanoWalletEntry): Promise<WalletApi> {
+  let enable: CardanoWalletEntry["enable"]
+  try {
+    enable = entry.enable
+  } catch {
+    const descriptor = Object.getOwnPropertyDescriptor(entry, "enable")
+    if (!descriptor || typeof descriptor.value !== "function") {
+      throw new Error("Wallet does not expose an enable() method")
+    }
+    enable = descriptor.value as CardanoWalletEntry["enable"]
+  }
+  return enable.call(entry)
+}
+
 const WalletContext = createContext<WalletContextType | null>(null)
 
 export const useWallet = () => {
@@ -99,7 +115,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         const cardano = getCardanoFromWindowObject()
         if (!cardano) return
 
-        let api = await cardano[id].enable()
+        let api = await enableWallet(cardano[id])
 
         if ((await api.getNetworkId()) !== networkIds[NETWORK]) {
           showToast({
@@ -119,7 +135,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
             throw err
 
           if (err?.code === -4) {
-            api = await cardano[id].enable()
+            api = await enableWallet(cardano[id])
             balanceStr = await api.getBalance()
           } else {
             throw err
